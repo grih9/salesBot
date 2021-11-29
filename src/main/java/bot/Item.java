@@ -26,7 +26,7 @@ public class Item {
         this.shopName = shopName;
         this.imageURL = imageURL;
     }
-    
+
     public String getName() {
         return name;
     }
@@ -94,11 +94,11 @@ public class Item {
     @Override
     public String toString() {
         return  "Название " + name + '\'' +
-                "Вес " + weight + '\'' +
+                (weight != 0 ? ("Вес " + weight + '\'') : "") +
                 "Цена без скидки " + price + '\'' +
                 "Цена со скидкой " + salePrice + '\'' +
-                "Начало акции " + saleBeginDate + '\'' +
-                "Окончание акции " + saleEndDate + '\'' +
+                (saleBeginDate != null ? ("Начало акции " + saleBeginDate + '\'') : "") +
+                (saleEndDate != null ? ("Окончание акции " + saleEndDate + '\'') : "") +
                 "Сеть " + shopName;
     }
 }
