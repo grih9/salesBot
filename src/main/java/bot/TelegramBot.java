@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import bot.commands.*;
+import database.City;
+import database.JDBCConnector;
 
 public final class TelegramBot extends TelegramLongPollingCommandBot {
     private final String BOT_NAME;
@@ -20,9 +22,9 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
     private final NonCommand nonCommand;
 
     /**
-     * Настройки для разных пользователей. Ключ - уникальный id чата, значение - id города пользователя
+     * Настройки для разных пользователей. Ключ - уникальный id чата, значение - имя пользователя
      */
-    private static Map<Long, Long> userSettings;
+    private static Map<Long, String> userSettings;
 
     public TelegramBot(String botName, String botToken) {
         super();
@@ -33,6 +35,9 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
         //регистрируем команды
         register(new StartCommand("start", "Старт"));
         register(new ChooseCityCommand("city", "Город"));
+        register(new ChooseShopsCommand("shops", "Выбрать магазины"));
+        register(new FindItemCommand("findItem", "Найти товар"));
+        register(new ShowItemsCommand("showItems", "Отобразить товары"));
         userSettings = new HashMap<>();
     }
 
@@ -63,9 +68,9 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
      * Получение города по id чата. Если ранее для этого чата в ходе сеанса работы бота настройки не были установлены,
      * вызывается команда выбора города
      */
-    public Long getUserCity(Long chatId) {
-        Map<Long, Long> userSettings = getUserSettings();
-        Long city = userSettings.get(chatId);
+    public City getUserCity(Long chatId) {
+        JDBCConnector jdbcConnector = new JDBCConnector();
+        City city = jdbcConnector.getUserCity(getUserSettings().get(chatId));
         if (city == null) {
             setAnswer(chatId, "Пожалуйста, выполните команду /city");
         }
@@ -98,7 +103,7 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
         }
     }
 
-    public static Map<Long, Long> getUserSettings() {
+    public static Map<Long, String> getUserSettings() {
         return userSettings;
     }
 }

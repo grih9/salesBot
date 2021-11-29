@@ -1,3 +1,5 @@
+package database;
+
 public class City {
     private String name;
     private String region;
