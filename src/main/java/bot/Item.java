@@ -1,21 +1,19 @@
 package bot;
 
-import java.util.Date;
-
 public class Item {
     private String name;
     private int weight;
     private float price;
     private float salePrice;
-    private Date saleBeginDate;
-    private Date saleEndDate;
+    private String saleBeginDate;
+    private String saleEndDate;
     private String shopName;
     private String imageURL;
 
     public Item() {
     }
 
-    public Item(String name, int weight, float price, float salePrice, Date saleBeginDate, Date saleEndDate,
+    public Item(String name, int weight, float price, float salePrice, String saleBeginDate, String saleEndDate,
                 String shopName, String imageURL) {
         this.name = name;
         this.weight = weight;
@@ -59,19 +57,19 @@ public class Item {
         this.salePrice = salePrice;
     }
 
-    public Date getSaleBeginDate() {
+    public String getSaleBeginDate() {
         return saleBeginDate;
     }
 
-    public void setSaleBeginDate(Date saleBeginDate) {
+    public void setSaleBeginDate(String saleBeginDate) {
         this.saleBeginDate = saleBeginDate;
     }
 
-    public Date getSaleEndDate() {
+    public String getSaleEndDate() {
         return saleEndDate;
     }
 
-    public void setSaleEndDate(Date saleEndDate) {
+    public void setSaleEndDate(String saleEndDate) {
         this.saleEndDate = saleEndDate;
     }
 
