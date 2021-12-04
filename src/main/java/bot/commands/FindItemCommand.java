@@ -17,7 +17,8 @@ import utils.Utils;
  * Команда "Найти товар"
  */
 public class FindItemCommand extends ServiceCommand {
-    List<Shop> shops;
+    List<Shop> shops; // TODO: добавление выбранных магазинов
+
     public FindItemCommand(String identifier, String description) {
         super(identifier, description);
     }
@@ -25,13 +26,16 @@ public class FindItemCommand extends ServiceCommand {
     @Override
     public void execute(AbsSender absSender, User user, Chat chat, String[] strings) {
         String userName = Utils.getUserName(user);
-        super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName,
-                "Введите название товара");
+        super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName, "Введите название товара");
+
         NonCommand nonCommand = new NonCommand();
-        String itemName = null; //= nonCommand получает и передает название
+        String itemName = null; // TODO: = nonCommand... получает и передает название
+
         JDBCConnector jdbcConnector = new JDBCConnector();
-        Parser parser = new Parser(jdbcConnector.getUserCity(Utils.getUserName(user)), shops);
-        List<Item> items = parser.findItemByName(itemName);
+        Parser.setCity(jdbcConnector.getUserCity(Utils.getUserName(user)));
+        Parser.setShops(shops);
+
+        List<Item> items = Parser.findItemsByName(itemName);
         if (items == null || items.isEmpty()) {
             super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName,
                     "Такого товара нет в каталогах акций выбранных магазинов");
