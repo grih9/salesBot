@@ -3,14 +3,9 @@ package database;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
 
-import java.io.*;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
+import java.io.FileReader;
+import java.io.IOException;
+import java.sql.*;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -28,6 +23,8 @@ public class JDBCConnector {
 				"Create Table users(id serial primary key, name varchar UNIQUE, cityId int REFERENCES cities(id)); " +
 				"Create Table cities_shops(id serial primary key, cityId int REFERENCES cities(id), shopId " +
 																			"int REFERENCES shops(id)); " +
+				"Create Table users_shops(id serial primary key, userId int REFERENCES users(id), shopId " +
+				"int REFERENCES shops(id)); " +
 				"Create Table categories(id serial primary key, name varchar); ";
 
 		stmt.executeUpdate(CreateSql);
@@ -166,7 +163,7 @@ public class JDBCConnector {
 		return true; // Список городов успешно изменен;
 	}
 
-	//Добавление пс
+	//Добавление списка категорий
 	public Boolean addCategories() {
 		String sqlInsert = "insert into categories(name) values(?)";
 		String sqlTruncate = "TRUNCATE TABLE categories";
@@ -195,6 +192,57 @@ public class JDBCConnector {
 		return true; // Список городов успешно изменен;
 	}
 
+	public Boolean addShops() {
+		String sqlInsert = "insert into shops(name, website) values(?, ?)";
+		String sqlTruncate = "TRUNCATE TABLE categories";
+		String fileName = "shops.csv";
+
+		try (CSVReader reader = new CSVReader(new FileReader(fileName))) {
+			Statement stmt = this.connection.createStatement();
+
+			stmt.executeUpdate(sqlTruncate);
+			stmt.close();
+
+			String[] lineInArray;
+			PreparedStatement ps = this.connection.prepareStatement(sqlInsert);
+			reader.readNext();
+
+			while ((lineInArray = reader.readNext()) != null) {
+				ps.setString(1, lineInArray[0]);
+				ps.setString(2, lineInArray[1]);
+				ps.executeUpdate();
+			}
+
+			ps.close();
+		} catch (IOException | CsvValidationException | SQLException e) {
+			e.printStackTrace();
+		}
+
+		return true; // Список магазинов успешно обновлен
+	}
+
+	public Boolean setSelectedShops(String username, List<Shop> shops) {
+		String sqlInsert = "insert into users_shops(userId, shopId) values((select id from users where name = ?), " +
+				"(select id from shops where name = ? and website =?));";
+
+		try {
+			PreparedStatement ps = this.connection.prepareStatement(sqlInsert);
+
+			for (Shop shop : shops) {
+				ps.setString(1, username);
+				ps.setString(2, shop.getName());
+				ps.setString(3, shop.getWebsite());
+				ps.executeUpdate();
+			}
+
+			ps.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return true; // Список выбранных магазинов изменен
+	}
+
 	public List<String> getCategories() {
 		List<String> result = new LinkedList<>();
 
@@ -217,19 +265,42 @@ public class JDBCConnector {
 		return result;
 	}
 
-	public List<Shop> getShops(String username) {
+	public List<Shop> getSelectedShops(String username) {
 		List<Shop> result = new LinkedList<>();
-
+		int []a = {12};
 		try {
-			String sql = "select name, website from shops join cities_shops on shops.id = cities_shops.shopId join" +
-					"cities on cities_shops.cityId = cities.id join users on users.cityId = cities.id where name = ?";
+			String sql = "select shops.name, website from shops join users_shops on shops.id = users_shops.shopId join" +
+					" users on users.id = users_shops.userId where users.name = ?";
 
 			PreparedStatement ps = this.connection.prepareStatement(sql);
 			ps.setString(1, username);
 			ResultSet rs = ps.executeQuery(sql);
 
 			while (rs.next()) {
-				result.add(new Shop(rs.getString("name"), rs.getString("website")));
+				result.add(new Shop(rs.getString("shops.name"), rs.getString("website")));
+			}
+
+			ps.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return result;
+	}
+
+	public List<Shop> getShops(String username) {
+		List<Shop> result = new LinkedList<>();
+
+		try {
+			String sql = "select shops.name, website from shops join cities_shops on shops.id = cities_shops.shopId join" +
+					"cities on cities_shops.cityId = cities.id join users on users.cityId = cities.id where users.name = ?";
+
+			PreparedStatement ps = this.connection.prepareStatement(sql);
+			ps.setString(1, username);
+			ResultSet rs = ps.executeQuery(sql);
+
+			while (rs.next()) {
+				result.add(new Shop(rs.getString("shops.name"), rs.getString("website")));
 			}
 
 			ps.close();
