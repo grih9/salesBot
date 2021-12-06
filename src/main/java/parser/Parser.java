@@ -8,11 +8,7 @@ import database.City;
 import database.Shop;
 
 public class Parser {
-    private static City city;
-    private static List<Shop> shops;
-    private static List<String> cathegories;
-
-    public static List<Item> findItemsByName(String itemName) {
+    public static List<Item> findItemsByName(String itemName, City city, List<Shop> shops) {
         List<Item> items = new ArrayList<>();
         for (Shop shop : shops) {
 
@@ -50,17 +46,5 @@ public class Parser {
             }
         }
         return items;
-    }
-
-    public static void setCity(City city) {
-        Parser.city = city;
-    }
-
-    public static void setShops(List<Shop> shops) {
-        Parser.shops = shops;
-    }
-
-    public static void setCathegories(List<String> cathegories) {
-        Parser.cathegories = cathegories;
     }
 }
