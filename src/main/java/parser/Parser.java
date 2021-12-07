@@ -2,13 +2,20 @@ package parser;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import static org.openqa.selenium.support.ui.ExpectedConditions.presenceOfElementLocated;
 
 import bot.Item;
 import database.City;
 import database.Shop;
 
 public class Parser {
-    public static List<Item> findItemsByName(String itemName, City city, List<Shop> shops) {
+    public List<Item> findItemsByName(String itemName, City city, List<Shop> shops) {
         List<Item> items = new ArrayList<>();
         for (Shop shop : shops) {
 
