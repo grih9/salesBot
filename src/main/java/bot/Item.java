@@ -3,8 +3,8 @@ package bot;
 public class Item {
     private String name;
     private int weight;
-    private float price;
-    private float salePrice;
+    private String price;
+    private String salePrice;
     private String saleBeginDate;
     private String saleEndDate;
     private String shopName;
@@ -13,7 +13,7 @@ public class Item {
     public Item() {
     }
 
-    public Item(String name, int weight, float price, float salePrice, String saleBeginDate, String saleEndDate,
+    public Item(String name, int weight, String price, String salePrice, String saleBeginDate, String saleEndDate,
                 String shopName, String imageURL) {
         this.name = name;
         this.weight = weight;
@@ -41,19 +41,19 @@ public class Item {
         this.weight = weight;
     }
 
-    public float getPrice() {
+    public String getPrice() {
         return price;
     }
 
-    public void setPrice(float price) {
+    public void setPrice(String price) {
         this.price = price;
     }
 
-    public float getSalePrice() {
+    public String getSalePrice() {
         return salePrice;
     }
 
-    public void setSalePrice(float salePrice) {
+    public void setSalePrice(String salePrice) {
         this.salePrice = salePrice;
     }
 
@@ -91,12 +91,12 @@ public class Item {
 
     @Override
     public String toString() {
-        return  "Название " + name + '\'' +
-                (weight != 0 ? ("Вес " + weight + '\'') : "") +
-                "Цена без скидки " + price + '\'' +
-                "Цена со скидкой " + salePrice + '\'' +
-                (saleBeginDate != null ? ("Начало акции " + saleBeginDate + '\'') : "") +
-                (saleEndDate != null ? ("Окончание акции " + saleEndDate + '\'') : "") +
-                "Сеть " + shopName;
+        return  "Название: " + name + "\n" +
+                (weight != 0 ? ("Вес: " + weight + "\n") : "") +
+                "Цена без скидки: " + price + "\n" +
+                "Цена со скидкой: " + salePrice + "\n" +
+                (saleBeginDate != null ? ("Начало акции: " + saleBeginDate + "\n") : "") +
+                (saleEndDate != null ? ("Окончание акции: " + saleEndDate + "\n") : "") +
+                "Сеть: " + shopName;
     }
 }
