@@ -15,6 +15,51 @@ import database.City;
 import database.Shop;
 
 public class Parser {
+    public static List<Item> findItemsByCategory(String category, City city, Shop shop){
+        List<Item> items = new ArrayList<>();
+
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--headless");
+        WebDriver driver = new ChromeDriver(options);
+        driver.get(shop.getWebsite());
+
+            switch (shop.getName()) {
+                case ("Пятёрочка"):
+                    //items = findItemsByNamePyatyorochka(itemName, city, driver);
+                    break;
+                case ("Перекрёсток"):
+                    //items = findItemsByCathegoryPerekryostok(category, city, driver);
+                    break;
+                case ("Магнит"):
+                    //items = findItemsByNameMagnit(itemName, city, driver);
+                    break;
+                case ("Ашан"):
+                    //
+                    break;
+                case ("Дикси"):
+                    items = findItemsByCathegoryDiksi(category, driver);
+                    break;
+                case ("Spar"):
+                    //
+                    break;
+                case ("О'КЕЙ"):
+                    //
+                    break;
+                case ("Лента"):
+                    //
+                    break;
+                case ("Карусель"):
+                    //
+                    break;
+                case ("Prisma"):
+                    //
+                    break;
+            }
+
+        driver.close();
+        return items;
+    }
+
     public static List<Item> findItemsByName(String itemName, City city, List<Shop> shops) {
         List<Item> items = new ArrayList<>();
 
