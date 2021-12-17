@@ -49,7 +49,7 @@ public class ChooseCityCommand extends ServiceCommand {
         try {
             absSender.execute(sendMessage);
         } catch (TelegramApiException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
 }
