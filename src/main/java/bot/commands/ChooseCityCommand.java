@@ -31,7 +31,7 @@ public class ChooseCityCommand extends ServiceCommand {
         super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName,
                 "Введите Ваш город");
         JDBCConnector jdbcConnector = new JDBCConnector();
-        while (jdbcConnector.getUserCity(userName) == null) {
+        if (jdbcConnector.getUserCity(userName) == null) {
             NonCommand nonCommand = new NonCommand();
             Message message = new Message();
             message.getText();
