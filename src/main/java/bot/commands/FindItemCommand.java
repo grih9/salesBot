@@ -8,6 +8,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.bots.AbsSender;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import bot.Item;
 import bot.NonCommand;
@@ -52,5 +53,10 @@ public class FindItemCommand extends ServiceCommand {
         commands.add("/finditem");
         commands.add("/showitems");
         keyboards.setButtonToCallCommand(sendMessage, commands);
+        try {
+            absSender.execute(sendMessage);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
     }
 }
