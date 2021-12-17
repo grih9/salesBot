@@ -9,6 +9,7 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.bots.AbsSender;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import bot.NonCommand;
 import bot.keyboards.Keyboards;
@@ -45,5 +46,10 @@ public class ChooseCityCommand extends ServiceCommand {
         List<String> commands = new ArrayList<>();
         commands.add("/shops");
         keyboards.setButtonToCallCommand(sendMessage, commands);
+        try {
+            absSender.execute(sendMessage);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
     }
 }
