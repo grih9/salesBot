@@ -36,8 +36,8 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
         register(new StartCommand("start", "Старт"));
         register(new ChooseCityCommand("city", "Город"));
         register(new ChooseShopsCommand("shops", "Выбрать магазины"));
-        register(new FindItemCommand("findItem", "Найти товар"));
-        register(new ShowItemsCommand("showItems", "Отобразить товары"));
+        register(new FindItemCommand("finditem", "Найти товар"));
+        register(new ShowItemsCommand("showitems", "Отобразить товары"));
         userSettings = new HashMap<>();
     }
 

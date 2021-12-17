@@ -1,15 +1,18 @@
 package bot.commands;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 
 import bot.Item;
 import bot.NonCommand;
+import bot.keyboards.Keyboards;
 import database.JDBCConnector;
-import database.Shop;
 import parser.Parser;
 import utils.Utils;
 
@@ -38,9 +41,16 @@ public class FindItemCommand extends ServiceCommand {
                     "Такого товара нет в каталогах акций выбранных магазинов");
             return;
         }
+        items.sort(Comparator.comparing(Item::getSalePrice));
         for (Item item : items) {
             super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName, item.toString());
-            // TODO: добавить отправку изображения
         }
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.setChatId(String.valueOf(chat.getId()));
+        Keyboards keyboards = new Keyboards();
+        List<String> commands = new ArrayList<>();
+        commands.add("/finditem");
+        commands.add("/showitems");
+        keyboards.setButtonToCallCommand(sendMessage, commands);
     }
 }
