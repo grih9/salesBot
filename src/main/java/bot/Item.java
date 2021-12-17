@@ -97,6 +97,7 @@ public class Item {
                 "Цена со скидкой: " + salePrice + "\n" +
                 (saleBeginDate != null ? ("Начало акции: " + saleBeginDate + "\n") : "") +
                 (saleEndDate != null ? ("Окончание акции: " + saleEndDate + "\n") : "") +
-                "Сеть: " + shopName;
+                "Сеть: " + shopName + "\n" +
+                imageURL;
     }
 }
