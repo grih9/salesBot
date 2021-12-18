@@ -18,7 +18,7 @@ import utils.Utils;
  * Команда "Город"
  */
 public class ChooseCityCommand extends ServiceCommand {
-    String message;
+    String message = "";
     public ChooseCityCommand(String identifier, String description) {
         super(identifier, description);
     }
@@ -31,8 +31,8 @@ public class ChooseCityCommand extends ServiceCommand {
                 "Введите Ваш город");
         JDBCConnector jdbcConnector = new JDBCConnector();
         try {
-            while (message == null) {
-                TimeUnit.SECONDS.sleep(3);
+            while (message == null || message.isEmpty()) {
+                TimeUnit.SECONDS.sleep(1);
             }
         } catch (InterruptedException e) {
         }
@@ -41,8 +41,8 @@ public class ChooseCityCommand extends ServiceCommand {
             super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName,
                     "Город не найден, пожалуйста, повторите ввод");
             try {
-                while (message == null) {
-                    TimeUnit.SECONDS.sleep(3);
+                while (message == null || message.isEmpty()) {
+                    TimeUnit.SECONDS.sleep(1);
                 }
             } catch (InterruptedException e) {
             }
