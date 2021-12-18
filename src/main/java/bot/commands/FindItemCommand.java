@@ -21,7 +21,7 @@ import utils.Utils;
  * Команда "Найти товар"
  */
 public class FindItemCommand extends ServiceCommand {
-    String message;
+    String message = "";
     public FindItemCommand(String identifier, String description) {
         super(identifier, description);
     }
@@ -31,8 +31,8 @@ public class FindItemCommand extends ServiceCommand {
         String userName = Utils.getUserName(user);
         super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName, "Введите название товара");
         try {
-            while (message == null) {
-                TimeUnit.SECONDS.sleep(3);
+            while (message == null || message.isEmpty()) {
+                TimeUnit.SECONDS.sleep(1);
             }
         } catch (InterruptedException e) {
         }
