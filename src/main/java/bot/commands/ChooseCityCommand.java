@@ -40,6 +40,7 @@ public class ChooseCityCommand extends ServiceCommand {
 
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(String.valueOf(chat.getId()));
+        sendMessage.setText("Выберите интересующие магазины");
         Keyboards keyboards = new Keyboards();
         List<String> commands = new ArrayList<>();
         commands.add("/shops");
