@@ -18,15 +18,11 @@ public class TelegramBotApplication {
     private static final Map<String, String> getenv = System.getenv();
 
     public static void main(String[] args) {
-        List<String> ss = new ArrayList<>();
-        ss.add("a");
-        ss.add("b");
-        System.out.println(ss.get(0));
-//        try {
-//            TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
-//            botsApi.registerBot(new TelegramBot(getenv.get("BOT_NAME"), getenv.get("BOT_TOKEN")));
-//        } catch (TelegramApiException e) {
-//            e.printStackTrace();
-//        }
+       try {
+            TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
+            botsApi.registerBot(new TelegramBot(getenv.get("BOT_NAME"), getenv.get("BOT_TOKEN")));
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
     }
 }
