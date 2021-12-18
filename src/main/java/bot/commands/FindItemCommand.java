@@ -22,7 +22,7 @@ import utils.Utils;
  * Команда "Найти товар"
  */
 public class FindItemCommand extends ServiceCommand {
-    char[] message = null;
+    String message = null;
     public FindItemCommand(String identifier, String description) {
         super(identifier, description);
     }
@@ -30,17 +30,16 @@ public class FindItemCommand extends ServiceCommand {
     @Override
     public void execute(AbsSender absSender, User user, Chat chat, String[] strings) {
         String userName = Utils.getUserName(user);
+
         super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName, "Введите название товара");
-        try {
-            while (message == null || message.length == 0) {
-                TimeUnit.SECONDS.sleep(1);
-            }
-        } catch (InterruptedException e) {
-        }
+    }
+
+    public void executePart2(AbsSender absSender, User user, Chat chat, String[] strings) {
+        String userName = Utils.getUserName(user);
 
         JDBCConnector jdbcConnector = new JDBCConnector();
 
-        List<Item> items = Parser.findItemsByName(Arrays.toString(message).trim(), jdbcConnector.getUserCity(Utils.getUserName(user)),
+        List<Item> items = Parser.findItemsByName(message.trim(), jdbcConnector.getUserCity(Utils.getUserName(user)),
                 jdbcConnector.getSelectedShops(Utils.getUserName(user)));
         if (items == null || items.isEmpty()) {
             super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName,
@@ -61,11 +60,11 @@ public class FindItemCommand extends ServiceCommand {
         try {
             absSender.execute(sendMessage);
         } catch (TelegramApiException e) {
-            //e.printStackTrace();
+            e.printStackTrace();
         }
     }
 
-    public void setMessage(char[] message) {
+    public void setMessage(String message) {
         this.message = message;
     }
 }
