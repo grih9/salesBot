@@ -2,6 +2,7 @@ package parser;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -43,7 +44,7 @@ public class Parser {
                     //
                     break;
                 case ("О'КЕЙ"):
-                    //
+                    items = findItemsByCathegoryEdadil(category, city, driver);
                     break;
                 case ("Лента"):
                     //
@@ -89,7 +90,7 @@ public class Parser {
                     //
                     break;
                 case ("О'КЕЙ"):
-                    //
+                    items = findItemsByNameEdadil(itemName, shop.getName(), city, driver);
                     break;
                 case ("Лента"):
                     //
@@ -100,6 +101,162 @@ public class Parser {
                 case ("Prisma"):
                     //
                     break;
+            }
+        }
+        return items;
+    }
+
+    public static List<Item> findItemsByNameEdadil(String itemName, String shopName, City city, WebDriver driver) {
+        List<Item> items = new ArrayList<>();
+        WebDriverWait wait = new WebDriverWait(driver, 10);
+        wait.until(visibilityOfElementLocated(By.className("b-header__search-input")));
+        driver.findElement(By.className("b-header__search-input")).sendKeys(itemName, Keys.ENTER);
+        if (driver.findElements(By.className("p-not-found__big-header")).size() != 0) {
+            return items;
+        }
+        if (driver.findElements(By.className("b-no-items-found__title")).size() != 0) {
+            return items;
+        }
+
+        wait.until(visibilityOfElementLocated(By.className("b-checkbox-list__options")));
+        List<WebElement> shops = driver
+                .findElement(By.className("b-checkbox-list__options"))
+                .findElements(By.tagName("div"));
+        for (WebElement shop: shops) {
+            if (shop.getAttribute("title").toLowerCase().contains(shopName.toLowerCase())) {
+                shop.click();
+                break;
+            }
+        }
+        items = findItemsEdadil(driver);
+        return items;
+    }
+
+    public static List<Item> findItemsByCathegoryEdadil(String cathegoryName, City city, WebDriver driver) {
+        List<Item> items = new ArrayList<>();
+        cathegoryName = cathegoryName.toLowerCase();
+        cathegoryName = cathegoryName.replaceAll("Товары для ", "");
+        List<String> keywords = getKeywordsFromCathegories(cathegoryName);
+        if (cathegoryName.contains("cладости")) {
+            keywords.add("кондитерские");
+        }
+        if (cathegoryName.contains("колбаса")) {
+            keywords.add("мясные");
+        }
+
+        if (cathegoryName.contains("животных")) {
+            keywords.add("зоотовары");
+        }
+
+        WebDriverWait wait = new WebDriverWait(driver, 30);
+        wait.until(visibilityOfElementLocated(By.className("p-retailer__sub-column")));
+
+        List<WebElement> cathegories = driver.
+                findElements(By.cssSelector(".b-accordion__item1-title.b-accordion__item1-title_selected_false.b-accordion__item1-title_opened_false"));
+
+        if (cathegories.isEmpty()) {
+            return null;
+        }
+
+        List<String> cathegoriesNames = new ArrayList<>();
+        List<String> cathegoriesHref = new ArrayList<>();
+        for (WebElement webElement : cathegories) {
+            cathegoriesNames.add(webElement.getText());
+            cathegoriesHref.add(webElement.getAttribute("href"));
+        }
+
+        for (int i = 0; i < cathegories.size(); i++) {
+            for (String s : keywords) {
+                if (cathegoriesNames.get(i).toLowerCase().contains(s)) {
+                    return findItemsEdadil(driver);
+                }
+            }
+        }
+
+        driver.get(cathegoriesHref.get(0));
+
+        wait.until(visibilityOfElementLocated(By.className("p-retailer__sub-column")));
+        List<WebElement> subCathegories = driver.
+                findElements(By.className("b-accordion__item2"));
+        List<String> subCathegoriesNames = new ArrayList<>();
+        List<String> subCathegoriesHref = new ArrayList<>();
+
+        for (WebElement webElement : subCathegories) {
+            subCathegoriesNames.add(webElement.findElement(By.tagName("a")).getText());
+            subCathegoriesHref.add(webElement.findElement(By.tagName("a")).getAttribute("href"));
+        }
+
+        for (int j = 0; j < subCathegories.size(); j++) {
+            for (String s : keywords) {
+                if (subCathegoriesNames.get(j).toLowerCase().contains(s)) {
+                    driver.get(subCathegoriesHref.get(j));
+                    items.addAll(findItemsEdadil(driver));
+                    break;
+                }
+            }
+        }
+        return items;
+    }
+
+    public static List<Item> findItemsEdadil(WebDriver driver) {
+        List<Item> items = new ArrayList<>();
+        driver.get(driver.getCurrentUrl() + "&sort=aprice");
+        String url = driver.getCurrentUrl();
+        int page = 1;
+        int maxPage = 1;
+
+        if (driver.findElements(By.xpath("//a[@class='b-no-items-found__body b-no-items-found__body-']")).size() != 0) {
+            return items;
+        }
+
+        if (driver.findElements(By.className("b-pagination__pages")).size() > 0) {
+            driver.manage().timeouts().implicitlyWait(3000, TimeUnit.MILLISECONDS);
+            List<WebElement> pageList = driver
+                    .findElement(By.className("b-pagination__pages"))
+                    .findElements(By.tagName("a"));
+
+            if (pageList.size() != 0) {
+                maxPage = Integer.parseInt(pageList.get(pageList.size() - 1).findElement(By.className("b-button__content")).getText());
+            }
+        }
+
+        WebDriverWait wait = new WebDriverWait(driver, 20);
+
+        while (page <= maxPage) {
+            wait.until(visibilityOfElementLocated(By.className("b-offer__root")));
+
+            List<WebElement> webElements = driver
+                    .findElements(By.className("b-offer__root"));
+
+            for (WebElement element : webElements) {
+                Item item = new Item();
+
+                item.setImageURL(element.findElement(By.tagName("img")).getAttribute("src"));
+
+                String salesDate = element.findElement(By.className("b-offer__dates")).getText();
+                salesDate = salesDate.substring(salesDate.indexOf(" ") + 1);
+
+                item.setSaleEndDate(salesDate);
+                item.setName(element.findElement(By.tagName("img")).getAttribute("alt")
+                        .replaceAll(" со скидкой", "").replaceAll("\\*", ""));
+                if (element.findElements(By.className("b-offer__price-old")).size() > 0) {
+                    String price = element.findElement(By.className("b-offer__price-old")).getText();
+                    price = price.substring(0, price.indexOf(" ₽")).replace(",", ".");
+                    if (price.contains("От ")) {
+                        item.setPrice(price.substring(3));
+                    } else {
+                        item.setPrice(price);
+                    }
+                }
+
+                String salePrice = element.findElement(By.className("b-offer__price-new")).getText();
+                item.setSalePrice(salePrice.substring(0, salePrice.indexOf(" ₽")).replace(",", "."));
+                item.setShopName("Окей");
+                items.add(item);
+            }
+            page++;
+            if (page <= maxPage) {
+                driver.get(url + "&page=" + page);
             }
         }
         return items;
@@ -406,24 +563,23 @@ public class Parser {
         return items;
     }
 
-    public static ArrayList<String> getKeywordsFromCathegories(ArrayList<String> cathegories) {
+    public static ArrayList<String> getKeywordsFromCathegories(String cathegory) {
         ArrayList<String> keywords = new ArrayList<>();
-        cathegories.stream()
-                .forEach(s -> {
-                    if (s.contains("Товары для")) {
-                        keywords.add(s);
-                    } else {
-                        String[] tmp = s.split(" ");
-                        for (String s1 : tmp) {
-                            if (!s1.contains("и") && !s1.contains("продукты")) {
-                                if (s1.endsWith(",")) {
-                                    s1.replaceAll(",", "");
-                                }
-                                keywords.add(s1);
-                            }
-                        }
+
+        if (cathegory.contains("Товары для")) {
+            keywords.add(cathegory);
+        } else {
+            String[] tmp = cathegory.split(" ");
+            for (String s1 : tmp) {
+                if (!s1.equals("и") && !s1.equals("продукты")) {
+                    if (s1.endsWith(",")) {
+                        s1 = s1.replaceAll(",", "");
                     }
-                });
+                    keywords.add(s1);
+                }
+            }
+        }
+
         return keywords;
     }
 }
