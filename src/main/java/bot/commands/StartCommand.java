@@ -30,6 +30,7 @@ public class StartCommand extends ServiceCommand {
                 "/finditem - Найти акционный товар по названию\n" +
                 "/showitems - Найти акции по категориям товаров";
         super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName, botInfo);
+
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(String.valueOf(chat.getId()));
         Keyboards keyboards = new Keyboards();

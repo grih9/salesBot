@@ -3,6 +3,7 @@ package bot.commands;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Chat;
@@ -11,7 +12,6 @@ import org.telegram.telegrambots.meta.bots.AbsSender;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import bot.Item;
-import bot.NonCommand;
 import bot.keyboards.Keyboards;
 import database.JDBCConnector;
 import parser.Parser;
@@ -21,6 +21,7 @@ import utils.Utils;
  * Команда "Найти товар"
  */
 public class FindItemCommand extends ServiceCommand {
+    String message;
     public FindItemCommand(String identifier, String description) {
         super(identifier, description);
     }
@@ -29,13 +30,16 @@ public class FindItemCommand extends ServiceCommand {
     public void execute(AbsSender absSender, User user, Chat chat, String[] strings) {
         String userName = Utils.getUserName(user);
         super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName, "Введите название товара");
-
-        NonCommand nonCommand = new NonCommand();
-        String itemName = null; // TODO: = nonCommand... получает и передает название
+        try {
+            while (message == null) {
+                TimeUnit.SECONDS.sleep(3);
+            }
+        } catch (InterruptedException e) {
+        }
 
         JDBCConnector jdbcConnector = new JDBCConnector();
 
-        List<Item> items = Parser.findItemsByName(itemName, jdbcConnector.getUserCity(Utils.getUserName(user)),
+        List<Item> items = Parser.findItemsByName(message.trim(), jdbcConnector.getUserCity(Utils.getUserName(user)),
                 jdbcConnector.getSelectedShops(Utils.getUserName(user)));
         if (items == null || items.isEmpty()) {
             super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName,
@@ -58,5 +62,9 @@ public class FindItemCommand extends ServiceCommand {
         } catch (TelegramApiException e) {
             //e.printStackTrace();
         }
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 }

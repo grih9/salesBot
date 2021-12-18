@@ -2,16 +2,14 @@ package bot.commands;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Chat;
-import org.telegram.telegrambots.meta.api.objects.Message;
-import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import bot.NonCommand;
 import bot.keyboards.Keyboards;
 import database.JDBCConnector;
 import utils.Utils;
@@ -20,6 +18,7 @@ import utils.Utils;
  * Команда "Город"
  */
 public class ChooseCityCommand extends ServiceCommand {
+    String message;
     public ChooseCityCommand(String identifier, String description) {
         super(identifier, description);
     }
@@ -31,15 +30,24 @@ public class ChooseCityCommand extends ServiceCommand {
         super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName,
                 "Введите Ваш город");
         JDBCConnector jdbcConnector = new JDBCConnector();
-        if (jdbcConnector.getUserCity(userName) == null) {
-            NonCommand nonCommand = new NonCommand();
-            Message message = new Message();
-            message.getText();
-//       if (!jdbcConnector.addCity(userName, /*nonCommand*/)) {
+        try {
+            while (message == null) {
+                TimeUnit.SECONDS.sleep(3);
+            }
+        } catch (InterruptedException e) {
+        }
+        while (!jdbcConnector.addCity(userName, message.trim())) {
+            message = null;
             super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName,
                     "Город не найден, пожалуйста, повторите ввод");
-//        }
+            try {
+                while (message == null) {
+                    TimeUnit.SECONDS.sleep(3);
+                }
+            } catch (InterruptedException e) {
+            }
         }
+
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(String.valueOf(chat.getId()));
         Keyboards keyboards = new Keyboards();
@@ -51,5 +59,9 @@ public class ChooseCityCommand extends ServiceCommand {
         } catch (TelegramApiException e) {
             //e.printStackTrace();
         }
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 }
