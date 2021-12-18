@@ -40,7 +40,7 @@ public class StartCommand extends ServiceCommand {
         try {
             absSender.execute(sendMessage);
         } catch (TelegramApiException e) {
-            //e.printStackTrace();
+            e.printStackTrace();
         }
     }
 }

@@ -12,8 +12,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import bot.commands.*;
-import database.City;
-import database.JDBCConnector;
 
 public final class TelegramBot extends TelegramLongPollingCommandBot {
     private final String BOT_NAME;
@@ -28,13 +26,10 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
     //Класс для обработки сообщений, не являющихся командой
     private final NonCommand nonCommand;
 
-    private String lastMessage;
-    private Command lastCommand;
-
     /**
      * Настройки для разных пользователей. Ключ - уникальный id чата, значение - имя пользователя
      */
-    private static Map<Long, String> userSettings;
+    private static Map<Long, Command> userCommand;
 
     public TelegramBot(String botName, String botToken) {
         super();
@@ -48,7 +43,7 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
 //        register(new ChooseShopsCommand("shops", "Выбрать магазины"));
 //        register(new FindItemCommand("finditem", "Найти товар"));
 //        register(new ShowItemsCommand("showitems", "Отобразить товары"));
-        userSettings = new HashMap<>();
+        userCommand = new HashMap<>();
     }
 
     @Override
@@ -75,36 +70,42 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
         }
         switch (msg.getText().trim()) {
             case "/start":
-                lastCommand = Command.START;
+                userCommand.put(chatId, Command.START);
                 startCommand.execute(this, update.getMessage().getFrom(), update.getMessage().getChat(), null);
                 break;
             case "/city":
-                lastCommand = Command.CITY;
+                userCommand.put(chatId, Command.CITY);
                 chooseCityCommand.execute(this, update.getMessage().getFrom(), update.getMessage().getChat(), null);
                 break;
             case "/shops":
-                lastCommand = Command.CHOSE_SHOPS;
+                userCommand.put(chatId, Command.CHOSE_SHOPS);
                 chooseShopsCommand.execute(this, update.getMessage().getFrom(), update.getMessage().getChat(), null);
                 break;
             case "/finditem":
-                lastCommand = Command.FIND_ITEM;
+                userCommand.put(chatId, Command.FIND_ITEM);
                 findItemCommand.execute(this, update.getMessage().getFrom(), update.getMessage().getChat(), null);
                 break;
             case "/showitems":
-                lastCommand = Command.SHOW_ITEMS;
+                userCommand.put(chatId, Command.SHOW_ITEMS);
                 showItemsCommand.execute(this, update.getMessage().getFrom(), update.getMessage().getChat(), null);
                 break;
             default: //получили текст
-                if (lastCommand == null) {
+                if (userCommand.get(chatId) == null) {
                     break; // + какая-то логика
                 }
-                if (lastCommand == Command.CITY) { // получили город
-                    chooseCityCommand.setMessage(msg.getText().toCharArray());
-                } else if (lastCommand == Command.FIND_ITEM) { // получили название товара
-                    findItemCommand.setMessage(msg.getText().toCharArray());
-                } else if (lastCommand == Command.CHOSE_SHOPS) { // получили список номеров магазинов
+                if (userCommand.get(chatId).equals(Command.CITY)) { // получили город
+                    chooseCityCommand.setMessage(msg.getText());
+                    // Если город успешно записан в БД - текущая команда пользователя обнуляется
+                    if (chooseCityCommand.executePart2(this, update.getMessage().getFrom(), update.getMessage().getChat(), null)) {
+                        userCommand.put(chatId, null);
+                    }
+                } else if (userCommand.get(chatId).equals(Command.FIND_ITEM)) { // получили название товара
+                    findItemCommand.setMessage(msg.getText());
+                    findItemCommand.executePart2(this, update.getMessage().getFrom(), update.getMessage().getChat(), null);
+                    userCommand.put(chatId, null);
+                } else if (userCommand.get(chatId).equals(Command.CHOSE_SHOPS)) { // получили список номеров магазинов
                     //
-                } else if (lastCommand == Command.SHOW_ITEMS) { // получили список номеров категорий (он запрашивается в команде showItems)
+                } else if (userCommand.get(chatId).equals(Command.SHOW_ITEMS)) { // получили список номеров категорий (он запрашивается в команде showItems)
                     //
                 }
         }
@@ -117,14 +118,14 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
      * Получение города по id чата. Если ранее для этого чата в ходе сеанса работы бота настройки не были установлены,
      * вызывается команда выбора города
      */
-    public City getUserCity(Long chatId) {
+   /* public City getUserCity(Long chatId) {
         JDBCConnector jdbcConnector = new JDBCConnector();
         City city = jdbcConnector.getUserCity(getUserSettings().get(chatId));
         if (city == null) {
             setAnswer(chatId, "Пожалуйста, выполните команду /city");
         }
         return city;
-    }
+    }*/
 
     /**
      * Формирование имени пользователя
@@ -152,7 +153,7 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
         }
     }
 
-    public static Map<Long, String> getUserSettings() {
-        return userSettings;
+    public static Map<Long, Command> getUserCommand() {
+        return userCommand;
     }
 }
