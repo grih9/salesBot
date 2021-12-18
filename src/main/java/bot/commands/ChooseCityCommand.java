@@ -1,6 +1,7 @@
 package bot.commands;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -18,7 +19,7 @@ import utils.Utils;
  * Команда "Город"
  */
 public class ChooseCityCommand extends ServiceCommand {
-    String message = "";
+    char[] message = null;
     public ChooseCityCommand(String identifier, String description) {
         super(identifier, description);
     }
@@ -31,22 +32,23 @@ public class ChooseCityCommand extends ServiceCommand {
                 "Введите Ваш город");
         JDBCConnector jdbcConnector = new JDBCConnector();
         try {
-            while (message == null || message.isEmpty()) {
+            while (message == null || message.length == 0) {
                 TimeUnit.SECONDS.sleep(1);
             }
         } catch (InterruptedException e) {
         }
-        while (!jdbcConnector.addCity(userName, message.trim())) {
+        while (!jdbcConnector.addCity(userName, Arrays.toString(message).trim())) {
             message = null;
             super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName,
                     "Город не найден, пожалуйста, повторите ввод");
             try {
-                while (message == null || message.isEmpty()) {
+                while (message == null || message.length == 0) {
                     TimeUnit.SECONDS.sleep(1);
                 }
             } catch (InterruptedException e) {
             }
         }
+        message = null;
 
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(String.valueOf(chat.getId()));
@@ -61,7 +63,7 @@ public class ChooseCityCommand extends ServiceCommand {
         }
     }
 
-    public void setMessage(String message) {
+    public void setMessage(char[] message) {
         this.message = message;
     }
 }

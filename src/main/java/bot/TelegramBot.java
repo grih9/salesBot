@@ -70,7 +70,10 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
         Long chatId = msg.getChatId();
         String userName = getUserName(msg);
 
-        switch (msg.getText()) {
+        if (msg.getText() == null || msg.getText().isEmpty()) {
+            return;
+        }
+        switch (msg.getText().trim()) {
             case "/start":
                 lastCommand = Command.START;
                 startCommand.execute(this, update.getMessage().getFrom(), update.getMessage().getChat(), null);
@@ -96,9 +99,9 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
                     break; // + какая-то логика
                 }
                 if (lastCommand == Command.CITY) { // получили город
-                    chooseCityCommand.setMessage(msg.getText());
+                    chooseCityCommand.setMessage(msg.getText().toCharArray());
                 } else if (lastCommand == Command.FIND_ITEM) { // получили название товара
-                    findItemCommand.setMessage(msg.getText());
+                    findItemCommand.setMessage(msg.getText().toCharArray());
                 } else if (lastCommand == Command.CHOSE_SHOPS) { // получили список номеров магазинов
                     //
                 } else if (lastCommand == Command.SHOW_ITEMS) { // получили список номеров категорий (он запрашивается в команде showItems)

@@ -1,6 +1,7 @@
 package bot.commands;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -21,7 +22,7 @@ import utils.Utils;
  * Команда "Найти товар"
  */
 public class FindItemCommand extends ServiceCommand {
-    String message = "";
+    char[] message = null;
     public FindItemCommand(String identifier, String description) {
         super(identifier, description);
     }
@@ -31,7 +32,7 @@ public class FindItemCommand extends ServiceCommand {
         String userName = Utils.getUserName(user);
         super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName, "Введите название товара");
         try {
-            while (message == null || message.isEmpty()) {
+            while (message == null || message.length == 0) {
                 TimeUnit.SECONDS.sleep(1);
             }
         } catch (InterruptedException e) {
@@ -39,7 +40,7 @@ public class FindItemCommand extends ServiceCommand {
 
         JDBCConnector jdbcConnector = new JDBCConnector();
 
-        List<Item> items = Parser.findItemsByName(message.trim(), jdbcConnector.getUserCity(Utils.getUserName(user)),
+        List<Item> items = Parser.findItemsByName(Arrays.toString(message).trim(), jdbcConnector.getUserCity(Utils.getUserName(user)),
                 jdbcConnector.getSelectedShops(Utils.getUserName(user)));
         if (items == null || items.isEmpty()) {
             super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName,
@@ -64,7 +65,7 @@ public class FindItemCommand extends ServiceCommand {
         }
     }
 
-    public void setMessage(String message) {
+    public void setMessage(char[] message) {
         this.message = message;
     }
 }
