@@ -5,6 +5,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
+import org.telegram.telegrambots.meta.bots.AbsSender;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.HashMap;
@@ -18,8 +19,17 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
     private final String BOT_NAME;
     private final String BOT_TOKEN;
 
+    StartCommand startCommand= new StartCommand("start", "Старт");
+    ChooseCityCommand chooseCityCommand = new ChooseCityCommand("city", "Город");
+    ChooseShopsCommand chooseShopsCommand = new ChooseShopsCommand("shops", "Выбрать магазины");
+    FindItemCommand findItemCommand = new FindItemCommand("finditem", "Найти товар");
+    ShowItemsCommand showItemsCommand = new ShowItemsCommand("showitems", "Отобразить товары");
+
     //Класс для обработки сообщений, не являющихся командой
     private final NonCommand nonCommand;
+
+    private String lastMessage;
+    private Command lastCommand;
 
     /**
      * Настройки для разных пользователей. Ключ - уникальный id чата, значение - имя пользователя
@@ -33,11 +43,11 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
         //создаём вспомогательный класс для работы с сообщениями, не являющимися командами
         this.nonCommand = new NonCommand();
         //регистрируем команды
-        register(new StartCommand("start", "Старт"));
-        register(new ChooseCityCommand("city", "Город"));
-        register(new ChooseShopsCommand("shops", "Выбрать магазины"));
-        register(new FindItemCommand("finditem", "Найти товар"));
-        register(new ShowItemsCommand("showitems", "Отобразить товары"));
+//        register(new StartCommand("start", "Старт"));
+//        register(new ChooseCityCommand("city", "Город"));
+//        register(new ChooseShopsCommand("shops", "Выбрать магазины"));
+//        register(new FindItemCommand("finditem", "Найти товар"));
+//        register(new ShowItemsCommand("showitems", "Отобразить товары"));
         userSettings = new HashMap<>();
     }
 
@@ -59,6 +69,42 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
         Message msg = update.getMessage();
         Long chatId = msg.getChatId();
         String userName = getUserName(msg);
+
+        switch (msg.getText()) {
+            case "/start":
+                lastCommand = Command.START;
+                startCommand.execute(this, update.getMessage().getFrom(), update.getMessage().getChat(), null);
+                break;
+            case "/city":
+                lastCommand = Command.CITY;
+                chooseCityCommand.execute(this, update.getMessage().getFrom(), update.getMessage().getChat(), null);
+                break;
+            case "/shops":
+                lastCommand = Command.CHOSE_SHOPS;
+                chooseShopsCommand.execute(this, update.getMessage().getFrom(), update.getMessage().getChat(), null);
+                break;
+            case "/finditem":
+                lastCommand = Command.FIND_ITEM;
+                findItemCommand.execute(this, update.getMessage().getFrom(), update.getMessage().getChat(), null);
+                break;
+            case "/showitems":
+                lastCommand = Command.SHOW_ITEMS;
+                showItemsCommand.execute(this, update.getMessage().getFrom(), update.getMessage().getChat(), null);
+                break;
+            default: //получили текст
+                if (lastCommand == null) {
+                    break; // + какая-то логика
+                }
+                if (lastCommand == Command.CITY) { // получили город
+                    chooseCityCommand.setMessage(msg.getText());
+                } else if (lastCommand == Command.FIND_ITEM) { // получили название товара
+                    findItemCommand.setMessage(msg.getText());
+                } else if (lastCommand == Command.CHOSE_SHOPS) { // получили список номеров магазинов
+                    //
+                } else if (lastCommand == Command.SHOW_ITEMS) { // получили список номеров категорий (он запрашивается в команде showItems)
+                    //
+                }
+        }
 
 //        String answer = nonCommand.nonCommandExecute(chatId, userName, msg.getText());
 //        setAnswer(chatId, userName, answer);
