@@ -25,13 +25,13 @@ public class Parser {
 
             switch (shop.getName()) {
                 case ("Пятёрочка"):
-                    items = findItemsByCathegoryPyatyorochka(category, city, driver);
+                    //items = findItemsByNamePyatyorochka(itemName, city, driver);
                     break;
                 case ("Перекрёсток"):
-                    items = findItemsByCathegoryPerekryostok(category, city, driver);
+                    //items = findItemsByCathegoryPerekryostok(category, city, driver);
                     break;
                 case ("Магнит"):
-                    items = findItemsByCathegoryMagnit(category, city, driver);
+                    //items = findItemsByNameMagnit(itemName, city, driver);
                     break;
                 case ("Ашан"):
                     //
@@ -107,30 +107,7 @@ public class Parser {
 
     public static List<Item> findItemsByNamePyatyorochka(String itemName, City city, WebDriver driver) {
         List<Item> items = new ArrayList<>();
-        driver.findElement(By.cssSelector("input[placeholder='Поиск по товарам']")).sendKeys(itemName, Keys.ENTER);
-        WebDriverWait wait = new WebDriverWait(driver, 3);
-        try {
-            WebElement webElement = driver.findElement(By.className("items-list"));
-            wait.until(visibilityOfElementLocated(By.xpath("//div[contains(., '" + itemName + "')]")));
-            List<WebElement> webElements = webElement.findElements(By.tagName("img"));
-            if (webElements.isEmpty()) {
-                return null;
-            }
-            for (WebElement element : webElements) {
-                Item item = new Item();
-                element = element.findElement(By.xpath("./..")).findElement(By.xpath("./.."));
-                item.setImageURL(element.findElement(By.tagName("img")).getAttribute("src"));
-                item.setSaleEndDate(element.findElement(By.className("item-date")).getText());
-                item.setName(element.findElement(By.tagName("img")).getAttribute("alt"));
-                item.setPrice(element.findElement(By.className("price-regular")).getText() + " р.");
-                item.setSalePrice(element.findElement(By.className("from")).findElement(By.xpath("./..")).getText() + " р.");
-                item.setShopName("Пятёрочка");
-                items.add(item);
-                //System.out.println(item.toString());
-            }
-        } catch (Exception e) {
-            return null;
-        }
+
         return items;
     }
 
@@ -150,30 +127,25 @@ public class Parser {
     public static List<Item> findItemsByNamePerekryostok(String itemName, City city, WebDriver driver) {
         List<Item> items = new ArrayList<>();
         driver.findElement(By.cssSelector("input[name='search']")).sendKeys(itemName, Keys.ENTER);
-        WebDriverWait wait = new WebDriverWait(driver, 3);
+        WebDriverWait wait = new WebDriverWait(driver, 10);
         wait.until(visibilityOfElementLocated(By.id("onlyDiscount")));
-        try {
-            driver.findElement(By.id("onlyDiscount")).sendKeys(Keys.SPACE);
-            wait.until(visibilityOfElementLocated(By.xpath("//*[@id=\"app\"]/div/main/div[1]/div/div/div[6]/div/div[1]/div/div")));
-            WebElement webElement = driver.findElement(By.xpath("//*[@id=\"app\"]/div/main/div[1]/div/div/div[6]/div/div[1]/div/div"));
-            List<WebElement> webElements = webElement.findElements(By.tagName("a"));
-            for (WebElement element : webElements) {
-                Item item = new Item();
-                element = element.findElement(By.xpath("./.."));
-                if (element.findElements(By.className("price-old")).isEmpty()) {
-                    continue;
-                }
-                item.setImageURL(element.findElement(By.className("product-card__image-wrapper"))
-                        .findElement(By.tagName("img")).getAttribute("src"));
-                item.setName(element.findElement(By.className("product-card__title")).getText());
-                item.setPrice(element.findElement(By.className("price-old")).getText());
-                item.setSalePrice(element.findElement(By.className("price-new")).getText());
-                item.setShopName("Перекрёсток");
-                items.add(item);
-                //System.out.println(item.toString());
+        driver.findElement(By.id("onlyDiscount")).sendKeys(Keys.SPACE);
+        wait.until(visibilityOfElementLocated(By.xpath("//*[@id=\"app\"]/div/main/div[1]/div/div/div[6]/div/div[1]/div/div")));
+        WebElement webElement = driver.findElement(By.xpath("//*[@id=\"app\"]/div/main/div[1]/div/div/div[6]/div/div[1]/div/div"));
+        List<WebElement> webElements = webElement.findElements(By.tagName("a"));
+        for (WebElement element: webElements) {
+            Item item = new Item();
+            element = element.findElement(By.xpath("./.."));
+            if (element.findElements(By.className("price-old")).isEmpty()) {
+                continue;
             }
-        } catch (Exception e) {
-            return null;
+            item.setImageURL(element.findElement(By.className("product-card__image-wrapper")).findElement(By.tagName("img")).getAttribute("src"));
+            item.setName(element.findElement(By.className("product-card__title")).getText());
+            item.setPrice(element.findElement(By.className("price-old")).getText());
+            item.setSalePrice(element.findElement(By.className("price-new")).getText());
+            item.setShopName("Перекрёсток");
+            items.add(item);
+            System.out.println(item.toString());
         }
         return items;
     }
@@ -363,19 +335,17 @@ public class Parser {
         return items;
     }
 
-    public static List<Item> findItemsByCathegoryPerekryostok(String cathegoryS, City city, WebDriver driver) {
+    public static List<Item> findItemsByCathegoryPerekryostok(ArrayList<String> cathegories, City city, WebDriver driver) {
         List<Item> items = new ArrayList<>();
-        List<String> keywords = getKeywordsFromCathegories(cathegoryS);
+        List<String> keywords = getKeywordsFromCathegories(cathegories);
 
-        List<WebElement> cathegoriesList = driver.findElement(By.className("catalog__list"))
-                .findElements(By.className("category-card__title"));
+        List<WebElement> cathegoriesList = driver.findElement(By.className("catalog__list")).findElements(By.className("category-card__title"));
         if (cathegoriesList.isEmpty()) {
             return null;
         }
         int k = cathegoriesList.size() - 1;
         for (int i = 0; i < k; i++) {
-            WebElement cathegory = driver.findElement(By.className("catalog__list"))
-                    .findElements(By.className("category-card__title")).get(i);
+            WebElement cathegory = driver.findElement(By.className("catalog__list")).findElements(By.className("category-card__title")).get(i);
             if (cathegory == null) {
                 continue;
             }
@@ -390,20 +360,18 @@ public class Parser {
                 continue;
             }
             driver.get(cathegory.findElement(By.xpath("./..")).findElement(By.xpath("./..")).getAttribute("href"));
-            List<WebElement> subCathegories = driver.findElement(By.className("category-filter-item__content"))
-                    .findElements(By.tagName("a"));
+            List<WebElement> subCathegories = driver.findElement(By.className("category-filter-item__content")).findElements(By.tagName("a"));
             if (subCathegories.isEmpty()) {
                 continue;
             }
             int count = subCathegories.size() - 1;
             for (int j = 0; j < count; j++) {
-                WebElement subCathegory = driver.findElement(By.className("category-filter-item__content"))
-                        .findElements(By.tagName("a")).get(j);
+                WebElement subCathegory = driver.findElement(By.className("category-filter-item__content")).findElements(By.tagName("a")).get(j);
                 if (subCathegory == null) {
                     continue;
                 }
                 driver.get(subCathegory.getAttribute("href"));
-                WebDriverWait wait = new WebDriverWait(driver, 3);
+                WebDriverWait wait = new WebDriverWait(driver, 10);
                 wait.until(visibilityOfElementLocated(By.id("onlyDiscount")));
                 driver.findElement(By.id("onlyDiscount")).sendKeys(Keys.SPACE);
                 wait.until(visibilityOfElementLocated(By.className("product-card__image")));
@@ -417,42 +385,45 @@ public class Parser {
                     if (element.findElements(By.className("price-old")).isEmpty()) {
                         continue;
                     }
-                    item.setImageURL(element.findElement(By.className("product-card__image-wrapper"))
-                            .findElement(By.tagName("img")).getAttribute("src"));
+                    item.setImageURL(element.findElement(By.className("product-card__image-wrapper")).findElement(By.tagName("img")).getAttribute("src"));
                     item.setName(element.findElement(By.className("product-card__title")).getText());
                     item.setPrice(element.findElement(By.className("price-old")).getText());
                     item.setSalePrice(element.findElement(By.className("price-new")).getText());
                     item.setShopName("Перекрёсток");
                     items.add(item);
-                    //System.out.println(item.toString());
+                    System.out.println(item.toString());
                 }
             }
             driver.get("https://www.perekrestok.ru/cat");
         }
+        driver.close();
         return items;
     }
 
-    public static List<Item> findItemsByCathegoryMagnit(String cathegory, City city, WebDriver driver) {
+    public static List<Item> findItemsByCathegoryMagnit(String itemName, City city, WebDriver driver) {
         List<Item> items = new ArrayList<>();
 
         return items;
     }
 
-    public static ArrayList<String> getKeywordsFromCathegories(String cathegory) {
+    public static ArrayList<String> getKeywordsFromCathegories(ArrayList<String> cathegories) {
         ArrayList<String> keywords = new ArrayList<>();
-        if (cathegory.contains("Товары для")) {
-            keywords.add(cathegory);
-        } else {
-            String[] tmp = cathegory.split(" ");
-            for (String s1 : tmp) {
-                if (!s1.contains("и") && !s1.contains("продукты")) {
-                    if (s1.endsWith(",")) {
-                        s1.replaceAll(",", "");
+        cathegories.stream()
+                .forEach(s -> {
+                    if (s.contains("Товары для")) {
+                        keywords.add(s);
+                    } else {
+                        String[] tmp = s.split(" ");
+                        for (String s1 : tmp) {
+                            if (!s1.contains("и") && !s1.contains("продукты")) {
+                                if (s1.endsWith(",")) {
+                                    s1.replaceAll(",", "");
+                                }
+                                keywords.add(s1);
+                            }
+                        }
                     }
-                    keywords.add(s1);
-                }
-            }
-        }
+                });
         return keywords;
     }
 }
