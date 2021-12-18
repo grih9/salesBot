@@ -50,6 +50,9 @@ public class FindItemCommand extends ServiceCommand {
         }
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(String.valueOf(chat.getId()));
+        sendMessage.setText("Хотите выполнить повторный поиск?\n" +
+                "/finditem - поиск акционных товаров по названию" +
+                "/showitems - поиск акционных товаров по категориям");
         Keyboards keyboards = new Keyboards();
         List<String> commands = new ArrayList<>();
         commands.add("/finditem");

@@ -33,6 +33,7 @@ public class StartCommand extends ServiceCommand {
 
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(String.valueOf(chat.getId()));
+        sendMessage.setText("Для начала выберите свой город");
         Keyboards keyboards = new Keyboards();
         List<String> commands = new ArrayList<>();
         commands.add("/city");
