@@ -332,18 +332,20 @@ public class JDBCConnector {
 		List<Shop> result = new LinkedList<>();
 
 		try {
-			String sql = "select shops.name, website from shops join cities_shops on shops.id = cities_shops.shopId join" +
-					"cities on cities_shops.cityId = cities.id join users on users.cityId = cities.id where users.name = ?";
-
-			PreparedStatement ps = this.connection.prepareStatement(sql);
-			ps.setString(1, username);
-			ResultSet rs = ps.executeQuery(sql);
+			/*String sql = "select shops.name, website from shops join cities_shops on shops.id = cities_shops.shopId join" +
+					"cities on cities_shops.cityId = cities.id join users on users.cityId = cities.id where users.name like ?";*/
+			String sql = "select shops.name, website from shops;";
+			/*PreparedStatement ps = this.connection.prepareStatement(sql);
+			//ps.setString(1, username);
+			ResultSet rs = ps.executeQuery(sql);*/
+			Statement stmt = this.connection.createStatement();
+			ResultSet rs = stmt.executeQuery(sql);
 
 			while (rs.next()) {
-				result.add(new Shop(rs.getString("shops.name"), rs.getString("website")));
+				result.add(new Shop(rs.getString("name"), rs.getString("website")));
 			}
 
-			ps.close();
+			stmt.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
