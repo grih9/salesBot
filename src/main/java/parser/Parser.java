@@ -25,23 +25,33 @@ public class Parser {
 
         switch (shop.getName()) {
             case ("Пятёрочка"):
-            case ("О'КЕЙ"):
-            case ("Магнит"):
-            case ("Prisma"):
-            case ("Ашан"):
-            case ("Spar"):
-                items = findItemsByCathegoryEdadil(category, city, driver);
+                items = findItemsByCathegoryPyatyorochka(category, city, driver);
                 break;
             case ("Перекрёсток"):
                 items = findItemsByCathegoryPerekryostok(category, city, driver);
                 break;
+            case ("Магнит"):
+                items = findItemsByCathegoryMagnit(category, city, driver);
+                break;
+            case ("Ашан"):
+                //
+                break;
             case ("Дикси"):
                 items = findItemsByCathegoryDiksi(category, driver);
+                break;
+            case ("Spar"):
+                //
+                break;
+            case ("О'КЕЙ"):
+                items = findItemsByCathegoryEdadil(category, city, driver);
                 break;
             case ("Лента"):
                 //
                 break;
             case ("Карусель"):
+                //
+                break;
+            case ("Prisma"):
                 //
                 break;
         }
@@ -67,19 +77,27 @@ public class Parser {
                     items = findItemsByNamePerekryostok(itemName, city, driver);
                     break;
                 case ("Магнит"):
-                case ("О'КЕЙ"):
-                case ("Prisma"):
+                    items = findItemsByNameMagnit(itemName, city, driver);
+                    break;
                 case ("Ашан"):
-                case ("Spar"):
-                    items = findItemsByNameEdadil(itemName, shop.getName(), city, driver);
+                    //
                     break;
                 case ("Дикси"):
                     items = findItemsByNameDiksi(itemName, driver);
+                    break;
+                case ("Spar"):
+                    //
+                    break;
+                case ("О'КЕЙ"):
+                    items = findItemsByNameEdadil(itemName, shop.getName(), city, driver);
                     break;
                 case ("Лента"):
                     //
                     break;
                 case ("Карусель"):
+                    //
+                    break;
+                case ("Prisma"):
                     //
                     break;
             }
@@ -313,6 +331,18 @@ public class Parser {
         } catch (Exception e) {
             return null;
         }
+        return items;
+    }
+
+    public static List<Item> findItemsByNameMagnit(String itemName, City city, WebDriver driver) {
+        List<Item> items = new ArrayList<>();
+
+        return items;
+    }
+
+    public static List<Item> findItemsByCathegoryPyatyorochka(String itemName, City city, WebDriver driver) {
+        List<Item> items = new ArrayList<>();
+
         return items;
     }
 
@@ -556,6 +586,12 @@ public class Parser {
             driver.get("https://www.perekrestok.ru/cat");
         }
         driver.close();
+        return items;
+    }
+
+    public static List<Item> findItemsByCathegoryMagnit(String itemName, City city, WebDriver driver) {
+        List<Item> items = new ArrayList<>();
+
         return items;
     }
 
