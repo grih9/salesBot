@@ -10,6 +10,7 @@ import org.telegram.telegrambots.meta.bots.AbsSender;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import bot.keyboards.Keyboards;
+import database.JDBCConnector;
 import utils.Utils;
 
 /**
@@ -23,6 +24,10 @@ public class StartCommand extends ServiceCommand {
     @Override
     public void execute(AbsSender absSender, User user, Chat chat, String[] strings) {
         String userName = Utils.getUserName(user);
+
+        JDBCConnector jdbcConnector = new JDBCConnector();
+        jdbcConnector.addUser(userName);
+
         String botInfo = "Давайте начнём!\n" +
                 "С помощью бота Вы можете искать акционные товары\n\n" +
                 "Команды:\n" +
