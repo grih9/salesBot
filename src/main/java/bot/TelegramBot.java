@@ -74,18 +74,22 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
                 startCommand.execute(this, update.getMessage().getFrom(), update.getMessage().getChat(), null);
                 break;
             case "/city":
+            case "Выбрать город":
                 userCommand.put(chatId, Command.CITY);
                 chooseCityCommand.execute(this, update.getMessage().getFrom(), update.getMessage().getChat(), null);
                 break;
             case "/shops":
+            case "Выбрать магазины":
                 userCommand.put(chatId, Command.CHOSE_SHOPS);
                 chooseShopsCommand.execute(this, update.getMessage().getFrom(), update.getMessage().getChat(), null);
                 break;
             case "/finditem":
+            case "Найти товар":
                 userCommand.put(chatId, Command.FIND_ITEM);
                 findItemCommand.execute(this, update.getMessage().getFrom(), update.getMessage().getChat(), null);
                 break;
             case "/showitems":
+            case "Отобразить товары":
                 userCommand.put(chatId, Command.SHOW_ITEMS);
                 showItemsCommand.execute(this, update.getMessage().getFrom(), update.getMessage().getChat(), null);
                 break;
