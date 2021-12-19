@@ -1,13 +1,18 @@
 package parser;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+import java.io.IOException;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.openqa.selenium.*;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfElementLocated;
@@ -25,7 +30,7 @@ public class Parser {
 
         if (!shop.getName().equals("Перекрёсток") && !shop.getName().equals("Дикси")
                 && !shop.getName().equals("Карусель")) {
-            options.addArguments("--window-size=1400,800");
+            options.addArguments("--window-size=1920,1080");
         }
 
         WebDriver driver = new ChromeDriver(options);
@@ -68,18 +73,36 @@ public class Parser {
     public static List<Item> findItemsByName(String itemName, City city, List<Shop> shops) {
         List<Item> items = new ArrayList<>();
 
-        try {
-            ChromeOptions options = new ChromeOptions();
-            options.addArguments("--headless");
-            List<Item> pItems;
-            for (Shop shop : shops) {
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--headless");
+        List<Item> pItems;
+        for (Shop shop : shops) {
+            try {
                 if (!shop.getName().equals("Перекрёсток") && !shop.getName().equals("Дикси")
                         && !shop.getName().equals("Карусель") && !shop.getName().equals("Пятёрочка")) {
-                    options.addArguments("--window-size=1400,800");
+                    options.addArguments("--window-size=1024,768");
                 }
 
+                options.addArguments("--disable-extensions");
+                options.addArguments("--proxy-server='direct://'");
+                options.addArguments("--proxy-bypass-list=*");
+                options.addArguments("--start-maximized");
+                options.addArguments("--disable-gpu");
+                options.addArguments("--disable-dev-shm-usage");
+                options.addArguments("--no-sandbox");
+                options.addArguments("--ignore-certificate-errors");
+                options.addArguments("--allow-running-insecure-content");
+
+                options.addArguments("user-agent=\"Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)\"");
                 WebDriver driver = new ChromeDriver(options);
-                driver.get(shop.getWebsite());
+                System.out.println(driver.getPageSource());
+                if (!shop.getName().equals("Перекрёсток") && !shop.getName().equals("Дикси")
+                        && !shop.getName().equals("Карусель") && !shop.getName().equals("Пятёрочка")) {
+                    driver.get("https://edeal.ru/sankt-peterburg/retailers/okmarket-giper/");
+                } else {
+                    driver.get(shop.getWebsite());
+                }
+
                 switch (shop.getName()) {
                     case ("Пятёрочка"):
                         pItems = findItemsByNamePyatyorochka(itemName, city, driver);
@@ -110,9 +133,9 @@ public class Parser {
                 }
 
                 driver.close();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
 
         return items;
@@ -444,7 +467,7 @@ public class Parser {
     public static List<Item> findItemsByNamePerekryostok(String itemName, City city, WebDriver driver) {
         List<Item> items = new ArrayList<>();
         driver.findElement(By.cssSelector("input[name='search']")).sendKeys(itemName, Keys.ENTER);
-        WebDriverWait wait = new WebDriverWait(driver, 3);
+        WebDriverWait wait = new WebDriverWait(driver, 10);
         wait.until(visibilityOfElementLocated(By.id("onlyDiscount")));
         try {
             driver.findElement(By.id("onlyDiscount")).sendKeys(Keys.SPACE);
