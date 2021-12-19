@@ -22,7 +22,12 @@ public class Parser {
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--headless");
         WebDriver driver = new ChromeDriver(options);
-        driver.get(shop.getWebsite());
+
+        if (shop.getName().equals("Пятёрочка")) {
+            driver.get("https://edadeal.ru/sankt-peterburg/retailers/5ka");
+        } else {
+            driver.get(shop.getWebsite());
+        }
 
         switch (shop.getName()) {
             case ("Пятёрочка"):
@@ -387,7 +392,6 @@ public class Parser {
                 item.setSalePrice(element.findElement(By.className("from")).findElement(By.xpath("./..")).getText() + " р.");
                 item.setShopName("Пятёрочка");
                 items.add(item);
-                System.out.println(item.toString());
             }
         } catch (Exception e) {
             return null;
@@ -673,12 +677,10 @@ public class Parser {
                     item.setSalePrice(element.findElement(By.className("price-new")).getText());
                     item.setShopName("Перекрёсток");
                     items.add(item);
-                    System.out.println(item.toString());
                 }
             }
             driver.get("https://www.perekrestok.ru/cat");
         }
-        driver.close();
         return items;
     }
 
