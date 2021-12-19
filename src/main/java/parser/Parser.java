@@ -41,7 +41,7 @@ public class Parser {
                 items = findItemsByCathegoryDiksi(category, driver);
                 break;
             case ("Карусель"):
-                //
+                items = findItemsByCathegoryKarusel(category, driver);
                 break;
         }
 
@@ -77,7 +77,7 @@ public class Parser {
                     items = findItemsByNameDiksi(itemName, driver);
                     break;
                 case ("Карусель"):
-                    //
+                    items = findItemsByNameKarusel(itemName, driver);
                     break;
             }
         }
@@ -240,7 +240,7 @@ public class Parser {
         return items;
     }
 
-    public static List<Item> findItemsByNameKarusel(String itemName, City city, WebDriver driver) {
+    public static List<Item> findItemsByNameKarusel(String itemName, WebDriver driver) {
         List<Item> items = new ArrayList<>();
         int page = 1;
 
@@ -302,7 +302,7 @@ public class Parser {
         return items;
     }
 
-    public static List<Item> findItemsByCathegoryKarusel(String cathegoryName, City city, WebDriver driver) {
+    public static List<Item> findItemsByCathegoryKarusel(String cathegoryName, WebDriver driver) {
         List<Item> items = new ArrayList<>();
 
         cathegoryName = cathegoryName.toLowerCase();
