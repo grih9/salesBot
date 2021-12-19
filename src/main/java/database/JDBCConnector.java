@@ -13,23 +13,27 @@ import java.util.Objects;
 public class JDBCConnector {
 	private Connection connection;
 
-	public void createTable() throws SQLException {
-		Statement stmt = this.connection.createStatement();
+	public void createTable() {
+		try {
+			Statement stmt = this.connection.createStatement();
 
-		String CreateSql = "DROP SCHEMA public CASCADE;" +
-				"CREATE SCHEMA public;" +
-				"Create Table cities(id serial primary key, name varchar, region varchar); " +
-				"Create Table shops(id serial primary key, name varchar, website varchar);" +
-				"Create Table users(id serial primary key, name varchar UNIQUE, cityId int REFERENCES cities(id)); " +
-				"Create Table cities_shops(id serial primary key, cityId int REFERENCES cities(id), shopId " +
-																			"int REFERENCES shops(id)); " +
-				"Create Table users_shops(id serial primary key, userId int REFERENCES users(id), shopId " +
-				"int REFERENCES shops(id)); " +
-				"Create Table categories(id serial primary key, name varchar); ";
+			String CreateSql = "DROP SCHEMA public CASCADE;" +
+					"CREATE SCHEMA public;" +
+					"Create Table cities(id serial primary key, name varchar, region varchar); " +
+					"Create Table shops(id serial primary key, name varchar, website varchar);" +
+					"Create Table users(id serial primary key, name varchar UNIQUE, cityId int REFERENCES cities(id)); " +
+					"Create Table cities_shops(id serial primary key, cityId int REFERENCES cities(id), shopId " +
+					"int REFERENCES shops(id)); " +
+					"Create Table users_shops(id serial primary key, userId int REFERENCES users(id), shopId " +
+					"int REFERENCES shops(id)); " +
+					"Create Table categories(id serial primary key, name varchar); ";
 
-		stmt.executeUpdate(CreateSql);
+			stmt.executeUpdate(CreateSql);
 
-		stmt.close();
+			stmt.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public JDBCConnector() {
@@ -125,7 +129,7 @@ public class JDBCConnector {
 			PreparedStatement ps = this.connection.prepareStatement(sqlInsert);
 			PreparedStatement psSelect = this.connection.prepareStatement(sqlSelect);
 			reader.readNext();
-			for (int i = 0; i < 100; i++) {
+			for (int i = 0; i < 10; i++) {
 				lineInArray = reader.readNext();
 				name = lineInArray[0];
 
@@ -194,7 +198,7 @@ public class JDBCConnector {
 
 	public Boolean addShops() {
 		String sqlInsert = "insert into shops(name, website) values(?, ?)";
-		String sqlTruncate = "TRUNCATE TABLE categories";
+		String sqlTruncate = "TRUNCATE TABLE shops CASCADE";
 		String fileName = "shops.csv";
 
 		try (CSVReader reader = new CSVReader(new FileReader(fileName))) {
@@ -215,6 +219,42 @@ public class JDBCConnector {
 
 			ps.close();
 		} catch (IOException | CsvValidationException | SQLException e) {
+			e.printStackTrace();
+		}
+
+		return true; // Список магазинов успешно обновлен
+	}
+
+	public Boolean addShopsForSities() {
+		String sqlInsert = "insert into cities_shops(cityId, shopId) values(?, ?);";
+		String sqlTruncate = "TRUNCATE TABLE cities_shops;";
+		String sqlShop = "select id from shops;";
+		String sqlCity = "select id from cities limit 10;";
+
+		try {
+			Statement stmt = this.connection.createStatement();
+
+			stmt.executeUpdate(sqlTruncate);
+			stmt.close();
+
+			Statement stmtCity = this.connection.createStatement();
+			ResultSet rs = stmtCity.executeQuery(sqlCity);
+			PreparedStatement ps = this.connection.prepareStatement(sqlInsert);
+			while (rs.next()) {
+				Statement shops = this.connection.createStatement();
+				ResultSet shopsRs = shops.executeQuery(sqlShop);
+				while (shopsRs.next()) {
+					ps.setInt(1, rs.getInt("id"));
+					ps.setInt(2, shopsRs.getInt("id"));
+					ps.executeUpdate();
+				}
+				shops.close();
+			}
+
+			ps.close();
+			stmt.close();
+
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 
@@ -259,7 +299,7 @@ public class JDBCConnector {
 			stmt.close();
 
 		} catch (SQLException e) {
-		e.printStackTrace();
+			e.printStackTrace();
 		}
 
 		return result;
@@ -267,7 +307,7 @@ public class JDBCConnector {
 
 	public List<Shop> getSelectedShops(String username) {
 		List<Shop> result = new LinkedList<>();
-		int []a = {12};
+		int[] a = {12};
 		try {
 			String sql = "select shops.name, website from shops join users_shops on shops.id = users_shops.shopId join" +
 					" users on users.id = users_shops.userId where users.name = ?";

@@ -1,6 +1,7 @@
 package parser;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -236,6 +237,132 @@ public class Parser {
                 driver.get(url + "&page=" + page);
             }
         }
+        return items;
+    }
+
+    public static List<Item> findItemsByNameKarusel(String itemName, City city, WebDriver driver) {
+        List<Item> items = new ArrayList<>();
+        int page = 1;
+
+        driver.get("https://karusel.ru/catalog/search/?q=" + itemName + "&page=" + page);
+        while (driver.findElements(By.xpath("//*[@class='card card--none promo-catalog-product card--with-hover card--fit-content']")).size() > 0) {
+            items.addAll(findItemsKarusel(driver));
+            page++;
+            driver.get("https://karusel.ru/catalog/search/?q=" + itemName + "&page=" + page);
+        }
+        items.sort(Comparator.naturalOrder());
+        return items;
+    }
+
+    public static List<Item> findItemsKarusel(WebDriver driver) {
+        List<Item> items = new ArrayList<>();
+
+        List<WebElement> webElements = driver
+                .findElements(By.xpath("//*[@class='card card--none promo-catalog-product card--with-hover card--fit-content']"));
+
+        for (int i = 0; i < webElements.size(); i ++) {
+            Item item = new Item();
+            WebElement element = driver
+                    .findElements(By.xpath("//*[@class='card card--none promo-catalog-product card--with-hover card--fit-content']"))
+                    .get(i);
+
+            item.setImageURL(element.findElement(By.xpath("//*[@class='karusel-image karusel-image-is-loaded']"))
+                    .getCssValue("background-image").replace("url(\"", "").replace("\")", ""));
+            String salesDate = element.
+                    findElement(By.xpath("//*[@class='karusel-badge karusel-badge--attention promo-catalog-product__date']"))
+                    .getText();
+            salesDate = salesDate.substring(salesDate.indexOf(" ") + 1);
+            item.setSaleEndDate(salesDate);
+            String name = element.findElement(By.className("promo-catalog-product__name")).getText();
+
+            if (name.endsWith("...")) {
+                WebElement parent = element.findElement(By.xpath("./.."));
+                String url = driver.getCurrentUrl();
+                driver.get(parent.getAttribute("href"));
+                WebDriverWait wait = new WebDriverWait(driver, 20);
+                wait.until(visibilityOfElementLocated(By.cssSelector(".karusel-page-wrapper.karusel-page-wrapper--content")));
+                name = driver.findElement(By.cssSelector(".karusel-page-wrapper.karusel-page-wrapper--content"))
+                        .findElement(By.tagName("h2")).getText();
+                driver.get(url);
+                wait.until(visibilityOfElementLocated(By.xpath("//*[@class='card card--none promo-catalog-product card--with-hover card--fit-content']")));
+                element = driver
+                        .findElements(By.xpath("//*[@class='card card--none promo-catalog-product card--with-hover card--fit-content']"))
+                        .get(i);
+            }
+
+            item.setName(name);
+
+            item.setPrice(element.findElement(By.className("promo-catalog-product__price"))
+                    .findElement(By.tagName("s")).getText());
+            item.setSalePrice(element.findElement(By.className("promo-catalog-product__price"))
+                    .findElement(By.tagName("b")).getText().replace(" ₽", ""));
+            item.setShopName("Карусель");
+            items.add(item);
+        }
+        return items;
+    }
+
+    public static List<Item> findItemsByCathegoryKarusel(String cathegoryName, City city, WebDriver driver) {
+        List<Item> items = new ArrayList<>();
+
+        cathegoryName = cathegoryName.toLowerCase();
+        cathegoryName = cathegoryName.replaceAll("Товары для ", "");
+        List<String> keywords = getKeywordsFromCathegories(cathegoryName);
+        if (cathegoryName.contains("колбаса")) {
+            keywords.add("колбасы");
+        }
+        WebDriverWait wait = new WebDriverWait(driver, 20);
+        wait.until(visibilityOfElementLocated(By.cssSelector(".promo-catalog-menu-list.promo-catalog-menu-list--root")));
+
+       /* wait.until(ExpectedConditions.
+                elementToBeClickable(By.xpath("//*[@class='app-button app-button--transparent app-button--rounded app-button--regular promo-catalog-menu-list__more']")));
+*/
+        driver.findElement(By.cssSelector(".promo-catalog-menu-list.promo-catalog-menu-list--root"))
+                .findElement(By.tagName("button")).click();
+
+        List<WebElement> cathegories = driver.findElements(By.xpath("//*[@class='karusel-link promo-catalog-menu-list__link']"));
+        int cathegoriesListSize = cathegories.size();
+        if (cathegories.isEmpty()) {
+            return null;
+        }
+
+        List<String> cathegoriesNames = new ArrayList<>();
+        List<String> cathegoriesHref = new ArrayList<>();
+        for (WebElement webElement : cathegories) {
+            cathegoriesNames.add(webElement.getText());
+            cathegoriesHref.add(webElement.getAttribute("href"));
+        }
+
+        for (int i = 0; i < cathegoriesListSize; i++) {
+            boolean isChosen = false;
+            for (String s : keywords) {
+                if (cathegoriesNames.get(i).toLowerCase().contains(s)) {
+                    isChosen = true;
+                    break;
+                }
+            }
+            if (!isChosen) {
+                continue;
+            }
+            driver.get(cathegoriesHref.get(i));
+
+            wait.until(visibilityOfElementLocated(By.xpath("//*[@class='promo-catalog-menu-list__container promo-catalog-menu-list__sub']")));
+
+            int subCathegoriesSize = driver
+                    .findElement(By.xpath("//*[@class='promo-catalog-menu-list__container promo-catalog-menu-list__sub']"))
+                    .findElements(By.tagName("a")).size();
+
+            for (int j = 0; j < subCathegoriesSize; j++) {
+                driver.get(driver
+                        .findElement(By.xpath("//*[@class='promo-catalog-menu-list__container promo-catalog-menu-list__sub']"))
+                        .findElements(By.tagName("a"))
+                        .get(j).getAttribute("href"));
+
+                items.addAll(findItemsKarusel(driver));
+            }
+            break;
+        }
+        items.sort(Comparator.naturalOrder());
         return items;
     }
 
