@@ -1,6 +1,5 @@
 package bot.commands;
 
-import bot.NonCommand;
 import bot.keyboards.Keyboards;
 import database.JDBCConnector;
 import database.Shop;
@@ -13,15 +12,14 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import utils.Utils;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Команда "Выбрать магазины"
  */
 public class ChooseShopsCommand extends ServiceCommand {
     ArrayList<Integer> numbers = new ArrayList<>();
+
     public ChooseShopsCommand(String identifier, String description) {
         super(identifier, description);
     }
@@ -32,36 +30,79 @@ public class ChooseShopsCommand extends ServiceCommand {
         JDBCConnector jdbcConnector = new JDBCConnector();
 
         List<Shop> shops = jdbcConnector.getShops(userName);
-        StringBuilder message = new StringBuilder("Введите номера магазинов из списка через запятую");
-
+        StringBuilder msg = new StringBuilder("Выберите одну или более торговую сеть\n");
         int iter = 1;
-        for (Shop shop: shops) {
-            message.append(String.format("%d %s\n", iter, shop.getName()));
+        for (Shop shop : shops) {
+            msg.append(String.format("%d %s\n", iter, shop.getName()));
             iter++;
         }
 
-        NonCommand nonCommand = new NonCommand();
-        int []numberList = {}; // TODO: = nonCommand... получает список номеров
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.setChatId(String.valueOf(chat.getId()));
+        sendMessage.setText(msg.toString());
+        Keyboards keyboards = new Keyboards();
+        keyboards.setButtonToCallNumbers(sendMessage, true);
+        try {
+            absSender.execute(sendMessage);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+    }
 
-        List<Shop> selectedShops = new LinkedList<>();
-        for (int number: numberList) {
-            selectedShops.add(shops.get(number - 1));
+    public Boolean execute2(AbsSender absSender, User user, Chat chat, String[] strings) {
+        String userName = Utils.getUserName(user);
+        JDBCConnector jdbcConnector = new JDBCConnector();
+        List<Shop> shops = jdbcConnector.getShops(userName);
+        List<Shop> selectedShops = new ArrayList<>();
+
+        if (numbers.size() == 0) {
+            super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName,
+                    "Выберите одну или более торговую сеть");
+            return false;
+        }
+
+        numbers = justUniques(numbers);
+
+        for (int elem : numbers) {
+            if (elem > shops.size()) {
+                super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName,
+                        "Номера сети " + elem + " нет в списке");
+                return false;
+            }
+
+            selectedShops.add(shops.get(elem - 1));
         }
 
         jdbcConnector.setSelectedShops(userName, selectedShops);
+
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.setChatId(String.valueOf(chat.getId()));
+        sendMessage.setText("Магазины успешно выбраны");
+        Keyboards keyboards = new Keyboards();
+        List<String> commands = new ArrayList<>();
+        commands.add("Найти товар");
+        commands.add("Отобразить товары");
+        keyboards.setButtonToCallCommand(sendMessage, commands);
+        try {
+            absSender.execute(sendMessage);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+        return true;
     }
 
-//    отправка клавиатуры
-//    SendMessage sendMessage = new SendMessage();
-//    sendMessage.setChatId(String.valueOf(chat.getId()));
-//    sendMessage.setText("Выберите одну или более торговую сеть");
-//    Keyboards keyboards = new Keyboards();
-//    keyboards.setButtonToCallNumbers(sendMessage, true);
-//    try {
-//        absSender.execute(sendMessage);
-//    } catch (TelegramApiException e) {
-//        e.printStackTrace();
-//    }
+    public static ArrayList<Integer> justUniques(ArrayList<Integer> list) {
+        Collections.sort(list);
+        ArrayList<Integer> res = new ArrayList<>();
+
+        res.add(list.get(0));
+        for (int i = 1; i < list.size(); i++) {
+            if (!Objects.equals(list.get(i), list.get(i - 1))) {
+                res.add(list.get(i));
+            }
+        }
+        return res;
+    }
 
     public void setNumbers(ArrayList<Integer> numbers) {
         this.numbers = numbers;
