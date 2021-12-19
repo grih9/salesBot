@@ -33,7 +33,7 @@ public class Parser {
             case ("Пятёрочка"):
             case ("Магнит"):
             case ("Ашан"):
-            case ("Spar"):
+            case ("Spar (Eurospar)"):
             case ("О'КЕЙ"):
             case ("Prisma"):
             case ("Лента"):
@@ -72,7 +72,7 @@ public class Parser {
                     break;
                 case ("Магнит"):
                 case ("Ашан"):
-                case ("Spar"):
+                case ("Spar (Eurospar)"):
                 case ("О'КЕЙ"):
                 case ("Prisma"):
                 case ("Лента"):
