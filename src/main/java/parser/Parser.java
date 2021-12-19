@@ -43,7 +43,7 @@ public class Parser {
                 //
                 break;
             case ("О'КЕЙ"):
-                items = findItemsByCathegoryEdadil(category, city, driver);
+                items = findItemsByCathegoryEdadil(category, shop.getName(), city, driver);
                 break;
             case ("Лента"):
                 //
@@ -127,11 +127,11 @@ public class Parser {
                 break;
             }
         }
-        items = findItemsEdadil(driver);
+        items = findItemsEdadil(driver, shopName);
         return items;
     }
 
-    public static List<Item> findItemsByCathegoryEdadil(String cathegoryName, City city, WebDriver driver) {
+    public static List<Item> findItemsByCathegoryEdadil(String cathegoryName, String shopName, City city, WebDriver driver) {
         List<Item> items = new ArrayList<>();
         cathegoryName = cathegoryName.toLowerCase();
         cathegoryName = cathegoryName.replaceAll("Товары для ", "");
@@ -167,7 +167,7 @@ public class Parser {
         for (int i = 0; i < cathegories.size(); i++) {
             for (String s : keywords) {
                 if (cathegoriesNames.get(i).toLowerCase().contains(s)) {
-                    return findItemsEdadil(driver);
+                    return findItemsEdadil(driver, shopName);
                 }
             }
         }
@@ -189,7 +189,7 @@ public class Parser {
             for (String s : keywords) {
                 if (subCathegoriesNames.get(j).toLowerCase().contains(s)) {
                     driver.get(subCathegoriesHref.get(j));
-                    items.addAll(findItemsEdadil(driver));
+                    items.addAll(findItemsEdadil(driver, shopName));
                     break;
                 }
             }
@@ -197,7 +197,7 @@ public class Parser {
         return items;
     }
 
-    public static List<Item> findItemsEdadil(WebDriver driver) {
+    public static List<Item> findItemsEdadil(WebDriver driver, String shopName) {
         List<Item> items = new ArrayList<>();
         driver.get(driver.getCurrentUrl() + "&sort=aprice");
         String url = driver.getCurrentUrl();
@@ -250,7 +250,7 @@ public class Parser {
 
                 String salePrice = element.findElement(By.className("b-offer__price-new")).getText();
                 item.setSalePrice(salePrice.substring(0, salePrice.indexOf(" ₽")).replace(",", "."));
-                item.setShopName("Окей");
+                item.setShopName(shopName);
                 items.add(item);
             }
             page++;
