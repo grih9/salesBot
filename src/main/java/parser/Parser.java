@@ -9,6 +9,7 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
 import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfElementLocated;
 
 import bot.Item;
@@ -16,38 +17,48 @@ import database.City;
 import database.Shop;
 
 public class Parser {
-    public static List<Item> findItemsByCategory(String category, City city, Shop shop){
+    public static List<Item> findItemsByCategory(String category, City city, Shop shop) {
         List<Item> items = new ArrayList<>();
 
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--headless");
-        WebDriver driver = new ChromeDriver(options);
 
-        if (shop.getName().equals("Пятёрочка")) {
-            driver.get("https://edadeal.ru/sankt-peterburg/retailers/5ka");
-        } else {
-            driver.get(shop.getWebsite());
+        if (!shop.getName().equals("Перекрёсток") && !shop.getName().equals("Дикси")
+                && !shop.getName().equals("Карусель")) {
+            options.addArguments("--window-size=1400,800");
         }
 
-        switch (shop.getName()) {
-            case ("Пятёрочка"):
-            case ("Магнит"):
-            case ("Ашан"):
-            case ("Spar"):
-            case ("О'КЕЙ"):
-            case ("Prisma"):
-            case ("Лента"):
-                items = findItemsByCathegoryEdadil(category, shop.getName(), city, driver);
-                break;
-            case ("Перекрёсток"):
-                items = findItemsByCathegoryPerekryostok(category, city, driver);
-                break;
-            case ("Дикси"):
-                items = findItemsByCathegoryDiksi(category, driver);
-                break;
-            case ("Карусель"):
-                items = findItemsByCathegoryKarusel(category, driver);
-                break;
+        WebDriver driver = new ChromeDriver(options);
+
+        try {
+            if (shop.getName().equals("Пятёрочка")) {
+                driver.get("https://edadeal.ru/sankt-peterburg/retailers/5ka");
+            } else {
+                driver.get(shop.getWebsite());
+            }
+
+            switch (shop.getName()) {
+                case ("Пятёрочка"):
+                case ("Магнит"):
+                case ("Ашан"):
+                case ("Spar (Eurospar)"):
+                case ("О'КЕЙ"):
+                case ("Prisma"):
+                case ("Лента"):
+                    items = findItemsByCathegoryEdadil(category, shop.getName(), city, driver);
+                    break;
+                case ("Перекрёсток"):
+                    items = findItemsByCathegoryPerekryostok(category, city, driver);
+                    break;
+                case ("Дикси"):
+                    items = findItemsByCathegoryDiksi(category, driver);
+                    break;
+                case ("Карусель"):
+                    items = findItemsByCathegoryKarusel(category, driver);
+                    break;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         driver.close();
@@ -57,35 +68,53 @@ public class Parser {
     public static List<Item> findItemsByName(String itemName, City city, List<Shop> shops) {
         List<Item> items = new ArrayList<>();
 
-        ChromeOptions options = new ChromeOptions();
-        options.addArguments("--headless");
-        WebDriver driver = new ChromeDriver(options);
+        try {
+            ChromeOptions options = new ChromeOptions();
+            options.addArguments("--headless");
+            List<Item> pItems;
+            for (Shop shop : shops) {
+                if (!shop.getName().equals("Перекрёсток") && !shop.getName().equals("Дикси")
+                        && !shop.getName().equals("Карусель") && !shop.getName().equals("Пятёрочка")) {
+                    options.addArguments("--window-size=1400,800");
+                }
 
-        for (Shop shop : shops) {
-            driver.get(shop.getWebsite());
-            switch (shop.getName()) {
-                case ("Пятёрочка"):
-                    items = findItemsByNamePyatyorochka(itemName, city, driver);
-                    break;
-                case ("Перекрёсток"):
-                    items = findItemsByNamePerekryostok(itemName, city, driver);
-                    break;
-                case ("Магнит"):
-                case ("Ашан"):
-                case ("Spar"):
-                case ("О'КЕЙ"):
-                case ("Prisma"):
-                case ("Лента"):
-                    items = findItemsByNameEdadil(itemName, shop.getName(), city, driver);
-                    break;
-                case ("Дикси"):
-                    items = findItemsByNameDiksi(itemName, driver);
-                    break;
-                case ("Карусель"):
-                    items = findItemsByNameKarusel(itemName, driver);
-                    break;
+                WebDriver driver = new ChromeDriver(options);
+                driver.get(shop.getWebsite());
+                switch (shop.getName()) {
+                    case ("Пятёрочка"):
+                        pItems = findItemsByNamePyatyorochka(itemName, city, driver);
+                        if (pItems != null) {
+                            items.addAll(pItems);
+                        }
+                        break;
+                    case ("Перекрёсток"):
+                        pItems = findItemsByNamePerekryostok(itemName, city, driver);
+                        if (pItems != null) {
+                            items.addAll(pItems);
+                        }
+                        break;
+                    case ("Магнит"):
+                    case ("Ашан"):
+                    case ("Spar (Eurospar)"):
+                    case ("О'КЕЙ"):
+                    case ("Prisma"):
+                    case ("Лента"):
+                        items.addAll(findItemsByNameEdadil(itemName, shop.getName(), city, driver));
+                        break;
+                    case ("Дикси"):
+                        items.addAll(findItemsByNameDiksi(itemName, driver));
+                        break;
+                    case ("Карусель"):
+                        items.addAll(findItemsByNameKarusel(itemName, driver));
+                        break;
+                }
+
+                driver.close();
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+
         return items;
     }
 
@@ -105,7 +134,7 @@ public class Parser {
         List<WebElement> shops = driver
                 .findElement(By.className("b-checkbox-list__options"))
                 .findElements(By.tagName("div"));
-        for (WebElement shop: shops) {
+        for (WebElement shop : shops) {
             if (shop.getAttribute("title").toLowerCase().contains(shopName.toLowerCase())) {
                 shop.click();
                 break;
@@ -138,7 +167,7 @@ public class Parser {
                 findElements(By.cssSelector(".b-accordion__item1-title.b-accordion__item1-title_selected_false.b-accordion__item1-title_opened_false"));
 
         if (cathegories.isEmpty()) {
-            return null;
+            return items;
         }
 
         List<String> cathegoriesNames = new ArrayList<>();
@@ -265,7 +294,7 @@ public class Parser {
         List<WebElement> webElements = driver
                 .findElements(By.xpath("//*[@class='card card--none promo-catalog-product card--with-hover card--fit-content']"));
 
-        for (int i = 0; i < webElements.size(); i ++) {
+        for (int i = 0; i < webElements.size(); i++) {
             Item item = new Item();
             WebElement element = driver
                     .findElements(By.xpath("//*[@class='card card--none promo-catalog-product card--with-hover card--fit-content']"))
@@ -399,7 +428,7 @@ public class Parser {
         return items;
     }
 
-    public static List<Item> findItemsByNameDiksi(String itemName, WebDriver driver){
+    public static List<Item> findItemsByNameDiksi(String itemName, WebDriver driver) {
         List<Item> items;
         WebDriverWait wait = new WebDriverWait(driver, 10);
         driver.findElement(By.xpath("/html/body/header/div/div/ul[2]/li[5]/a/p")).click();
@@ -443,7 +472,7 @@ public class Parser {
         return items;
     }
 
-    public static  List<Item> findItemsByCathegoryDiksi(String cathegory, WebDriver driver) {
+    public static List<Item> findItemsByCathegoryDiksi(String cathegory, WebDriver driver) {
         List<Item> items = new ArrayList<>();
         switch (cathegory) {
             case "Молочные продукты и яйца":
@@ -510,13 +539,13 @@ public class Parser {
                 while (driver.findElements(By.xpath("/html/body/section[3]/div/a")).size() > 0) {
                     driver.findElement(By.xpath("/html/body/section[3]/div/a")).click();
                 }
-                List<Item> items10= parserItemsDiksi(driver);
+                List<Item> items10 = parserItemsDiksi(driver);
                 items.addAll(items10);
                 driver.get("https://dixy.ru/catalog/gotovye-zavtraki-semechki-sukhofrukty/");
                 while (driver.findElements(By.xpath("/html/body/section[3]/div/a")).size() > 0) {
                     driver.findElement(By.xpath("/html/body/section[3]/div/a")).click();
                 }
-                List<Item> items11= parserItemsDiksi(driver);
+                List<Item> items11 = parserItemsDiksi(driver);
                 items.addAll(items11);
                 break;
             case "Сладости":
@@ -590,10 +619,10 @@ public class Parser {
         return items;
     }
 
-    private static List<Item> parserItemsDiksi(WebDriver driver){
+    private static List<Item> parserItemsDiksi(WebDriver driver) {
         List<Item> items = new ArrayList<>();
         List<WebElement> webElements = driver.findElements(By.className("dixyCatalogItem"));
-        for (WebElement element: webElements) {
+        for (WebElement element : webElements) {
             Item item = new Item();
             item.setImageURL(element.findElement(By.className("dixyCatalogItem__picplacer")).findElement(By.tagName("img")).getAttribute("src"));
             //item.setName(element.findElement(By.className("dixyCatalogItem__title")).getText());
@@ -633,7 +662,7 @@ public class Parser {
                 continue;
             }
             boolean isChosen = false;
-            for (String s: keywords) {
+            for (String s : keywords) {
                 if (cathegory.getText().contains(s)) {
                     isChosen = true;
                     break;
@@ -664,7 +693,7 @@ public class Parser {
                 if (webElements.isEmpty()) {
                     continue;
                 }
-                for (WebElement element: webElements) {
+                for (WebElement element : webElements) {
                     Item item = new Item();
                     element = element.findElement(By.xpath("./..")).findElement(By.xpath("./.."));
                     if (element.findElements(By.className("price-old")).isEmpty()) {

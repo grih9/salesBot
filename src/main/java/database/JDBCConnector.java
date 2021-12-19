@@ -264,8 +264,14 @@ public class JDBCConnector {
 	public Boolean setSelectedShops(String username, List<Shop> shops) {
 		String sqlInsert = "insert into users_shops(userId, shopId) values((select id from users where name = ?), " +
 				"(select id from shops where name = ? and website =?));";
+		String sqlTruncate = "DELETE FROM users_shops WHERE userId = (select id from users where name = ?)";
 
 		try {
+			PreparedStatement tr = this.connection.prepareStatement(sqlTruncate);
+			tr.setString(1, username);
+			tr.executeUpdate();
+			tr.close();
+
 			PreparedStatement ps = this.connection.prepareStatement(sqlInsert);
 
 			for (Shop shop : shops) {
@@ -314,10 +320,10 @@ public class JDBCConnector {
 
 			PreparedStatement ps = this.connection.prepareStatement(sql);
 			ps.setString(1, username);
-			ResultSet rs = ps.executeQuery(sql);
+			ResultSet rs = ps.executeQuery();
 
 			while (rs.next()) {
-				result.add(new Shop(rs.getString("shops.name"), rs.getString("website")));
+				result.add(new Shop(rs.getString("name"), rs.getString("website")));
 			}
 
 			ps.close();
