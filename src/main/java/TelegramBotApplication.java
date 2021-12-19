@@ -21,8 +21,8 @@ public class TelegramBotApplication {
        try {
             TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
             botsApi.registerBot(new TelegramBot(getenv.get("BOT_NAME"), getenv.get("BOT_TOKEN")));
-        } catch (TelegramApiException e) {
+       } catch (TelegramApiException e) {
             e.printStackTrace();
-        }
+       }
     }
 }
