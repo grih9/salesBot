@@ -18,7 +18,9 @@ import parser.Parser;
 import utils.Utils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Команда "Отобразить товары"
@@ -31,13 +33,9 @@ public class ShowItemsCommand extends ServiceCommand {
         super(identifier, description);
     }
 
-    public void setMessage(String message) { //теперь не нужно
-        this.message = message;
-    }
-
     @Override
     public void execute(AbsSender absSender, User user, Chat chat, String[] strings) {
-        String userName = Utils.getUserName(user);
+        //String userName = Utils.getUserName(user);
         JDBCConnector jdbcConnector = new JDBCConnector();
         List<String> categories = jdbcConnector.getCategories();
 
@@ -62,34 +60,41 @@ public class ShowItemsCommand extends ServiceCommand {
         }
     }
 
-    public void execute2(AbsSender absSender, User user, Chat chat, String[] strings) {
+    public Boolean execute2(AbsSender absSender, User user, Chat chat, String[] strings) {
         String userName = Utils.getUserName(user);
         JDBCConnector jdbcConnector = new JDBCConnector();
         List<String> categories = jdbcConnector.getCategories();
         List<Shop> selectedShops = jdbcConnector.getSelectedShops(userName);
         City city = jdbcConnector.getUserCity(userName);
 
-        NonCommand nonCommand = new NonCommand();
-        int []numberList = nonCommand.getNumbers(message);
+        if (numbers.size() == 0) {
+            super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName,
+                    "Выберите одну или более категорию");
+            return false;
+        }
+
+        numbers = ChooseShopsCommand.justUniques(numbers);
+
         for (Shop shop : selectedShops) {
             super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName,
                     shop.getName());
-            for (int i : numberList) {
-                try {
+            for (int i : numbers) {
+                if (i > categories.size()) {
                     super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName,
-                            categories.get(i-1));
-                } catch (IndexOutOfBoundsException e) {
-                    super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName,
-                            "Нет категории с номером: " + i + ". Пожалуйста, вводите номера " +
-                                    "категорий товаров через запятую");
+                            "Нет категории с таким номером: " + i );
+                    return false;
                 }
+                super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName,
+                            categories.get(i-1));
                 List<Item> items = Parser.findItemsByCategory(categories.get(i-1), city, shop);
                 for (Item item : items) {
                     super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName, item.toString());
                 }
             }
         }
+        return true;
     }
+
 
     public void setNumbers(ArrayList<Integer> numbers) {
         this.numbers = numbers;

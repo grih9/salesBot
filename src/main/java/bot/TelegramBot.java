@@ -133,8 +133,10 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
                     } else if (msg.getText().equals("Далее")) {
                         showItemsCommand.setNumbers(userNumbers.get(chatId));
                         userNumbers.put(chatId, new ArrayList<>()); // передали числа команде и очищаем мапу для пользователя
-                        showItemsCommand.execute2(this, update.getMessage().getFrom(), update.getMessage().getChat(), null);
-                        userCommand.put(chatId, null);
+                        if (showItemsCommand.execute2(this, update.getMessage().getFrom(), update.getMessage().getChat(), null)){
+                            userCommand.put(chatId, null);
+                        }
+
                     }
                 }
         }
