@@ -110,7 +110,9 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
                 } else if (userCommand.get(chatId).equals(Command.CHOSE_SHOPS)) { // получили список номеров магазинов
                     //
                 } else if (userCommand.get(chatId).equals(Command.SHOW_ITEMS)) { // получили список номеров категорий (он запрашивается в команде showItems)
-                    //
+                    showItemsCommand.setMessage(msg.getText());
+                    showItemsCommand.execute2(this, update.getMessage().getFrom(), update.getMessage().getChat(), null);
+                    userCommand.put(chatId, null);
                 }
         }
 
