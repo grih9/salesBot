@@ -43,7 +43,7 @@ public class ChooseCityCommand extends ServiceCommand {
         sendMessage.setText("Выберите интересующие магазины");
         Keyboards keyboards = new Keyboards();
         List<String> commands = new ArrayList<>();
-        commands.add("/shops");
+        commands.add("Выбрать магазины");
         keyboards.setButtonToCallCommand(sendMessage, commands);
         try {
             absSender.execute(sendMessage);

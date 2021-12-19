@@ -36,7 +36,7 @@ public class StartCommand extends ServiceCommand {
         sendMessage.setText("Для начала выберите свой город");
         Keyboards keyboards = new Keyboards();
         List<String> commands = new ArrayList<>();
-        commands.add("/city");
+        commands.add("Выбрать город");
         keyboards.setButtonToCallCommand(sendMessage, commands);
         try {
             absSender.execute(sendMessage);
