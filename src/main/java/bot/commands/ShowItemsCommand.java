@@ -2,28 +2,36 @@ package bot.commands;
 
 import bot.Item;
 import bot.NonCommand;
+import bot.keyboards.Keyboards;
 import database.City;
 import database.JDBCConnector;
 import database.Shop;
+
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.bots.AbsSender;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+
 import parser.Parser;
 import utils.Utils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Команда "Отобразить товары"
  */
 public class ShowItemsCommand extends ServiceCommand {
-    String message = null;
+    String message = null;//поле теперь не нужно
+    ArrayList<Integer> numbers = new ArrayList<>();
+
     public ShowItemsCommand(String identifier, String description) {
         super(identifier, description);
     }
 
-    public void setMessage(String message) {
+    public void setMessage(String message) { //теперь не нужно
         this.message = message;
     }
 
@@ -33,16 +41,27 @@ public class ShowItemsCommand extends ServiceCommand {
         JDBCConnector jdbcConnector = new JDBCConnector();
         List<String> categories = jdbcConnector.getCategories();
 
-        StringBuilder msg = new StringBuilder("Введите категории товаров через запятую");
+        StringBuilder msg = new StringBuilder("Введите категории товаров\n");
         int iter = 1;
         for (String category : categories) {
             msg.append(String.format("%d %s\n", iter, category));
             iter++;
         }
 
-        super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName, msg.toString());
+        //super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName, msg.toString());
 
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.setChatId(String.valueOf(chat.getId()));
+        sendMessage.setText(msg.toString());
+        Keyboards keyboards = new Keyboards();
+        keyboards.setButtonToCallNumbers(sendMessage, false);
+        try {
+            absSender.execute(sendMessage);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
     }
+
     public void execute2(AbsSender absSender, User user, Chat chat, String[] strings) {
         String userName = Utils.getUserName(user);
         JDBCConnector jdbcConnector = new JDBCConnector();
@@ -70,5 +89,9 @@ public class ShowItemsCommand extends ServiceCommand {
                 }
             }
         }
+    }
+
+    public void setNumbers(ArrayList<Integer> numbers) {
+        this.numbers = numbers;
     }
 }

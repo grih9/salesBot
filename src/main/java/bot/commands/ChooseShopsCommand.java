@@ -1,13 +1,19 @@
 package bot.commands;
 
 import bot.NonCommand;
+import bot.keyboards.Keyboards;
 import database.JDBCConnector;
 import database.Shop;
+
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.bots.AbsSender;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+
 import utils.Utils;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -15,6 +21,7 @@ import java.util.List;
  * Команда "Выбрать магазины"
  */
 public class ChooseShopsCommand extends ServiceCommand {
+    ArrayList<Integer> numbers = new ArrayList<>();
     public ChooseShopsCommand(String identifier, String description) {
         super(identifier, description);
     }
@@ -42,5 +49,21 @@ public class ChooseShopsCommand extends ServiceCommand {
         }
 
         jdbcConnector.setSelectedShops(userName, selectedShops);
+    }
+
+//    отправка клавиатуры
+//    SendMessage sendMessage = new SendMessage();
+//    sendMessage.setChatId(String.valueOf(chat.getId()));
+//    sendMessage.setText("Выберите одну или более торговую сеть");
+//    Keyboards keyboards = new Keyboards();
+//    keyboards.setButtonToCallNumbers(sendMessage, true);
+//    try {
+//        absSender.execute(sendMessage);
+//    } catch (TelegramApiException e) {
+//        e.printStackTrace();
+//    }
+
+    public void setNumbers(ArrayList<Integer> numbers) {
+        this.numbers = numbers;
     }
 }

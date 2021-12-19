@@ -8,6 +8,7 @@ import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,6 +31,7 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
      * Настройки для разных пользователей. Ключ - уникальный id чата, значение - имя пользователя
      */
     private static Map<Long, Command> userCommand;
+    private static Map<Long, ArrayList<Integer>> userNumbers;
 
     public TelegramBot(String botName, String botToken) {
         super();
@@ -44,6 +46,7 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
 //        register(new FindItemCommand("finditem", "Найти товар"));
 //        register(new ShowItemsCommand("showitems", "Отобразить товары"));
         userCommand = new HashMap<>();
+        userNumbers = new HashMap<>();
     }
 
     @Override
@@ -71,6 +74,7 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
         switch (msg.getText().trim()) {
             case "/start":
                 userCommand.put(chatId, Command.START);
+                userNumbers.put(chatId, new ArrayList<>());
                 startCommand.execute(this, update.getMessage().getFrom(), update.getMessage().getChat(), null);
                 break;
             case "/city":
@@ -107,17 +111,47 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
                     findItemCommand.setMessage(msg.getText());
                     findItemCommand.executePart2(this, update.getMessage().getFrom(), update.getMessage().getChat(), null);
                     userCommand.put(chatId, null);
-                } else if (userCommand.get(chatId).equals(Command.CHOSE_SHOPS)) { // получили список номеров магазинов
+                } else if (userCommand.get(chatId).equals(Command.CHOSE_SHOPS)) { // получили результат нажатия кнопки клавиатуры
+                    if (isNumeric(msg.getText())) {
+                        userNumbers.get(chatId).add(Integer.valueOf(msg.getText()));
+                    } else if (msg.getText().equals("Стереть последний") && userNumbers.get(chatId).size() > 0) {
+                        userNumbers.get(chatId).remove(userNumbers.get(chatId).size() - 1);
+                    } else if (msg.getText().equals("Далее")) {
+                        chooseShopsCommand.setNumbers(userNumbers.get(chatId));
+                        userNumbers.put(chatId, new ArrayList<>()); // передали числа команде и очищаем мапу для пользователя
+
+                        // вызвать дальнейшую обработку в команде (второй метод для execute)
+
+                        userCommand.put(chatId, null);
+                    }
+
                     //
                 } else if (userCommand.get(chatId).equals(Command.SHOW_ITEMS)) { // получили список номеров категорий (он запрашивается в команде showItems)
-                    showItemsCommand.setMessage(msg.getText());
-                    showItemsCommand.execute2(this, update.getMessage().getFrom(), update.getMessage().getChat(), null);
-                    userCommand.put(chatId, null);
+                    if (isNumeric(msg.getText())) {
+                        userNumbers.get(chatId).add(Integer.valueOf(msg.getText()));
+                    } else if (msg.getText().equals("Стереть последний") && userNumbers.get(chatId).size() > 0) {
+                        userNumbers.get(chatId).remove(userNumbers.get(chatId).size() - 1);
+                    } else if (msg.getText().equals("Далее")) {
+                        showItemsCommand.setNumbers(userNumbers.get(chatId));
+                        userNumbers.put(chatId, new ArrayList<>()); // передали числа команде и очищаем мапу для пользователя
+                        showItemsCommand.execute2(this, update.getMessage().getFrom(), update.getMessage().getChat(), null);
+                        userCommand.put(chatId, null);
+                    }
                 }
         }
 
 //        String answer = nonCommand.nonCommandExecute(chatId, userName, msg.getText());
 //        setAnswer(chatId, userName, answer);
+    }
+
+    private boolean isNumeric(String s) {
+        char[] chars = s.toCharArray();
+        for (char c: chars) {
+            if (!Character.isDigit(c)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
