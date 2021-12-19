@@ -30,6 +30,7 @@ public class Parser {
             case ("Spar"):
             case ("О'КЕЙ"):
             case ("Prisma"):
+            case ("Лента"):
                 items = findItemsByCathegoryEdadil(category, shop.getName(), city, driver);
                 break;
             case ("Перекрёсток"):
@@ -37,9 +38,6 @@ public class Parser {
                 break;
             case ("Дикси"):
                 items = findItemsByCathegoryDiksi(category, driver);
-                break;
-            case ("Лента"):
-                //
                 break;
             case ("Карусель"):
                 //
@@ -71,13 +69,11 @@ public class Parser {
                 case ("Spar"):
                 case ("О'КЕЙ"):
                 case ("Prisma"):
+                case ("Лента"):
                     items = findItemsByNameEdadil(itemName, shop.getName(), city, driver);
                     break;
                 case ("Дикси"):
                     items = findItemsByNameDiksi(itemName, driver);
-                    break;
-                case ("Лента"):
-                    //
                     break;
                 case ("Карусель"):
                     //
