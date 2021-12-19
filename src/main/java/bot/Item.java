@@ -1,6 +1,6 @@
 package bot;
 
-public class Item {
+public class Item implements Comparable<Item>  {
     private String name;
     private int weight;
     private String price;
@@ -99,5 +99,17 @@ public class Item {
                 (saleEndDate != null ? ("Окончание акции: " + saleEndDate + "\n") : "") +
                 "Сеть: " + shopName + "\n" +
                 imageURL;
+    }
+
+    @Override
+    public int compareTo(Item o) {
+        double firstPrice = Double.parseDouble(salePrice);
+        double secondPrice = Double.parseDouble(o.getSalePrice());
+
+        if(firstPrice > secondPrice)
+            return 1;
+        else if(firstPrice < secondPrice)
+            return -1;
+        return 0;
     }
 }
