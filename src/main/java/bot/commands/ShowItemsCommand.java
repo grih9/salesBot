@@ -12,18 +12,21 @@ import org.telegram.telegrambots.meta.bots.AbsSender;
 import parser.Parser;
 import utils.Utils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Команда "Отобразить товары"
  */
 public class ShowItemsCommand extends ServiceCommand {
-    String message = null;
+    String message = null;//поле теперь не нужно
+    ArrayList<Integer> numbers = new ArrayList<>();
+
     public ShowItemsCommand(String identifier, String description) {
         super(identifier, description);
     }
 
-    public void setMessage(String message) {
+    public void setMessage(String message) { //теперь не нужно
         this.message = message;
     }
 
@@ -42,7 +45,19 @@ public class ShowItemsCommand extends ServiceCommand {
 
         super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName, msg.toString());
 
+        //    отправка клавиатуры
+        //    SendMessage sendMessage = new SendMessage();
+        //    sendMessage.setChatId(String.valueOf(chat.getId()));
+        //    sendMessage.setText("Выберите категории товаров");
+        //    Keyboards keyboards = new Keyboards();
+        //    keyboards.setButtonToCallNumbers(sendMessage, 0);
+        //    try {
+        //        absSender.execute(sendMessage);
+        //    } catch (TelegramApiException e) {
+        //        e.printStackTrace();
+        //    }
     }
+
     public void execute2(AbsSender absSender, User user, Chat chat, String[] strings) {
         String userName = Utils.getUserName(user);
         JDBCConnector jdbcConnector = new JDBCConnector();
@@ -70,5 +85,9 @@ public class ShowItemsCommand extends ServiceCommand {
                 }
             }
         }
+    }
+
+    public void setNumbers(ArrayList<Integer> numbers) {
+        this.numbers = numbers;
     }
 }
