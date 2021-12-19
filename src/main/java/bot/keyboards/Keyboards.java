@@ -31,8 +31,8 @@ public class Keyboards {
     /**
      *
      * @param sendMessage
-     * @param isForShop : 0 - клавиатура для поиска по категрориям
-     *                    1 - клавиатура для выбора магазинов
+     * @param isForShop : false - клавиатура для поиска по категрориям
+     *                    true - клавиатура для выбора магазинов
      */
     public synchronized void setButtonToCallNumbers(SendMessage sendMessage, boolean isForShop) {
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();

@@ -56,7 +56,7 @@ public class ChooseShopsCommand extends ServiceCommand {
 //    sendMessage.setChatId(String.valueOf(chat.getId()));
 //    sendMessage.setText("Выберите одну или более торговую сеть");
 //    Keyboards keyboards = new Keyboards();
-//    keyboards.setButtonToCallNumbers(sendMessage, 1);
+//    keyboards.setButtonToCallNumbers(sendMessage, true);
 //    try {
 //        absSender.execute(sendMessage);
 //    } catch (TelegramApiException e) {
