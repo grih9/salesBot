@@ -119,10 +119,9 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
                     } else if (msg.getText().equals("Далее")) {
                         chooseShopsCommand.setNumbers(userNumbers.get(chatId));
                         userNumbers.put(chatId, new ArrayList<>()); // передали числа команде и очищаем мапу для пользователя
-
-                        // вызвать дальнейшую обработку в команде (второй метод для execute)
-
-                        userCommand.put(chatId, null);
+                        if (chooseShopsCommand.execute2(this, update.getMessage().getFrom(), update.getMessage().getChat(), null)) {
+                            userCommand.put(chatId, null);
+                        }
                     }
 
                     //
