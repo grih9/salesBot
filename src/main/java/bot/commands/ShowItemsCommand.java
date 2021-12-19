@@ -29,6 +29,7 @@ public class ShowItemsCommand extends ServiceCommand {
 
     @Override
     public void execute(AbsSender absSender, User user, Chat chat, String[] strings) {
+        String userName = Utils.getUserName(user);
         JDBCConnector jdbcConnector = new JDBCConnector();
         List<String> categories = jdbcConnector.getCategories();
 
@@ -38,6 +39,8 @@ public class ShowItemsCommand extends ServiceCommand {
             msg.append(String.format("%d %s\n", iter, category));
             iter++;
         }
+
+        super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName, msg.toString());
 
     }
     public void execute2(AbsSender absSender, User user, Chat chat, String[] strings) {
