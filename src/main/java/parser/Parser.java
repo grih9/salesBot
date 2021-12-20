@@ -71,6 +71,7 @@ public class Parser {
                 driver.close();
             }
             e.printStackTrace();
+            return items;
         }
 
         return items;
@@ -127,6 +128,7 @@ public class Parser {
                 driver.close();
             }
             e.printStackTrace();
+            return items;
         }
 
         return items;
@@ -533,7 +535,7 @@ public class Parser {
                 items.add(item);
             }
         } catch (Exception e) {
-            return null;
+            return items;
         }
         return items;
     }

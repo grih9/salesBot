@@ -56,7 +56,7 @@ public class FindItemCommand extends ServiceCommand {
         super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName, "Выполняется поиск");
         for (Shop shop: selectedShops) {
             items = Parser.findItemsByName(message.trim(), jdbcConnector.getUserCity(Utils.getUserName(user)), shop);
-            if (items.isEmpty()) {
+            if (items == null || items.isEmpty()) {
                 continue;
             }
             super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName,
