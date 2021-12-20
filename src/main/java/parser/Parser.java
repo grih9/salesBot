@@ -259,7 +259,8 @@ public class Parser {
 
 
         while (page <= maxPage) {
-             wait.until(visibilityOfElementLocated(By.className("b-offer__root")));
+             //System.out.println(driver.getWindowHandle());
+             //wait.until(visibilityOfElementLocated(By.className("p-retailer__offers")));
            /* if (driver.findElements(By.className("b-offer__root")).size() == 0) {
                 return items;
             }*/
@@ -269,6 +270,7 @@ public class Parser {
 
             for (WebElement element : webElements) {
                 Item item = new Item();
+               // wait.until(visibilityOfElementLocated(element));
 
                 item.setImageURL(element.findElement(By.className("b-image__root"))
                         .findElement(By.tagName("img")).getAttribute("src"));
