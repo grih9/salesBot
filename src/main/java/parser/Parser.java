@@ -184,7 +184,8 @@ public class Parser {
         cathegoryName = cathegoryName.toLowerCase();
         cathegoryName = cathegoryName.replaceAll("Товары для ", "");
         List<String> keywords = getKeywordsFromCathegories(cathegoryName);
-        if (cathegoryName.equals("cладости")) {
+        String sl = "сладости";
+        if (cathegoryName.contains(sl.toLowerCase())) {
             keywords.add("кондитерские");
         }
         if (cathegoryName.contains("колбаса")) {
