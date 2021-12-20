@@ -15,8 +15,10 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfAllElements;
 import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfElementLocated;
 
 import bot.Item;
@@ -26,18 +28,17 @@ import database.Shop;
 public class Parser {
     public static List<Item> findItemsByCategory(String category, City city, Shop shop) {
         List<Item> items = new ArrayList<>();
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--headless");
+
+        if (!shop.getName().equals("Перекрёсток") && !shop.getName().equals("Дикси")
+                && !shop.getName().equals("Карусель")) {
+            options.addArguments("--window-size=1920,1080");
+        }
+
+        WebDriver driver = new ChromeDriver(options);
 
         try {
-            ChromeOptions options = new ChromeOptions();
-            options.addArguments("--headless");
-
-            if (!shop.getName().equals("Перекрёсток") && !shop.getName().equals("Дикси")
-                    && !shop.getName().equals("Карусель")) {
-                options.addArguments("--window-size=1920,1080");
-            }
-
-            WebDriver driver = new ChromeDriver(options);
-
             if (shop.getName().equals("Пятёрочка")) {
                 driver.get("https://edadeal.ru/sankt-peterburg/retailers/5ka");
             } else {
@@ -64,8 +65,8 @@ public class Parser {
                     items = findItemsByCathegoryKarusel(category, driver);
                     break;
             }
-            driver.close();
         } catch (Exception e) {
+            driver.close();
             e.printStackTrace();
         }
 
@@ -80,53 +81,54 @@ public class Parser {
         options.addArguments("--disable-gpu");
         options.addArguments("--no-sandbox");
         options.addArguments("--remote-debugging-port=9222");
-        options.setBinary("/app/.apt/usr/bin/google-chrome");
+        //options.setBinary("/app/.apt/usr/bin/google-chrome");
         options.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
         options.setCapability(CapabilityType.ACCEPT_INSECURE_CERTS, true);
         options.addArguments("--headless");
+
+        WebDriver driver = new ChromeDriver(options);
+        List<Item> pItems;
+
         try {
-            WebDriver driver = new ChromeDriver(options);
-            List<Item> pItems;
+            if (!shop.getName().equals("Перекрёсток") && !shop.getName().equals("Дикси")
+                    && !shop.getName().equals("Карусель") && !shop.getName().equals("Пятёрочка")) {
+                options.addArguments("--window-size=1280,960");
+                driver.get("https://edadeal.ru/sankt-peterburg/offers");
+            }
 
-                    if (!shop.getName().equals("Перекрёсток") && !shop.getName().equals("Дикси")
-                            && !shop.getName().equals("Карусель") && !shop.getName().equals("Пятёрочка")) {
-                        options.addArguments("--window-size=1280,960");
-                        driver.get("https://edadeal.ru/sankt-peterburg/offers");
-                    }
-
-                    driver.get(shop.getWebsite());
+            driver.get(shop.getWebsite());
 /*                    System.out.println(driver.getCurrentUrl());
                     System.out.println(driver.getPageSource());*/
-                    switch (shop.getName()) {
-                        case ("Пятёрочка"):
-                            pItems = findItemsByNamePyatyorochka(itemName, city, driver);
-                            if (pItems != null) {
-                                items.addAll(pItems);
-                            }
-                            break;
-                        case ("Перекрёсток"):
-                            pItems = findItemsByNamePerekryostok(itemName, city, driver);
-                            if (pItems != null) {
-                                items.addAll(pItems);
-                            }
-                            break;
-                        case ("Магнит"):
-                        case ("Ашан"):
-                        case ("Spar (Eurospar)"):
-                        case ("О'КЕЙ"):
-                        case ("Prisma"):
-                        case ("Лента"):
-                            items.addAll(findItemsByNameEdadil(itemName, shop.getName(), city, driver));
-                            break;
-                        case ("Дикси"):
-                            items.addAll(findItemsByNameDiksi(itemName, driver));
-                            break;
-                        case ("Карусель"):
-                            items.addAll(findItemsByNameKarusel(itemName, driver));
-                            break;
+            switch (shop.getName()) {
+                case ("Пятёрочка"):
+                    pItems = findItemsByNamePyatyorochka(itemName, city, driver);
+                    if (pItems != null) {
+                        items.addAll(pItems);
                     }
-            driver.close();
+                    break;
+                case ("Перекрёсток"):
+                    pItems = findItemsByNamePerekryostok(itemName, city, driver);
+                    if (pItems != null) {
+                        items.addAll(pItems);
+                    }
+                    break;
+                case ("Магнит"):
+                case ("Ашан"):
+                case ("Spar (Eurospar)"):
+                case ("О'КЕЙ"):
+                case ("Prisma"):
+                case ("Лента"):
+                    items.addAll(findItemsByNameEdadil(itemName, shop.getName(), city, driver));
+                    break;
+                case ("Дикси"):
+                    items.addAll(findItemsByNameDiksi(itemName, driver));
+                    break;
+                case ("Карусель"):
+                    items.addAll(findItemsByNameKarusel(itemName, driver));
+                    break;
+            }
         } catch (Exception e) {
+            driver.close();
             e.printStackTrace();
         }
 
@@ -259,14 +261,9 @@ public class Parser {
 
 
         while (page <= maxPage) {
-             //System.out.println(driver.getWindowHandle());
-             //wait.until(visibilityOfElementLocated(By.className("p-retailer__offers")));
-           /* if (driver.findElements(By.className("b-offer__root")).size() == 0) {
-                return items;
-            }*/
-           // System.out.println(driver.getCurrentUrl());
             List<WebElement> webElements = driver
                     .findElements(By.className("b-offer__root"));
+            wait.until(ExpectedConditions.visibilityOfAllElements(webElements));
 
             for (WebElement element : webElements) {
                 Item item = new Item();
