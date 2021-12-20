@@ -39,7 +39,7 @@ public class Parser {
         options.setCapability(CapabilityType.ACCEPT_INSECURE_CERTS, true);
         options.addArguments("--headless");
         options.addArguments("--ignore-certificate-errors");
-        options.addArguments("--disable-dev-shm-usage");
+        //options.addArguments("--disable-dev-shm-usage");
         options.addArguments("window-size=1800x900");
         String userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36";
         options.addArguments("--user-agent=" + userAgent);
@@ -89,7 +89,7 @@ public class Parser {
         options.setCapability(CapabilityType.ACCEPT_INSECURE_CERTS, true);
         options.addArguments("--headless");
         options.addArguments("--ignore-certificate-errors");
-        options.addArguments("--disable-dev-shm-usage");
+        //options.addArguments("--disable-dev-shm-usage");
         options.addArguments("window-size=1800x900");
         String userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36";
         options.addArguments("--user-agent=" + userAgent);
@@ -184,7 +184,8 @@ public class Parser {
         cathegoryName = cathegoryName.toLowerCase();
         cathegoryName = cathegoryName.replaceAll("Товары для ", "");
         List<String> keywords = getKeywordsFromCathegories(cathegoryName);
-        if (cathegoryName.contains("cладости")) {
+        String sl = "сладости";
+        if (cathegoryName.contains(sl.toLowerCase())) {
             keywords.add("кондитерские");
         }
         if (cathegoryName.contains("колбаса")) {
@@ -196,7 +197,7 @@ public class Parser {
         }
 
         WebDriverWait wait = new WebDriverWait(driver, 30);
-        wait.until(visibilityOfElementLocated(By.className("p-retailer__sub-column")));
+        wait.until(visibilityOfElementLocated(By.cssSelector(".b-accordion__item1-title.b-accordion__item1-title_selected_false.b-accordion__item1-title_opened_false")));
 
         List<WebElement> cathegories = driver.
                 findElements(By.cssSelector(".b-accordion__item1-title.b-accordion__item1-title_selected_false.b-accordion__item1-title_opened_false"));
@@ -215,6 +216,7 @@ public class Parser {
         for (int i = 0; i < cathegories.size(); i++) {
             for (String s : keywords) {
                 if (cathegoriesNames.get(i).toLowerCase().contains(s)) {
+                    driver.get(cathegoriesHref.get(i));
                     return findItemsEdadil(driver, shopName);
                 }
             }
@@ -222,7 +224,7 @@ public class Parser {
 
         driver.get(cathegoriesHref.get(0));
 
-        wait.until(visibilityOfElementLocated(By.className("p-retailer__sub-column")));
+        wait.until(visibilityOfElementLocated(By.className("b-accordion__item2")));
         List<WebElement> subCathegories = driver.
                 findElements(By.className("b-accordion__item2"));
         List<String> subCathegoriesNames = new ArrayList<>();
@@ -251,29 +253,47 @@ public class Parser {
         int page = 1;
         int maxPage = 1;
 
+        try {
+            WebDriverWait wait2 = new WebDriverWait(driver, 5);
+            wait2.until(visibilityOfElementLocated(By.xpath("//a[@class='b-no-items-found__body b-no-items-found__body-']")));
+        } catch (Exception e) {
+        }
+
         if (driver.findElements(By.xpath("//a[@class='b-no-items-found__body b-no-items-found__body-']")).size() != 0) {
             return items;
         }
+        WebDriverWait wait = new WebDriverWait(driver, 10);
+        try {
+            WebDriverWait wait2 = new WebDriverWait(driver, 7);
+            wait2.until(visibilityOfElementLocated(By.className("b-pagination__pages")));
+        } catch (Exception e) {
+        }
 
         if (driver.findElements(By.className("b-pagination__pages")).size() > 0) {
-            driver.manage().timeouts().implicitlyWait(3000, TimeUnit.MILLISECONDS);
             List<WebElement> pageList = driver
                     .findElement(By.className("b-pagination__pages"))
                     .findElements(By.tagName("a"));
-
             if (pageList.size() != 0) {
                 maxPage = Integer.parseInt(pageList.get(pageList.size() - 1).findElement(By.className("b-button__content")).getText());
             }
         }
-        //System.out.println(driver.getPageSource());
-        WebDriverWait wait = new WebDriverWait(driver, 20);
-        //driver.manage().timeouts().implicitlyWait(3000, TimeUnit.MILLISECONDS);
-        //System.out.println(driver.getPageSource());
-        //wait.until(ExpectedConditions.visibilityOfAllElements(driver.findElements(By.className("p-retailer__offers"))));
+
         while (page <= maxPage) {
+
+            try {
+                WebDriverWait wait2 = new WebDriverWait(driver, 1);
+                wait2.until(visibilityOfElementLocated(By.xpath("//a[@class='b-no-items-found__body b-no-items-found__body-']")));
+            } catch (Exception e) {
+            }
+
+            if (driver.findElements(By.xpath("//a[@class='b-no-items-found__body b-no-items-found__body-']")).size() != 0) {
+                return items;
+            }
+
+            wait.until(visibilityOfElementLocated(By.className("p-retailer__base-column")));
             List<WebElement> webElements = driver
                     .findElements(By.className("b-offer__root"));
-            
+
             for (WebElement element : webElements) {
                 wait.until(ExpectedConditions.visibilityOf(element));
                 Item item = new Item();
