@@ -261,10 +261,12 @@ public class Parser {
 
 
         while (page <= maxPage) {
+            wait.until(ExpectedConditions.visibilityOfAllElements(driver
+                    .findElements(By.className("b-offer__root"))));
+
             List<WebElement> webElements = driver
                     .findElements(By.className("b-offer__root"));
-            wait.until(ExpectedConditions.visibilityOfAllElements(webElements));
-
+            
             for (WebElement element : webElements) {
                 Item item = new Item();
 
