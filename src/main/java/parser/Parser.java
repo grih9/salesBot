@@ -3,10 +3,18 @@ package parser;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+import java.io.IOException;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.openqa.selenium.*;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.remote.CapabilityType;
+import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfElementLocated;
@@ -66,67 +74,70 @@ public class Parser {
 
     public static List<Item> findItemsByName(String itemName, City city, List<Shop> shops) {
         List<Item> items = new ArrayList<>();
+        try {
+            ChromeOptions options = new ChromeOptions();
 
-        ChromeOptions options = new ChromeOptions();
+            options.addArguments("--disable-gpu");
+            options.addArguments("--no-sandbox");
+            options.addArguments("--remote-debugging-port=9222");
 
-        options.addArguments("--disable-gpu");
-        options.addArguments("--no-sandbox");
-        //driver = webdriver.Chrome(executable_path=CHROMEDRIVER_PATH, chrome_options=chrome_options)
-        List<Item> pItems;
-        for (Shop shop : shops) {
-            try {
-                if (!shop.getName().equals("Перекрёсток") && !shop.getName().equals("Дикси")
-                        && !shop.getName().equals("Карусель") && !shop.getName().equals("Пятёрочка")) {
-                    options.addArguments("--window-size=1280,960");
-                }
+            options.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
+            options.setCapability(CapabilityType.ACCEPT_INSECURE_CERTS, true);
+            options.addArguments("--headless");
+            List<Item> pItems;
+            for (Shop shop : shops) {
+                try {
+                    if (!shop.getName().equals("Перекрёсток") && !shop.getName().equals("Дикси")
+                            && !shop.getName().equals("Карусель") && !shop.getName().equals("Пятёрочка")) {
+                        options.addArguments("--window-size=1280,960");
+                    }
 
-                WebDriver driver = new ChromeDriver(options);
-                System.out.println(driver.getPageSource());
-                if (!shop.getName().equals("Перекрёсток") && !shop.getName().equals("Дикси")
-                        && !shop.getName().equals("Карусель") && !shop.getName().equals("Пятёрочка")) {
-                    driver.get("https://edeal.ru/sankt-peterburg/retailers/okmarket-giper/");
-                } else {
+                    WebDriver driver = new ChromeDriver(options);
                     driver.get(shop.getWebsite());
-                }
+                    System.out.println(driver.getCurrentUrl());
+                    System.out.println(driver.getPageSource());
 
-                switch (shop.getName()) {
-                    case ("Пятёрочка"):
-                        pItems = findItemsByNamePyatyorochka(itemName, city, driver);
-                        if (pItems != null) {
-                            items.addAll(pItems);
-                        }
-                        break;
-                    case ("Перекрёсток"):
-                        pItems = findItemsByNamePerekryostok(itemName, city, driver);
-                        if (pItems != null) {
-                            items.addAll(pItems);
-                        }
-                        break;
-                    case ("Магнит"):
-                    case ("Ашан"):
-                    case ("Spar (Eurospar)"):
-                    case ("О'КЕЙ"):
-                    case ("Prisma"):
-                    case ("Лента"):
-                        items.addAll(findItemsByNameEdadil(itemName, shop.getName(), city, driver));
-                        break;
-                    case ("Дикси"):
-                        items.addAll(findItemsByNameDiksi(itemName, driver));
-                        break;
-                    case ("Карусель"):
-                        items.addAll(findItemsByNameKarusel(itemName, driver));
-                        break;
-                }
+                    switch (shop.getName()) {
+                        case ("Пятёрочка"):
+                            pItems = findItemsByNamePyatyorochka(itemName, city, driver);
+                            if (pItems != null) {
+                                items.addAll(pItems);
+                            }
+                            break;
+                        case ("Перекрёсток"):
+                            pItems = findItemsByNamePerekryostok(itemName, city, driver);
+                            if (pItems != null) {
+                                items.addAll(pItems);
+                            }
+                            break;
+                        case ("Магнит"):
+                        case ("Ашан"):
+                        case ("Spar (Eurospar)"):
+                        case ("О'КЕЙ"):
+                        case ("Prisma"):
+                        case ("Лента"):
+                            items.addAll(findItemsByNameEdadil(itemName, shop.getName(), city, driver));
+                            break;
+                        case ("Дикси"):
+                            items.addAll(findItemsByNameDiksi(itemName, driver));
+                            break;
+                        case ("Карусель"):
+                            items.addAll(findItemsByNameKarusel(itemName, driver));
+                            break;
+                    }
 
-                driver.close();
-            } catch (Exception e) {
-                e.printStackTrace();
+                    driver.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         return items;
     }
-
+    
     public static List<Item> findItemsByNameEdadil(String itemName, String shopName, City city, WebDriver driver) {
         List<Item> items = new ArrayList<>();
         WebDriverWait wait = new WebDriverWait(driver, 10);
