@@ -28,15 +28,8 @@ import database.Shop;
 public class Parser {
     public static List<Item> findItemsByCategory(String category, City city, Shop shop) {
         List<Item> items = new ArrayList<>();
-        ChromeOptions options = new ChromeOptions();
-        options.addArguments("--headless");
 
-        if (!shop.getName().equals("Перекрёсток") && !shop.getName().equals("Дикси")
-                && !shop.getName().equals("Карусель")) {
-            options.addArguments("--window-size=1920,1080");
-        }
-
-        WebDriver driver = new ChromeDriver(options);
+        WebDriver driver = WebDriverSingleton.getInstance();
 
         try {
             if (shop.getName().equals("Пятёрочка")) {
@@ -66,7 +59,6 @@ public class Parser {
                     break;
             }
         } catch (Exception e) {
-            driver.close();
             e.printStackTrace();
         }
 
@@ -76,29 +68,12 @@ public class Parser {
     public static List<Item> findItemsByName(String itemName, City city, Shop shop) {
         List<Item> items = new ArrayList<>();
 
-        ChromeOptions options = new ChromeOptions();
-
-        options.addArguments("--disable-gpu");
-        options.addArguments("--no-sandbox");
-        options.addArguments("--remote-debugging-port=9222");
-        //options.setBinary("/app/.apt/usr/bin/google-chrome");
-        options.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
-        options.setCapability(CapabilityType.ACCEPT_INSECURE_CERTS, true);
-        options.addArguments("--headless");
-
-        WebDriver driver = new ChromeDriver(options);
+        WebDriver driver = WebDriverSingleton.getInstance();
         List<Item> pItems;
 
         try {
-            if (!shop.getName().equals("Перекрёсток") && !shop.getName().equals("Дикси")
-                    && !shop.getName().equals("Карусель") && !shop.getName().equals("Пятёрочка")) {
-                options.addArguments("--window-size=1280,960");
-                driver.get("https://edadeal.ru/sankt-peterburg/offers");
-            }
 
             driver.get(shop.getWebsite());
-/*                    System.out.println(driver.getCurrentUrl());
-                    System.out.println(driver.getPageSource());*/
             switch (shop.getName()) {
                 case ("Пятёрочка"):
                     pItems = findItemsByNamePyatyorochka(itemName, city, driver);
@@ -128,7 +103,27 @@ public class Parser {
                     break;
             }
         } catch (Exception e) {
-            driver.close();
+            e.printStackTrace();
+        }
+
+        return items;
+    }
+
+    public static List<Item> findItemsByNameEdadilJsoup(String itemName, String shopName, City city, String  url) {
+        List<Item> items = new ArrayList<>();
+
+        Map<String, String> map = new HashMap<>();
+        map.put("Магнит", "magnit-univer");
+        map.put("Ашан", "auchan");
+        map.put("Spar (Eurospar)", "eurospar");
+        map.put("О'КЕЙ", "okmarket-giper");
+        map.put("Prisma", "prismamarket_giper");
+        map.put("Лента", "lenta-giper");
+
+        Document doc = null;
+        try {
+            doc = Jsoup.connect(url + "?q=" + itemName + "&sort=aprice&retailer=" + map.get(shopName)).get();
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
@@ -154,17 +149,6 @@ public class Parser {
         if (driver.findElements(By.className("b-no-items-found__title")).size() != 0) {
             return items;
         }
-
-        /*wait.until(visibilityOfElementLocated(By.className("b-checkbox-list__options")));
-        List<WebElement> shops = driver
-                .findElement(By.className("b-checkbox-list__options"))
-                .findElements(By.tagName("div"));
-        for (WebElement shop : shops) {
-            if (shop.getAttribute("title").toLowerCase().contains(shopName.toLowerCase())) {
-                shop.click();
-                break;
-            }
-        }*/
         items = findItemsEdadil(driver, shopName);
         return items;
     }
@@ -259,17 +243,14 @@ public class Parser {
         WebDriverWait wait = new WebDriverWait(driver, 20);
         //driver.manage().timeouts().implicitlyWait(3000, TimeUnit.MILLISECONDS);
 
-
+        wait.until(ExpectedConditions.visibilityOfAllElements(driver.findElements(By.className("p-retailer__offers"))));
         while (page <= maxPage) {
-            wait.until(ExpectedConditions.visibilityOfAllElements(driver
-                    .findElements(By.className("b-offer__root"))));
-
             List<WebElement> webElements = driver
                     .findElements(By.className("b-offer__root"));
             
             for (WebElement element : webElements) {
+                wait.until(ExpectedConditions.visibilityOf(element));
                 Item item = new Item();
-               // wait.until(visibilityOfElementLocated(element));
 
                 item.setImageURL(element.findElement(By.className("b-image__root"))
                         .findElement(By.tagName("img")).getAttribute("src"));
