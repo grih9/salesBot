@@ -292,7 +292,7 @@ public class JDBCConnector {
 	}
 
 	public Boolean addItems(String categoty, Shop shop, List<Item> items) {
-		String sqlInsert = "insert into items(name, imageur, price, salePrice, saleBeginDate, saleEndDate, shopId, categoryId) " +
+		String sqlInsert = "insert into items(name, imageurl, price, salePrice, saleBeginDate, saleEndDate, cityId, categoryId) " +
 				"values(?, ?, ?, ?, ?, ?, (select id from shops where name = ? and website =?), (select id from categories where name = ?));";
 
 		try {
@@ -316,15 +316,15 @@ public class JDBCConnector {
 			e.printStackTrace();
 		}
 
-		return true; // Список выбранных магазинов изменен
+		return true;
 	}
 
 	public List<Item> getItemsByCategory(String categoty, Shop shop) {
 		List<Item> items= new ArrayList<>();
 		try {
-			String sql = "select items.name, imageURL, price, salePrice, saleBeginDate, saleEndDate from items join categories " +
-					"on items.categoryId = categories.id where categories.name = ? join shops " +
-					"on items.shopId = shops.id where shops.name = ? AND shops.website = ? ";
+			String sql = "select items.name, imageURL, price, salePrice, saleBeginDate, saleEndDate, shops.name from items join categories " +
+					"on items.categoryId = categories.id join shops " +
+					"on items.cityId = shops.id where categories.name =? AND shops.name =? AND shops.website =? ";
 
 			PreparedStatement ps = this.connection.prepareStatement(sql);
 			ps.setString(1, categoty);
@@ -333,7 +333,38 @@ public class JDBCConnector {
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
 				Item item = new Item();
-				item.setName(rs.getString("items.name"));
+				item.setName(rs.getString(1));
+				item.setImageURL(rs.getString(2));
+				item.setPrice(rs.getString(3));
+				item.setSalePrice(rs.getString(4));
+				item.setSaleBeginDate(rs.getString(5));
+				item.setSaleEndDate(rs.getString(6));
+				item.setShopName(rs.getString(7));
+				items.add(item);
+			}
+
+			ps.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return items;
+	}
+
+	public List<Item> getItemsByName(String itemName, Shop shop) {
+		List<Item> items= new ArrayList<>();
+		try {
+			String sql = "select items.name, imageURL, price, salePrice, saleBeginDate, saleEndDate, shops.name from items join shops " +
+					"on items.cityId = shops.id where shops.name = ? AND shops.website = ? AND LOWER(items.name) LIKE LOWER(?);";
+
+			PreparedStatement ps = this.connection.prepareStatement(sql);
+			ps.setString(1, shop.getName());
+			ps.setString(2, shop.getWebsite());
+			ps.setString(3, "%" + itemName.toLowerCase(Locale.ROOT) + "%");
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				Item item = new Item();
+				item.setName(rs.getString("name"));
 				item.setImageURL(rs.getString("imageURL"));
 				item.setPrice(rs.getString("price"));
 				item.setSalePrice(rs.getString("salePrice"));
@@ -371,6 +402,7 @@ public class JDBCConnector {
 
 		return result;
 	}
+
 
 	public List<Shop> getSelectedShops(String username) {
 		List<Shop> result = new LinkedList<>();
