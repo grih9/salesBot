@@ -13,6 +13,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import bot.Item;
 import bot.keyboards.Keyboards;
 import database.JDBCConnector;
+import database.Shop;
 import parser.Parser;
 import utils.Utils;
 
@@ -20,7 +21,12 @@ import utils.Utils;
  * Команда "Найти товар"
  */
 public class FindItemCommand extends ServiceCommand {
-    String message = null;
+    private final String MESSAGE_FOR_SENDING_KEYBOARD_TO_RESEARCH = "Хотите выполнить повторный поиск?\n" +
+            "Найти товар - поиск акционных товаров по названию" +
+            "Отобразить товары - поиск акционных товаров по категориям\n" +
+            "/shop - вернуться к выбору магазинов";
+    private String message = null;
+
     public FindItemCommand(String identifier, String description) {
         super(identifier, description);
     }
@@ -36,28 +42,44 @@ public class FindItemCommand extends ServiceCommand {
         String userName = Utils.getUserName(user);
 
         JDBCConnector jdbcConnector = new JDBCConnector();
+        List<Shop> selectedShops = jdbcConnector.getSelectedShops(Utils.getUserName(user));
 
+        if (selectedShops == null || selectedShops.isEmpty()) {
+            super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName,
+                    "Выберите одну или более торговую сеть");
+            showKeyboard(absSender, chat, "Выберите интересующие магазины", 1);
+            return;
+        }
+
+        super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName, "Выполняется поиск");
         List<Item> items = Parser.findItemsByName(message.trim(), jdbcConnector.getUserCity(Utils.getUserName(user)),
-                jdbcConnector.getSelectedShops(Utils.getUserName(user)));
-        if (items == null || items.isEmpty()) {
+                selectedShops);
+        if (items.isEmpty()) {
             super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName,
                     "Такого товара нет в каталогах акций выбранных магазинов");
+            showKeyboard(absSender, chat, MESSAGE_FOR_SENDING_KEYBOARD_TO_RESEARCH, 2);
             return;
         }
         items.sort(Comparator.comparing(Item::getSalePrice));
         for (Item item : items) {
             super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName, item.toString());
         }
+
+        showKeyboard(absSender, chat, MESSAGE_FOR_SENDING_KEYBOARD_TO_RESEARCH, 2);
+    }
+
+    private void showKeyboard(AbsSender absSender, Chat chat, String text, int buttonsCount) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(String.valueOf(chat.getId()));
-        sendMessage.setText("Хотите выполнить повторный поиск?\n" +
-                "Найти товар - поиск акционных товаров по названию" +
-                "Отобразить товары - поиск акционных товаров по категориям\n" +
-                "/shop - вернуться к выбору магазинов");
+        sendMessage.setText(text);
         Keyboards keyboards = new Keyboards();
         List<String> commands = new ArrayList<>();
-        commands.add("Найти товар");
-        commands.add("Отобразить товары");
+        if (buttonsCount == 2) {
+            commands.add("Найти товар");
+            commands.add("Отобразить товары");
+        } else if (buttonsCount == 1) {
+            commands.add("Выбрать магазины");
+        }
         keyboards.setButtonToCallCommand(sendMessage, commands);
         try {
             absSender.execute(sendMessage);
