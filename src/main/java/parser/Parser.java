@@ -92,10 +92,12 @@ public class Parser {
                     if (!shop.getName().equals("Перекрёсток") && !shop.getName().equals("Дикси")
                             && !shop.getName().equals("Карусель") && !shop.getName().equals("Пятёрочка")) {
                         options.addArguments("--window-size=1280,960");
+                        driver.get("https://edadeal.ru/sankt-peterburg/offers");
                     }
 
                     driver.get(shop.getWebsite());
-
+/*                    System.out.println(driver.getCurrentUrl());
+                    System.out.println(driver.getPageSource());*/
                     switch (shop.getName()) {
                         case ("Пятёрочка"):
                             pItems = findItemsByNamePyatyorochka(itemName, city, driver);
@@ -139,8 +141,16 @@ public class Parser {
     public static List<Item> findItemsByNameEdadil(String itemName, String shopName, City city, WebDriver driver) {
         List<Item> items = new ArrayList<>();
         WebDriverWait wait = new WebDriverWait(driver, 10);
-        wait.until(visibilityOfElementLocated(By.className("b-header__search-input")));
-        driver.findElement(By.className("b-header__search-input")).sendKeys(itemName, Keys.ENTER);
+
+        Map<String, String> map = new HashMap<>();
+        map.put("Магнит", "magnit-univer");
+        map.put("Ашан", "auchan");
+        map.put("Spar (Eurospar)", "eurospar");
+        map.put("О'КЕЙ", "okmarket-giper");
+        map.put("Prisma", "prismamarket_giper");
+        map.put("Лента", "lenta-giper");
+
+        driver.get(driver.getCurrentUrl() + "?q=" + itemName + "&sort=aprice&retailer=" + map.get(shopName));
         if (driver.findElements(By.className("p-not-found__big-header")).size() != 0) {
             return items;
         }
@@ -148,7 +158,7 @@ public class Parser {
             return items;
         }
 
-        wait.until(visibilityOfElementLocated(By.className("b-checkbox-list__options")));
+        /*wait.until(visibilityOfElementLocated(By.className("b-checkbox-list__options")));
         List<WebElement> shops = driver
                 .findElement(By.className("b-checkbox-list__options"))
                 .findElements(By.tagName("div"));
@@ -157,7 +167,7 @@ public class Parser {
                 shop.click();
                 break;
             }
-        }
+        }*/
         items = findItemsEdadil(driver, shopName);
         return items;
     }
@@ -230,7 +240,6 @@ public class Parser {
 
     public static List<Item> findItemsEdadil(WebDriver driver, String shopName) {
         List<Item> items = new ArrayList<>();
-        driver.get(driver.getCurrentUrl() + "&sort=aprice");
         String url = driver.getCurrentUrl();
         int page = 1;
         int maxPage = 1;
@@ -251,8 +260,13 @@ public class Parser {
         }
 
         WebDriverWait wait = new WebDriverWait(driver, 20);
+        driver.manage().timeouts().implicitlyWait(3000, TimeUnit.MILLISECONDS);
+        if (driver.findElements(By.className("b-offer__root")).size() == 0) {
+            return items;
+        }
 
         while (page <= maxPage) {
+            System.out.println(driver.getCurrentUrl());
             wait.until(visibilityOfElementLocated(By.className("b-offer__root")));
 
             List<WebElement> webElements = driver
