@@ -255,32 +255,39 @@ public class Parser {
         }
 
         WebDriverWait wait = new WebDriverWait(driver, 20);
-        driver.manage().timeouts().implicitlyWait(3000, TimeUnit.MILLISECONDS);
-        if (driver.findElements(By.className("b-offer__root")).size() == 0) {
-            return items;
-        }
+        //driver.manage().timeouts().implicitlyWait(3000, TimeUnit.MILLISECONDS);
+
 
         while (page <= maxPage) {
-            System.out.println(driver.getCurrentUrl());
-            wait.until(visibilityOfElementLocated(By.className("b-offer__root")));
-
+             wait.until(visibilityOfElementLocated(By.className("b-offer__root")));
+           /* if (driver.findElements(By.className("b-offer__root")).size() == 0) {
+                return items;
+            }*/
+           // System.out.println(driver.getCurrentUrl());
             List<WebElement> webElements = driver
                     .findElements(By.className("b-offer__root"));
 
             for (WebElement element : webElements) {
                 Item item = new Item();
 
-                item.setImageURL(element.findElement(By.tagName("img")).getAttribute("src"));
+                item.setImageURL(element.findElement(By.className("b-image__root"))
+                        .findElement(By.tagName("img")).getAttribute("src"));
 
                 String salesDate = element.findElement(By.className("b-offer__dates")).getText();
                 salesDate = salesDate.substring(3);
 
                 item.setSaleEndDate(salesDate);
-                item.setName(element.findElement(By.tagName("img")).getAttribute("alt")
+
+                item.setName(element.findElement(By.className("b-image__root")).findElement(By.tagName("img")).getAttribute("alt")
                         .replaceAll(" со скидкой", "").replaceAll("\\*", ""));
                 if (element.findElements(By.className("b-offer__price-old")).size() > 0) {
                     String price = element.findElement(By.className("b-offer__price-old")).getText();
-                    price = price.substring(0, price.indexOf(" ₽")).replace(",", ".");
+                    price = price.replace(",", ".");
+
+                    if (price.contains("₽")) {
+                        price = price.substring(0, price.indexOf(" ₽"));
+                    }
+
                     if (price.contains("От ")) {
                         item.setPrice(price.substring(3));
                     } else {
@@ -289,7 +296,12 @@ public class Parser {
                 }
 
                 String salePrice = element.findElement(By.className("b-offer__price-new")).getText();
-                item.setSalePrice(salePrice.substring(0, salePrice.indexOf(" ₽")).replace(",", "."));
+                salePrice = salePrice.replace(",", ".");
+
+                if (salePrice.contains("₽")) {
+                    salePrice = salePrice.substring(0, salePrice.indexOf(" ₽"));
+                }
+                item.setSalePrice(salePrice);
                 item.setShopName(shopName);
                 items.add(item);
             }
