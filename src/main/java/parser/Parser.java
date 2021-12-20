@@ -122,11 +122,14 @@ public class Parser {
 
         Document doc = null;
         try {
-            doc = Jsoup.connect(url + "?q=" + itemName + "&sort=aprice&retailer=" + map.get(shopName)).get();
+            doc = Jsoup.connect("https://edadeal.ru/sankt-peterburg/retailers/lenta-giper?q=%D0%A5%D0%BB%D0%B5%D0%B1&retailer=lenta-giper&sort=aprice")
+                    .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36").get();
         } catch (IOException e) {
             e.printStackTrace();
         }
+        Elements element = doc.getElementsByClass("b-offer__root");
 
+        element.get(0).getElementsByClass("b-image__root").get(0).getElementsByTag("img").get(0).attr("alt");
         return items;
     }
 
@@ -239,11 +242,11 @@ public class Parser {
                 maxPage = Integer.parseInt(pageList.get(pageList.size() - 1).findElement(By.className("b-button__content")).getText());
             }
         }
-
+        System.out.println(driver.getPageSource());
         WebDriverWait wait = new WebDriverWait(driver, 20);
         //driver.manage().timeouts().implicitlyWait(3000, TimeUnit.MILLISECONDS);
-
-        wait.until(ExpectedConditions.visibilityOfAllElements(driver.findElements(By.className("p-retailer__offers"))));
+        System.out.println(driver.getPageSource());
+        //wait.until(ExpectedConditions.visibilityOfAllElements(driver.findElements(By.className("p-retailer__offers"))));
         while (page <= maxPage) {
             List<WebElement> webElements = driver
                     .findElements(By.className("b-offer__root"));
