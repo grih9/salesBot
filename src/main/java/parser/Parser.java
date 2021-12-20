@@ -23,6 +23,7 @@ import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfElem
 
 import bot.Item;
 import database.City;
+import database.JDBCConnector;
 import database.Shop;
 
 public class Parser {
@@ -34,12 +35,12 @@ public class Parser {
         options.addArguments("--disable-gpu");
         options.addArguments("--no-sandbox");
         options.addArguments("--remote-debugging-port=9222");
-        options.setBinary("/app/.chromedriver/bin/chromedriver");
+        options.setBinary("/app/.apt/usr/bin/google-chrome");
         options.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
         options.setCapability(CapabilityType.ACCEPT_INSECURE_CERTS, true);
         options.addArguments("--headless");
         options.addArguments("--ignore-certificate-errors");
-        options.addArguments("--disable-dev-shm-usage");
+        //options.addArguments("--disable-dev-shm-usage");
         options.addArguments("window-size=1800x900");
         String userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36";
         options.addArguments("--user-agent=" + userAgent);
@@ -71,9 +72,11 @@ public class Parser {
                 driver.close();
             }
             e.printStackTrace();
+            JDBCConnector jdbcConnector = new JDBCConnector();
+            return jdbcConnector.getItemsByName(category, shop);
         }
-
-        return items;
+        JDBCConnector jdbcConnector = new JDBCConnector();
+        return items.isEmpty() ? jdbcConnector.getItemsByCategory(category, shop) : items;
     }
 
     public static List<Item> findItemsByName(String itemName, City city, Shop shop) {
@@ -84,12 +87,12 @@ public class Parser {
         options.addArguments("--disable-gpu");
         options.addArguments("--no-sandbox");
         options.addArguments("--remote-debugging-port=9222");
-        options.setBinary("/app/.chromedriver/bin/chromedriver");
+        options.setBinary("/app/.apt/usr/bin/google-chrome");
         options.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
         options.setCapability(CapabilityType.ACCEPT_INSECURE_CERTS, true);
         options.addArguments("--headless");
         options.addArguments("--ignore-certificate-errors");
-        options.addArguments("--disable-dev-shm-usage");
+        //options.addArguments("--disable-dev-shm-usage");
         options.addArguments("window-size=1800x900");
         String userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36";
         options.addArguments("--user-agent=" + userAgent);
@@ -100,11 +103,6 @@ public class Parser {
             driver.get(shop.getWebsite());
             switch (shop.getName()) {
                 case ("Перекрёсток"):
-                    pItems = findItemsByNamePerekryostok(itemName, city, driver);
-                    if (pItems != null) {
-                        items.addAll(pItems);
-                    }
-                    break;
                 case ("Магнит"):
                 case ("Ашан"):
                 case ("Spar (Eurospar)"):
@@ -112,13 +110,11 @@ public class Parser {
                 case ("Prisma"):
                 case ("Лента"):
                 case ("Пятёрочка"):
+                case ("Карусель"):
                     items.addAll(findItemsByNameEdadil(itemName, shop.getName(), city, driver));
                     break;
                 case ("Дикси"):
                     items.addAll(findItemsByNameDiksi(itemName, driver));
-                    break;
-                case ("Карусель"):
-                    items.addAll(findItemsByNameKarusel(itemName, driver));
                     break;
             }
             driver.close();
@@ -127,9 +123,11 @@ public class Parser {
                 driver.close();
             }
             e.printStackTrace();
+            JDBCConnector jdbcConnector = new JDBCConnector();
+            return jdbcConnector.getItemsByName(itemName, shop);
         }
-
-        return items;
+        JDBCConnector jdbcConnector = new JDBCConnector();
+        return items.isEmpty() ? jdbcConnector.getItemsByName(itemName, shop) : items;
     }
 
     public static List<Item> findItemsByNameEdadilJsoup(String itemName, String shopName, City city, String  url) {
@@ -533,7 +531,7 @@ public class Parser {
                 items.add(item);
             }
         } catch (Exception e) {
-            return null;
+            return items;
         }
         return items;
     }
