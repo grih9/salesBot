@@ -360,7 +360,7 @@ public class JDBCConnector {
 			PreparedStatement ps = this.connection.prepareStatement(sql);
 			ps.setString(1, shop.getName());
 			ps.setString(2, shop.getWebsite());
-			ps.setString(3, "%" + itemName.toLowerCase(Locale.ROOT) + "%");
+			ps.setString(3, "%" + itemName.toLowerCase() + "%");
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
 				Item item = new Item();
