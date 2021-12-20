@@ -267,6 +267,7 @@ public class Parser {
 
             for (WebElement element : webElements) {
                 Item item = new Item();
+               // wait.until(visibilityOfElementLocated(element));
 
                 item.setImageURL(element.findElement(By.className("b-image__root"))
                         .findElement(By.tagName("img")).getAttribute("src"));
