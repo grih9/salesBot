@@ -1,11 +1,13 @@
 package database;
 
+import bot.Item;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
 
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -287,6 +289,65 @@ public class JDBCConnector {
 		}
 
 		return true; // Список выбранных магазинов изменен
+	}
+
+	public Boolean addItems(String categoty, Shop shop, List<Item> items) {
+		String sqlInsert = "insert into items(name, imageur, price, salePrice, saleBeginDate, saleEndDate, shopId, categoryId) " +
+				"values(?, ?, ?, ?, ?, ?, (select id from shops where name = ? and website =?), (select id from categories where name = ?));";
+
+		try {
+			PreparedStatement ps = this.connection.prepareStatement(sqlInsert);
+
+			for (Item item : items) {
+				ps.setString(1, item.getName());
+				ps.setString(2, item.getImageURL());
+				ps.setString(3, item.getPrice());
+				ps.setString(4, item.getSalePrice());
+				ps.setString(5, item.getSaleBeginDate());
+				ps.setString(6, item.getSaleEndDate());
+				ps.setString(7, shop.getName());
+				ps.setString(8, shop.getWebsite());
+				ps.setString(9, categoty);
+				ps.executeUpdate();
+			}
+
+			ps.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return true; // Список выбранных магазинов изменен
+	}
+
+	public List<Item> getItemsByCategory(String categoty, Shop shop) {
+		List<Item> items= new ArrayList<>();
+		try {
+			String sql = "select items.name, imageURL, price, salePrice, saleBeginDate, saleEndDate from items join categories " +
+					"on items.categoryId = categories.id where categories.name = ? join shops " +
+					"on items.shopId = shops.id where shops.name = ? AND shops.website = ? ";
+
+			PreparedStatement ps = this.connection.prepareStatement(sql);
+			ps.setString(1, categoty);
+			ps.setString(2, shop.getName());
+			ps.setString(3, shop.getWebsite());
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				Item item = new Item();
+				item.setName(rs.getString("items.name"));
+				item.setImageURL(rs.getString("imageURL"));
+				item.setPrice(rs.getString("price"));
+				item.setSalePrice(rs.getString("salePrice"));
+				item.setSaleBeginDate(rs.getString("saleBeginDate"));
+				item.setSaleEndDate(rs.getString("saleEndDate"));
+				items.add(item);
+			}
+
+			ps.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return items;
 	}
 
 	public List<String> getCategories() {
