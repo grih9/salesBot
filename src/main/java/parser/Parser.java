@@ -3,17 +3,10 @@ package parser;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-import java.io.IOException;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.openqa.selenium.*;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.htmlunit.HtmlUnitDriver;
-import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfElementLocated;
@@ -133,7 +126,7 @@ public class Parser {
 
         return items;
     }
-    
+
     public static List<Item> findItemsByNameEdadil(String itemName, String shopName, City city, WebDriver driver) {
         List<Item> items = new ArrayList<>();
         WebDriverWait wait = new WebDriverWait(driver, 10);

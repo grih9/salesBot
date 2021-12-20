@@ -44,7 +44,7 @@ public class FindItemCommand extends ServiceCommand {
                     "Такого товара нет в каталогах акций выбранных магазинов");
             return;
         }
-        items.sort(Comparator.comparing(Item::getSalePrice));
+        items.sort(Comparator.naturalOrder());
         for (Item item : items) {
             super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName, item.toString());
         }
