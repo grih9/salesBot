@@ -93,7 +93,7 @@ public class Item implements Comparable<Item>  {
     public String toString() {
         return  "Название: " + name + "\n" +
                 (weight != 0 ? ("Вес: " + weight + "\n") : "") +
-                "Цена без скидки: " + price + "\n" +
+                (price != null ? ("Цена без скидки: " + price + "\n") : "") +
                 "Цена со скидкой: " + salePrice + "\n" +
                 (saleBeginDate != null ? ("Начало акции: " + saleBeginDate + "\n") : "") +
                 (saleEndDate != null ? ("Окончание акции: " + saleEndDate + "\n") : "") +

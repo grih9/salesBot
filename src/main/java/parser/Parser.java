@@ -29,14 +29,23 @@ public class Parser {
     public static List<Item> findItemsByCategory(String category, City city, Shop shop) {
         List<Item> items = new ArrayList<>();
 
-        WebDriver driver = WebDriverSingleton.getInstance();
-
+        WebDriver driver = null;
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--disable-gpu");
+        options.addArguments("--no-sandbox");
+        options.addArguments("--remote-debugging-port=9222");
+        options.setBinary("/app/.apt/usr/bin/google-chrome");
+        options.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
+        options.setCapability(CapabilityType.ACCEPT_INSECURE_CERTS, true);
+        options.addArguments("--headless");
+        options.addArguments("--ignore-certificate-errors");
+        options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("window-size=1800x900");
+        String userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36";
+        options.addArguments("--user-agent=" + userAgent);
         try {
-            if (shop.getName().equals("Пятёрочка")) {
-                driver.get("https://edadeal.ru/sankt-peterburg/retailers/5ka");
-            } else {
-                driver.get(shop.getWebsite());
-            }
+            driver = new ChromeDriver();
+            driver.get(shop.getWebsite());
 
             switch (shop.getName()) {
                 case ("Пятёрочка"):
@@ -46,6 +55,7 @@ public class Parser {
                 case ("О'КЕЙ"):
                 case ("Prisma"):
                 case ("Лента"):
+                case ("Карусель"):
                     items = findItemsByCathegoryEdadil(category, shop.getName(), city, driver);
                     break;
                 case ("Перекрёсток"):
@@ -54,11 +64,12 @@ public class Parser {
                 case ("Дикси"):
                     items = findItemsByCathegoryDiksi(category, driver);
                     break;
-                case ("Карусель"):
-                    items = findItemsByCathegoryKarusel(category, driver);
-                    break;
             }
+            driver.close();
         } catch (Exception e) {
+            if (driver != null) {
+                driver.close();
+            }
             e.printStackTrace();
         }
 
@@ -68,19 +79,26 @@ public class Parser {
     public static List<Item> findItemsByName(String itemName, City city, Shop shop) {
         List<Item> items = new ArrayList<>();
 
-        WebDriver driver = WebDriverSingleton.getInstance();
+        WebDriver driver = null;
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--disable-gpu");
+        options.addArguments("--no-sandbox");
+        options.addArguments("--remote-debugging-port=9222");
+        options.setBinary("/app/.apt/usr/bin/google-chrome");
+        options.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
+        options.setCapability(CapabilityType.ACCEPT_INSECURE_CERTS, true);
+        options.addArguments("--headless");
+        options.addArguments("--ignore-certificate-errors");
+        options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("window-size=1800x900");
+        String userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36";
+        options.addArguments("--user-agent=" + userAgent);
         List<Item> pItems;
 
         try {
-
+            driver = new ChromeDriver();
             driver.get(shop.getWebsite());
             switch (shop.getName()) {
-                case ("Пятёрочка"):
-                    pItems = findItemsByNamePyatyorochka(itemName, city, driver);
-                    if (pItems != null) {
-                        items.addAll(pItems);
-                    }
-                    break;
                 case ("Перекрёсток"):
                     pItems = findItemsByNamePerekryostok(itemName, city, driver);
                     if (pItems != null) {
@@ -93,6 +111,7 @@ public class Parser {
                 case ("О'КЕЙ"):
                 case ("Prisma"):
                 case ("Лента"):
+                case ("Пятёрочка"):
                     items.addAll(findItemsByNameEdadil(itemName, shop.getName(), city, driver));
                     break;
                 case ("Дикси"):
@@ -102,7 +121,11 @@ public class Parser {
                     items.addAll(findItemsByNameKarusel(itemName, driver));
                     break;
             }
+            driver.close();
         } catch (Exception e) {
+            if (driver != null) {
+                driver.close();
+            }
             e.printStackTrace();
         }
 
@@ -242,10 +265,10 @@ public class Parser {
                 maxPage = Integer.parseInt(pageList.get(pageList.size() - 1).findElement(By.className("b-button__content")).getText());
             }
         }
-        System.out.println(driver.getPageSource());
+        //System.out.println(driver.getPageSource());
         WebDriverWait wait = new WebDriverWait(driver, 20);
         //driver.manage().timeouts().implicitlyWait(3000, TimeUnit.MILLISECONDS);
-        System.out.println(driver.getPageSource());
+        //System.out.println(driver.getPageSource());
         //wait.until(ExpectedConditions.visibilityOfAllElements(driver.findElements(By.className("p-retailer__offers"))));
         while (page <= maxPage) {
             List<WebElement> webElements = driver
@@ -671,7 +694,7 @@ public class Parser {
     public static List<Item> findItemsByCathegoryPerekryostok(String cathegoryS, City city, WebDriver driver) {
         List<Item> items = new ArrayList<>();
         List<String> keywords = getKeywordsFromCathegories(cathegoryS);
-
+        driver.get("https://www.perekrestok.ru/cat");
         List<WebElement> cathegoriesList = driver.findElement(By.className("catalog__list"))
                 .findElements(By.className("category-card__title"));
         if (cathegoriesList.isEmpty()) {
@@ -711,7 +734,11 @@ public class Parser {
                 WebDriverWait wait = new WebDriverWait(driver, 10);
                 wait.until(visibilityOfElementLocated(By.id("onlyDiscount")));
                 driver.findElement(By.id("onlyDiscount")).sendKeys(Keys.SPACE);
-                wait.until(visibilityOfElementLocated(By.className("product-card__image")));
+                try {
+                    wait.until(visibilityOfElementLocated(By.className("product-card__image")));
+                } catch (Exception e) {
+                    continue;
+                }
                 List<WebElement> webElements = driver.findElements(By.className("product-card__image"));
                 if (webElements.isEmpty()) {
                     continue;
