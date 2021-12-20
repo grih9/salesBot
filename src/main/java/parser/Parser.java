@@ -73,7 +73,7 @@ public class Parser {
             }
             e.printStackTrace();
             JDBCConnector jdbcConnector = new JDBCConnector();
-            return jdbcConnector.getItemsByName(category, shop);
+            return jdbcConnector.getItemsByCategory(category, shop);
         }
         JDBCConnector jdbcConnector = new JDBCConnector();
         return items.isEmpty() ? jdbcConnector.getItemsByCategory(category, shop) : items;
