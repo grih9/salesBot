@@ -23,6 +23,7 @@ import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfElem
 
 import bot.Item;
 import database.City;
+import database.JDBCConnector;
 import database.Shop;
 
 public class Parser {
@@ -71,10 +72,11 @@ public class Parser {
                 driver.close();
             }
             e.printStackTrace();
-            return items;
+            JDBCConnector jdbcConnector = new JDBCConnector();
+            return jdbcConnector.getItemsByName(category, shop);
         }
-
-        return items;
+        JDBCConnector jdbcConnector = new JDBCConnector();
+        return items.isEmpty() ? jdbcConnector.getItemsByCategory(category, shop) : items;
     }
 
     public static List<Item> findItemsByName(String itemName, City city, Shop shop) {
@@ -101,11 +103,6 @@ public class Parser {
             driver.get(shop.getWebsite());
             switch (shop.getName()) {
                 case ("Перекрёсток"):
-                    pItems = findItemsByNamePerekryostok(itemName, city, driver);
-                    if (pItems != null) {
-                        items.addAll(pItems);
-                    }
-                    break;
                 case ("Магнит"):
                 case ("Ашан"):
                 case ("Spar (Eurospar)"):
@@ -113,13 +110,11 @@ public class Parser {
                 case ("Prisma"):
                 case ("Лента"):
                 case ("Пятёрочка"):
+                case ("Карусель"):
                     items.addAll(findItemsByNameEdadil(itemName, shop.getName(), city, driver));
                     break;
                 case ("Дикси"):
                     items.addAll(findItemsByNameDiksi(itemName, driver));
-                    break;
-                case ("Карусель"):
-                    items.addAll(findItemsByNameKarusel(itemName, driver));
                     break;
             }
             driver.close();
@@ -128,10 +123,11 @@ public class Parser {
                 driver.close();
             }
             e.printStackTrace();
-            return items;
+            JDBCConnector jdbcConnector = new JDBCConnector();
+            return jdbcConnector.getItemsByName(itemName, shop);
         }
-
-        return items;
+        JDBCConnector jdbcConnector = new JDBCConnector();
+        return items.isEmpty() ? jdbcConnector.getItemsByName(itemName, shop) : items;
     }
 
     public static List<Item> findItemsByNameEdadilJsoup(String itemName, String shopName, City city, String  url) {
