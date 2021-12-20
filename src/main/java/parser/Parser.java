@@ -496,7 +496,6 @@ public class Parser {
                 item.setSalePrice(element.findElement(By.className("price-new")).getText());
                 item.setShopName("Перекрёсток");
                 items.add(item);
-                System.out.println(item.toString());
             }
         } catch (Exception e) {
             return null;
