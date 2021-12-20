@@ -80,7 +80,7 @@ public class Parser {
         options.addArguments("--disable-gpu");
         options.addArguments("--no-sandbox");
         options.addArguments("--remote-debugging-port=9222");
-        //options.setBinary("$GOOGLE_CHROME_BIN");
+        options.setBinary("$GOOGLE_CHROME_BIN");
         options.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
         options.setCapability(CapabilityType.ACCEPT_INSECURE_CERTS, true);
         options.addArguments("--headless");
