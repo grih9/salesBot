@@ -103,17 +103,6 @@ public class Parser {
             driver.get(shop.getWebsite());
             switch (shop.getName()) {
                 case ("Перекрёсток"):
-                    pItems = findItemsByNamePerekryostok(itemName, city, driver);
-                    if (pItems != null) {
-                        items.addAll(pItems);
-                    } else {
-                        JDBCConnector jdbcConnector = new JDBCConnector();
-                        pItems = jdbcConnector.getItemsByName(itemName, shop);
-                        if (pItems != null) {
-                            items.addAll(pItems);
-                        }
-                    }
-                    break;
                 case ("Магнит"):
                 case ("Ашан"):
                 case ("Spar (Eurospar)"):
