@@ -51,18 +51,24 @@ public class FindItemCommand extends ServiceCommand {
             return;
         }
 
+        List<Item> items = null;
         super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName, "Выполняется поиск");
-        List<Item> items = Parser.findItemsByName(message.trim(), jdbcConnector.getUserCity(Utils.getUserName(user)),
-                selectedShops);
-        if (items.isEmpty()) {
+        for (Shop shop: selectedShops) {
+            items = Parser.findItemsByName(message.trim(), jdbcConnector.getUserCity(Utils.getUserName(user)), shop);
+            if (items.isEmpty()) {
+                continue;
+            }
+            items.sort(Comparator.naturalOrder());
+            for (Item item : items) {
+                super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName, item.toString());
+            }
+        }
+
+        if (items == null || items.isEmpty()) {
             super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName,
                     "Такого товара нет в каталогах акций выбранных магазинов");
             showKeyboard(absSender, chat, MESSAGE_FOR_SENDING_KEYBOARD_TO_RESEARCH, 2);
             return;
-        }
-        items.sort(Comparator.naturalOrder());
-        for (Item item : items) {
-            super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName, item.toString());
         }
 
         showKeyboard(absSender, chat, MESSAGE_FOR_SENDING_KEYBOARD_TO_RESEARCH, 2);
