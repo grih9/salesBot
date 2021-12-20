@@ -74,16 +74,18 @@ public class Parser {
 
     public static List<Item> findItemsByName(String itemName, City city, List<Shop> shops) {
         List<Item> items = new ArrayList<>();
+
+        ChromeOptions options = new ChromeOptions();
+
+        options.addArguments("--disable-gpu");
+        options.addArguments("--no-sandbox");
+        options.addArguments("--remote-debugging-port=9222");
+        //options.setBinary("$GOOGLE_CHROME_BIN");
+        options.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
+        options.setCapability(CapabilityType.ACCEPT_INSECURE_CERTS, true);
+        options.addArguments("--headless");
         try {
-            ChromeOptions options = new ChromeOptions();
-
-            options.addArguments("--disable-gpu");
-            options.addArguments("--no-sandbox");
-            options.addArguments("--remote-debugging-port=9222");
-
-            options.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
-            options.setCapability(CapabilityType.ACCEPT_INSECURE_CERTS, true);
-            options.addArguments("--headless");
+            WebDriver driver = new ChromeDriver(options);
             List<Item> pItems;
             for (Shop shop : shops) {
                 try {
@@ -92,10 +94,7 @@ public class Parser {
                         options.addArguments("--window-size=1280,960");
                     }
 
-                    WebDriver driver = new ChromeDriver(options);
                     driver.get(shop.getWebsite());
-                    System.out.println(driver.getCurrentUrl());
-                    System.out.println(driver.getPageSource());
 
                     switch (shop.getName()) {
                         case ("Пятёрочка"):
@@ -125,19 +124,18 @@ public class Parser {
                             items.addAll(findItemsByNameKarusel(itemName, driver));
                             break;
                     }
-
-                    driver.close();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
+            driver.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         return items;
     }
-    
+
     public static List<Item> findItemsByNameEdadil(String itemName, String shopName, City city, WebDriver driver) {
         List<Item> items = new ArrayList<>();
         WebDriverWait wait = new WebDriverWait(driver, 10);
