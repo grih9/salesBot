@@ -12,6 +12,7 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -74,26 +75,18 @@ public class Parser {
         List<Item> items = new ArrayList<>();
 
         ChromeOptions options = new ChromeOptions();
-        options.addArguments("--headless");
+
+        options.addArguments("--disable-gpu");
+        options.addArguments("--no-sandbox");
+        //driver = webdriver.Chrome(executable_path=CHROMEDRIVER_PATH, chrome_options=chrome_options)
         List<Item> pItems;
         for (Shop shop : shops) {
             try {
                 if (!shop.getName().equals("Перекрёсток") && !shop.getName().equals("Дикси")
                         && !shop.getName().equals("Карусель") && !shop.getName().equals("Пятёрочка")) {
-                    options.addArguments("--window-size=1024,768");
+                    options.addArguments("--window-size=1280,960");
                 }
 
-                options.addArguments("--disable-extensions");
-                options.addArguments("--proxy-server='direct://'");
-                options.addArguments("--proxy-bypass-list=*");
-                options.addArguments("--start-maximized");
-                options.addArguments("--disable-gpu");
-                options.addArguments("--disable-dev-shm-usage");
-                options.addArguments("--no-sandbox");
-                options.addArguments("--ignore-certificate-errors");
-                options.addArguments("--allow-running-insecure-content");
-
-                options.addArguments("user-agent=\"Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)\"");
                 WebDriver driver = new ChromeDriver(options);
                 System.out.println(driver.getPageSource());
                 if (!shop.getName().equals("Перекрёсток") && !shop.getName().equals("Дикси")
@@ -140,7 +133,7 @@ public class Parser {
 
         return items;
     }
-
+    
     public static List<Item> findItemsByNameEdadil(String itemName, String shopName, City city, WebDriver driver) {
         List<Item> items = new ArrayList<>();
         WebDriverWait wait = new WebDriverWait(driver, 10);
