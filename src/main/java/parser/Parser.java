@@ -39,7 +39,7 @@ public class Parser {
         options.setCapability(CapabilityType.ACCEPT_INSECURE_CERTS, true);
         options.addArguments("--headless");
         options.addArguments("--ignore-certificate-errors");
-        options.addArguments("--disable-dev-shm-usage");
+        //options.addArguments("--disable-dev-shm-usage");
         options.addArguments("window-size=1800x900");
         String userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36";
         options.addArguments("--user-agent=" + userAgent);
@@ -89,7 +89,7 @@ public class Parser {
         options.setCapability(CapabilityType.ACCEPT_INSECURE_CERTS, true);
         options.addArguments("--headless");
         options.addArguments("--ignore-certificate-errors");
-        options.addArguments("--disable-dev-shm-usage");
+        //options.addArguments("--disable-dev-shm-usage");
         options.addArguments("window-size=1800x900");
         String userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36";
         options.addArguments("--user-agent=" + userAgent);
