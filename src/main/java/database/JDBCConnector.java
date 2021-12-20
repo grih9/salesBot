@@ -364,12 +364,13 @@ public class JDBCConnector {
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
 				Item item = new Item();
-				item.setName(rs.getString("name"));
-				item.setImageURL(rs.getString("imageURL"));
-				item.setPrice(rs.getString("price"));
-				item.setSalePrice(rs.getString("salePrice"));
-				item.setSaleBeginDate(rs.getString("saleBeginDate"));
-				item.setSaleEndDate(rs.getString("saleEndDate"));
+				item.setName(rs.getString(1));
+				item.setImageURL(rs.getString(2));
+				item.setPrice(rs.getString(3));
+				item.setSalePrice(rs.getString(4));
+				item.setSaleBeginDate(rs.getString(5));
+				item.setSaleEndDate(rs.getString(6));
+				item.setShopName(rs.getString(7));
 				items.add(item);
 			}
 
