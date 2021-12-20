@@ -60,7 +60,7 @@ public class FindItemCommand extends ServiceCommand {
             showKeyboard(absSender, chat, MESSAGE_FOR_SENDING_KEYBOARD_TO_RESEARCH, 2);
             return;
         }
-        items.sort(Comparator.comparing(Item::getSalePrice));
+        items.sort(Comparator.naturalOrder());
         for (Item item : items) {
             super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName, item.toString());
         }
