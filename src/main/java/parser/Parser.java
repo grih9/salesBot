@@ -27,17 +27,17 @@ public class Parser {
     public static List<Item> findItemsByCategory(String category, City city, Shop shop) {
         List<Item> items = new ArrayList<>();
 
-        ChromeOptions options = new ChromeOptions();
-        options.addArguments("--headless");
-
-        if (!shop.getName().equals("Перекрёсток") && !shop.getName().equals("Дикси")
-                && !shop.getName().equals("Карусель")) {
-            options.addArguments("--window-size=1920,1080");
-        }
-
-        WebDriver driver = new ChromeDriver(options);
-
         try {
+            ChromeOptions options = new ChromeOptions();
+            options.addArguments("--headless");
+
+            if (!shop.getName().equals("Перекрёсток") && !shop.getName().equals("Дикси")
+                    && !shop.getName().equals("Карусель")) {
+                options.addArguments("--window-size=1920,1080");
+            }
+
+            WebDriver driver = new ChromeDriver(options);
+
             if (shop.getName().equals("Пятёрочка")) {
                 driver.get("https://edadeal.ru/sankt-peterburg/retailers/5ka");
             } else {
@@ -64,15 +64,15 @@ public class Parser {
                     items = findItemsByCathegoryKarusel(category, driver);
                     break;
             }
+            driver.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        driver.close();
         return items;
     }
 
-    public static List<Item> findItemsByName(String itemName, City city, List<Shop> shops) {
+    public static List<Item> findItemsByName(String itemName, City city, Shop shop) {
         List<Item> items = new ArrayList<>();
 
         ChromeOptions options = new ChromeOptions();
@@ -87,8 +87,7 @@ public class Parser {
         try {
             WebDriver driver = new ChromeDriver(options);
             List<Item> pItems;
-            for (Shop shop : shops) {
-                try {
+
                     if (!shop.getName().equals("Перекрёсток") && !shop.getName().equals("Дикси")
                             && !shop.getName().equals("Карусель") && !shop.getName().equals("Пятёрочка")) {
                         options.addArguments("--window-size=1280,960");
@@ -126,10 +125,6 @@ public class Parser {
                             items.addAll(findItemsByNameKarusel(itemName, driver));
                             break;
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
             driver.close();
         } catch (Exception e) {
             e.printStackTrace();
@@ -278,7 +273,7 @@ public class Parser {
                 item.setImageURL(element.findElement(By.tagName("img")).getAttribute("src"));
 
                 String salesDate = element.findElement(By.className("b-offer__dates")).getText();
-                salesDate = salesDate.substring(salesDate.indexOf(" ") + 1);
+                salesDate = salesDate.substring(3);
 
                 item.setSaleEndDate(salesDate);
                 item.setName(element.findElement(By.tagName("img")).getAttribute("alt")
