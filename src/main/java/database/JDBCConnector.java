@@ -333,7 +333,16 @@ public class JDBCConnector {
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
 				Item item = new Item();
-				item.setName(rs.getString(1));
+				String name = rs.getString(1);
+				name = name.replaceAll("Товар Представлен Не Во Всех Магазинах", "");
+
+				if (name.contains("Товар представлен")) {
+					name = name.substring(0, name.indexOf("Товар представлен"));
+				}
+				while (name.endsWith(".") || name.endsWith(" ")) {
+					name = name.substring(0, name.length() - 2);
+				}
+				item.setName(name);
 				item.setImageURL(rs.getString(2));
 				item.setPrice(rs.getString(3));
 				item.setSalePrice(rs.getString(4));
@@ -364,7 +373,17 @@ public class JDBCConnector {
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
 				Item item = new Item();
-				item.setName(rs.getString(1));
+				String name = rs.getString(1);
+				name = name.replaceAll("Товар Представлен Не Во Всех Магазинах", "");
+
+				if (name.contains("Товар представлен")) {
+					name = name.substring(0, name.indexOf("Товар представлен"));
+				}
+
+				if (name.endsWith(".")) {
+					name = name.substring(0, name.length() - 1);
+				}
+				item.setName(name);
 				item.setImageURL(rs.getString(2));
 				item.setPrice(rs.getString(3));
 				item.setSalePrice(rs.getString(4));
