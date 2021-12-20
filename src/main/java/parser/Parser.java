@@ -442,7 +442,7 @@ public class Parser {
     public static List<Item> findItemsByNamePyatyorochka(String itemName, City city, WebDriver driver) {
         List<Item> items = new ArrayList<>();
         driver.findElement(By.cssSelector("input[placeholder='Поиск по товарам']")).sendKeys(itemName, Keys.ENTER);
-        WebDriverWait wait = new WebDriverWait(driver, 3);
+        WebDriverWait wait = new WebDriverWait(driver, 10);
         try {
             WebElement webElement = driver.findElement(By.className("items-list"));
             wait.until(visibilityOfElementLocated(By.xpath("//div[contains(., '" + itemName + "')]")));
@@ -723,7 +723,7 @@ public class Parser {
                     continue;
                 }
                 driver.get(subCathegory.getAttribute("href"));
-                WebDriverWait wait = new WebDriverWait(driver, 3);
+                WebDriverWait wait = new WebDriverWait(driver, 10);
                 wait.until(visibilityOfElementLocated(By.id("onlyDiscount")));
                 driver.findElement(By.id("onlyDiscount")).sendKeys(Keys.SPACE);
                 wait.until(visibilityOfElementLocated(By.className("product-card__image")));
