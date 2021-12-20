@@ -34,7 +34,7 @@ public class Parser {
         options.addArguments("--disable-gpu");
         options.addArguments("--no-sandbox");
         options.addArguments("--remote-debugging-port=9222");
-        options.setBinary("/app/.apt/usr/bin/google-chrome");
+        options.setBinary("/app/.chromedriver/bin/chromedriver");
         options.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
         options.setCapability(CapabilityType.ACCEPT_INSECURE_CERTS, true);
         options.addArguments("--headless");
@@ -84,7 +84,7 @@ public class Parser {
         options.addArguments("--disable-gpu");
         options.addArguments("--no-sandbox");
         options.addArguments("--remote-debugging-port=9222");
-        options.setBinary("/app/.apt/usr/bin/google-chrome");
+        options.setBinary("/app/.chromedriver/bin/chromedriver");
         options.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
         options.setCapability(CapabilityType.ACCEPT_INSECURE_CERTS, true);
         options.addArguments("--headless");
