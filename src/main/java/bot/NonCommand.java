@@ -1,10 +1,16 @@
 package bot;
 
+import javax.ws.rs.core.Link;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.stream.IntStream;
+
 /**
  * Обработка сообщения, не являющегося командой (т.е. обычного текста не начинающегося с "/")
  */
 public class NonCommand {
     public int[] getNumbers(String text){
+        text = text.replaceAll(" ", "");
         String removeDuplicates = removeDuplicates(text);
 
         if (removeDuplicates.endsWith(",")) {
@@ -16,22 +22,21 @@ public class NonCommand {
         }
         String[] words = removeDuplicates.split(",");
 
-        int[] numbers = new int[words.length];
-        int i = 0;
+        LinkedHashSet<Integer> numbers = new LinkedHashSet<>();
         for (String word : words) {
-            numbers[i] = Integer.parseInt(word);
-            i++;
+            numbers.add(Integer.valueOf(word));
         }
-        return numbers;
+
+        return numbers.stream().mapToInt(Number::intValue).toArray();
     }
 
     public String removeDuplicates(String input){
-        String result = "";
-        for (int i = 0; i < input.length(); i++) {
-            if(!result.contains(String.valueOf(input.charAt(i)))) {
-                result += String.valueOf(input.charAt(i));
+        StringBuilder result = new StringBuilder(String.valueOf(input.charAt(0)));
+        for (int i = 1; i < input.length(); i++) {
+            if (!String.valueOf(input.charAt(i)).equals(String.valueOf(input.charAt(i - 1)))) {
+                result.append(String.valueOf(input.charAt(i)));
             }
         }
-        return result;
+        return result.toString();
     }
 }
