@@ -24,7 +24,7 @@ public class FindItemCommand extends ServiceCommand {
     private final String MESSAGE_FOR_SENDING_KEYBOARD_TO_RESEARCH = "Хотите выполнить повторный поиск?\n" +
             "Найти товар - поиск акционных товаров по названию" +
             "Отобразить товары - поиск акционных товаров по категориям\n" +
-            "/shop - вернуться к выбору магазинов";
+            "/shops - вернуться к выбору магазинов";
     private String message = null;
 
     public FindItemCommand(String identifier, String description) {
