@@ -7,10 +7,10 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.Charset;
+import java.util.*;
 
 import bot.commands.*;
 import bot.keyboards.Keyboards;
@@ -159,6 +159,7 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
                         break;
                     } else if (msg.getText().contains(",")) {
                         NonCommand nonComand = new NonCommand();
+                        System.out.println("bytes" + toBytes(msg.getText().toCharArray()).toString());
                         if (!nonComand.checkValid(msg.getText())) {
                             int[] array = nonComand.getNumbers(msg.getText());
                             for (int elem : array) {
@@ -207,6 +208,15 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
         }
 //        String answer = nonCommand.nonCommandExecute(chatId, userName, msg.getText());
 //        setAnswer(chatId, userName, answer);
+    }
+
+    byte[] toBytes(char[] chars) {
+        CharBuffer charBuffer = CharBuffer.wrap(chars);
+        ByteBuffer byteBuffer = Charset.forName("UTF-8").encode(charBuffer);
+        byte[] bytes = Arrays.copyOfRange(byteBuffer.array(),
+                byteBuffer.position(), byteBuffer.limit());
+        Arrays.fill(byteBuffer.array(), (byte) 0); // clear sensitive data
+        return bytes;
     }
 
     private boolean isNumeric(String s) {
