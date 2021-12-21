@@ -52,6 +52,7 @@ public class Keyboards {
             keyboardSecondRow.add(new KeyboardButton(String.valueOf(k / 2 + i)));
         }
 
+        keyboardThirdRow.add(new KeyboardButton("Назад"));
         keyboardThirdRow.add(new KeyboardButton("Стереть последний"));
         keyboardThirdRow.add(new KeyboardButton("Далее"));
         keyboard.add(keyboardFirstRow);

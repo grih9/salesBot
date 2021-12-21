@@ -10,9 +10,11 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import bot.commands.*;
+import bot.keyboards.Keyboards;
 
 public final class TelegramBot extends TelegramLongPollingCommandBot {
     private final String BOT_NAME;
@@ -122,6 +124,22 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
                         if (chooseShopsCommand.execute2(this, update.getMessage().getFrom(), update.getMessage().getChat(), null)) {
                             userCommand.put(chatId, null);
                         }
+                    } else if (msg.getText().equals("Назад")) {
+                        userNumbers.put(chatId, new ArrayList<>()); // передали числа команде и очищаем мапу для пользователя
+                        userCommand.put(chatId, null);
+                        SendMessage sendMessage = new SendMessage();
+                        sendMessage.setChatId(String.valueOf(chatId));
+                        sendMessage.setText("Выберите интересующие магазины");
+                        Keyboards keyboards = new Keyboards();
+                        List<String> commands = new ArrayList<>();
+                        commands.add("Выбрать магазины");
+                        keyboards.setButtonToCallCommand(sendMessage, commands);
+                        try {
+                            execute(sendMessage);
+                        } catch (TelegramApiException e) {
+                            e.printStackTrace();
+                        }
+
                     }
 
                     //
@@ -136,8 +154,27 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
                         if (showItemsCommand.execute2(this, update.getMessage().getFrom(), update.getMessage().getChat(), null)){
                             userCommand.put(chatId, null);
                         }
-
+                    } else if (msg.getText().equals("Назад")) {
+                        userNumbers.put(chatId, new ArrayList<>()); // передали числа команде и очищаем мапу для пользователя
+                        userCommand.put(chatId, null);
+                        SendMessage sendMessage = new SendMessage();
+                        sendMessage.setChatId(String.valueOf(chatId));
+                        sendMessage.setText("Хотите выполнить повторный поиск?\n" +
+                                "Найти товар - поиск акционных товаров по названию" +
+                                "Отобразить товары - поиск акционных товаров по категориям\n" +
+                                "/shops - вернуться к выбору магазинов");
+                        Keyboards keyboards = new Keyboards();
+                        List<String> commands = new ArrayList<>();
+                        commands.add("Найти товар");
+                        commands.add("Отобразить товары");
+                        keyboards.setButtonToCallCommand(sendMessage, commands);
+                        try {
+                            execute(sendMessage);
+                        } catch (TelegramApiException e) {
+                            e.printStackTrace();
+                        }
                     }
+
                 }
         }
 
