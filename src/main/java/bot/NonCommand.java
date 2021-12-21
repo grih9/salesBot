@@ -13,7 +13,7 @@ import java.util.stream.IntStream;
 public class NonCommand {
     public Boolean checkValid(String text) {
         //Pattern pattern = Pattern.compile("((,*[ \\t\\s]*)*[0-9]+(,*[ \\t\\s]*)*)+");
-        Pattern pattern = Pattern.compile("(,*[ \\t\\s]*)*[0-9]+");
+        Pattern pattern = Pattern.compile("(,*[ ]*)*[0-9]+");
         System.out.println(pattern.matcher(text).pattern());
 
         Matcher m = pattern.matcher(text);
