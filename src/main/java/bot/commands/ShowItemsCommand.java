@@ -17,11 +17,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import parser.Parser;
 import utils.Utils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Comparator;
+import java.util.*;
 
 /**
  * Команда "Отобразить товары"
@@ -81,13 +77,15 @@ public class ShowItemsCommand extends ServiceCommand {
 //                i++;
 //            }
 //        } else {
-            numbers = ChooseShopsCommand.justUniques(numbers);
+        LinkedHashSet<Integer> noDuplArray =  new LinkedHashSet<>(numbers);
+        numbers = new ArrayList<>(noDuplArray);
        // }
 
         for (Shop shop : selectedShops) {
             super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName,
                     shop.getName());
             for (int i : numbers) {
+                System.out.println("findElem " + i);
                 if (i > categories.size()) {
                     super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName,
                             "Нет категории с таким номером: " + i );

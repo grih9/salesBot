@@ -13,7 +13,6 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import utils.Utils;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Команда "Выбрать магазины"
@@ -62,10 +61,11 @@ public class ChooseShopsCommand extends ServiceCommand {
             return false;
         }
 
-        LinkedHashSet<Integer> noDuplArray = new LinkedHashSet<>(numbers);
+        LinkedHashSet<Integer> noDuplArray =  new LinkedHashSet<>(numbers);
+        numbers = new ArrayList<>(noDuplArray);
 
         for (int elem : noDuplArray) {
-            System.out.println("elem " + elem);
+            System.out.println("shop " + elem);
             if (elem > shops.size()) {
                 super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName,
                         "Номера сети " + elem + " нет в списке");
