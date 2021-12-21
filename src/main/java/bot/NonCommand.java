@@ -11,13 +11,15 @@ import java.util.stream.IntStream;
  */
 public class NonCommand {
     public Boolean checkValid(String text) {
-        Pattern pattern = Pattern.compile("((,* *)*[0-9]+(,* *)*)+");
+        Pattern pattern = Pattern.compile("((,*[ \\t\\s]*)*[0-9]+(,*[ \\t\\s]*)*)+");
 
         return pattern.matcher(text).matches();
     }
 
     public int[] getNumbers(String text){
         text = text.replaceAll(" ", "");
+        text = text.replaceAll("\\t", "");
+        text = text.replaceAll("\\s", "");
         String removeDuplicates = removeDuplicatesCommas(text);
 
         if (removeDuplicates.endsWith(",")) {
