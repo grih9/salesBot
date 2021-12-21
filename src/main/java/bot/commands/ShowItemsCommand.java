@@ -94,6 +94,8 @@ public class ShowItemsCommand extends ServiceCommand {
                 super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName,
                             categories.get(i-1));
                 System.out.println("cat " + categories.get(i-1));
+                System.out.println("name " + shop.getName());
+                System.out.println("website " + shop.getWebsite());
                 List<Item> items = Parser.findItemsByCategory(categories.get(i-1), city, shop);
                 items.sort(Comparator.naturalOrder());
                 for (Item item : items) {
