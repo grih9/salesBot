@@ -67,9 +67,11 @@ public class Parser {
                     break;
             }
             driver.close();
+            driver.quit();
         } catch (Exception e) {
             if (driver != null) {
                 driver.close();
+                driver.quit();
             }
             e.printStackTrace();
             JDBCConnector jdbcConnector = new JDBCConnector();
@@ -118,9 +120,11 @@ public class Parser {
                     break;
             }
             driver.close();
+            driver.quit();
         } catch (Exception e) {
             if (driver != null) {
                 driver.close();
+                driver.quit();
             }
             e.printStackTrace();
             JDBCConnector jdbcConnector = new JDBCConnector();
