@@ -159,7 +159,8 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
                         break;
                     } else if (msg.getText().contains(",")) {
                         NonCommand nonComand = new NonCommand();
-                        String pattern  = "((,*[ \\t\\s]*)*[0-9]+(,*[ \\t\\s]*)*)+";
+                        String pattern  = "\"((,*[ ]*)*[0-9]+(,*[ ]*)*)+";
+                        System.out.println("pattern " + pattern);
                         System.out.println("bytes" + Arrays.toString(toBytes(pattern.toCharArray())));
                         System.out.println("bytes" + Arrays.toString(toBytes(msg.getText().toCharArray())));
                         if (!nonComand.checkValid(msg.getText())) {
