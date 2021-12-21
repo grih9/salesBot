@@ -173,6 +173,11 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
                         } catch (TelegramApiException e) {
                             e.printStackTrace();
                         }
+                    } else {
+                        showItemsCommand.setMessage(msg.getText());
+                        if (showItemsCommand.execute2(this, update.getMessage().getFrom(), update.getMessage().getChat(), null)){
+                            userCommand.put(chatId, null);
+                        }
                     }
 
                 }
