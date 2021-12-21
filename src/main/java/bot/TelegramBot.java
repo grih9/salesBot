@@ -120,6 +120,7 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
                         userNumbers.get(chatId).remove(userNumbers.get(chatId).size() - 1);
                     } else if (msg.getText().contains(",")) {
                         NonCommand nonComand = new NonCommand();
+                        System.out.println("message" + msg.getText());
                         if (!nonComand.checkValid(msg.getText())) {
                             int[] array = nonComand.getNumbers(msg.getText());
                             for (int elem : array) {
@@ -158,19 +159,6 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
                             e.printStackTrace();
                         }
 
-                    } else {
-                        NonCommand nonComand = new NonCommand();
-                        if (!nonComand.checkValid(msg.getText())) {
-                            SendMessage sendMessage = new SendMessage();
-                            sendMessage.setChatId(String.valueOf(chatId));
-                            sendMessage.setText("Пожалуйста, введите номера торговых сетей через запятую," +
-                                    " или воспользуйтесь клавиатурой для ввода чисел");
-                            try {
-                                execute(sendMessage);
-                            } catch (TelegramApiException e) {
-                                e.printStackTrace();
-                            }
-                        }
                     }
 
                     //
@@ -179,6 +167,7 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
                         userNumbers.get(chatId).add(Integer.valueOf(msg.getText()));
                     } else if (msg.getText().contains(",")) {
                         NonCommand nonComand = new NonCommand();
+                        System.out.println("message" + msg.getText());
                         if (!nonComand.checkValid(msg.getText())) {
                             int[] array = nonComand.getNumbers(msg.getText());
                             for (int elem : array) {
@@ -221,19 +210,6 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
                             execute(sendMessage);
                         } catch (TelegramApiException e) {
                             e.printStackTrace();
-                        }
-                    } else {
-                        NonCommand nonComand = new NonCommand();
-                        if (!nonComand.checkValid(msg.getText())) {
-                            SendMessage sendMessage = new SendMessage();
-                            sendMessage.setChatId(String.valueOf(chatId));
-                            sendMessage.setText("Пожалуйста, введите номера категорий товаров через запятую " +
-                                    "или воспользуйтесь клавиатурой для ввода чисел\");");
-                            try {
-                                execute(sendMessage);
-                            } catch (TelegramApiException e) {
-                                e.printStackTrace();
-                            }
                         }
                     }
                 }
