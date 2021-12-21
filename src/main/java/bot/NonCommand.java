@@ -14,11 +14,11 @@ public class NonCommand {
         String removeDuplicates = removeDuplicates(text);
 
         if (removeDuplicates.endsWith(",")) {
-            removeDuplicates = removeDuplicates.substring(0, removeDuplicates.length() - 2);
+            removeDuplicates = removeDuplicates.substring(0, removeDuplicates.length() - 1);
         }
 
         if (removeDuplicates.indexOf(",") == 0) {
-            removeDuplicates = removeDuplicates.substring(1, removeDuplicates.length() - 1);
+            removeDuplicates = removeDuplicates.substring(1, removeDuplicates.length());
         }
         String[] words = removeDuplicates.split(",");
 
