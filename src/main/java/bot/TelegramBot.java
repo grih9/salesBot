@@ -152,6 +152,12 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
                 } else if (userCommand.get(chatId).equals(Command.SHOW_ITEMS)) { // получили список номеров категорий (он запрашивается в команде showItems)
                     if (isNumeric(msg.getText())) {
                         userNumbers.get(chatId).add(Integer.valueOf(msg.getText()));
+                    } else if (msg.getText().contains(",")) {
+                        NonCommand nonComand = new NonCommand();
+                        int[] array = nonComand.getNumbers(msg.getText());
+                        for (int elem: array) {
+                            userNumbers.get(chatId).add(elem);
+                        }
                     } else if (msg.getText().equals("Стереть последний") && userNumbers.get(chatId).size() > 0) {
                         userNumbers.get(chatId).remove(userNumbers.get(chatId).size() - 1);
                     } else if (msg.getText().equals("Далее")) {
@@ -179,13 +185,7 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
                         } catch (TelegramApiException e) {
                             e.printStackTrace();
                         }
-                    } else {
-                        showItemsCommand.setMessage(msg.getText());
-                        if (showItemsCommand.execute2(this, update.getMessage().getFrom(), update.getMessage().getChat(), null)){
-                            userCommand.put(chatId, null);
-                        }
                     }
-
                 }
         }
 
