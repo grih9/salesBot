@@ -118,7 +118,7 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
                         userNumbers.get(chatId).add(Integer.valueOf(msg.getText()));
                     } else if (msg.getText().equals("Стереть последний") && userNumbers.get(chatId).size() > 0) {
                         userNumbers.get(chatId).remove(userNumbers.get(chatId).size() - 1);
-                    } else if (msg.getText().contains(",") && userNumbers.get(chatId).size() > 0) {
+                    } else if (msg.getText().contains(",")) {
                         NonCommand nonComand = new NonCommand();
                         int[] array = nonComand.getNumbers(msg.getText());
                         for (int elem: array) {
