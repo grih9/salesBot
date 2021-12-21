@@ -14,7 +14,6 @@ public class NonCommand {
         if (removeDuplicates.indexOf(",") == 0) {
             removeDuplicates = removeDuplicates.substring(1, removeDuplicates.length() - 1);
         }
-        removeDuplicates = removeDuplicates.replaceAll(" ", "");
         String[] words = removeDuplicates.split(",");
 
         int[] numbers = new int[words.length];
