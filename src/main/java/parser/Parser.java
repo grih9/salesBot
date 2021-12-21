@@ -78,6 +78,12 @@ public class Parser {
             return jdbcConnector.getItemsByCategory(category, shop);
         }
         JDBCConnector jdbcConnector = new JDBCConnector();
+        if(items.isEmpty()) {
+            System.out.println("isEmpty()");
+            System.out.println(items.isEmpty());
+        } else {
+            System.out.println(items.isEmpty());
+        }
         return items.isEmpty() ? jdbcConnector.getItemsByCategory(category, shop) : items;
     }
 
