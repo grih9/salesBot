@@ -11,7 +11,7 @@ import java.util.stream.IntStream;
  */
 public class NonCommand {
     public Boolean checkValid(String text) {
-        Pattern pattern = Pattern.compile("(,*[0-9],*)+");
+        Pattern pattern = Pattern.compile("(,*[0-9]*,*)+");
 
         return pattern.matcher(text).matches();
     }
