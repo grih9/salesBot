@@ -137,6 +137,11 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
                             userCommand.put(chatId, null);
                         }
 
+                    } else {
+                        showItemsCommand.setMessage(msg.getText());
+                        if (showItemsCommand.execute2(this, update.getMessage().getFrom(), update.getMessage().getChat(), null)){
+                            userCommand.put(chatId, null);
+                        }
                     }
                 }
         }

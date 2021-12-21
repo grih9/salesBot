@@ -67,13 +67,21 @@ public class ShowItemsCommand extends ServiceCommand {
         List<Shop> selectedShops = jdbcConnector.getSelectedShops(userName);
         City city = jdbcConnector.getUserCity(userName);
 
-        if (numbers.size() == 0) {
+        if (numbers.size() == 0 && message == null) {
             super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName,
                     "Выберите одну или более категорию");
             return false;
         }
-
-        numbers = ChooseShopsCommand.justUniques(numbers);
+        if (message != null) {
+            String[] words = message.split(",");
+            int i = 0;
+            for (String word : words) {
+                numbers.set(i, Integer.parseInt(word));
+                i++;
+            }
+        } else {
+            numbers = ChooseShopsCommand.justUniques(numbers);
+        }
 
         for (Shop shop : selectedShops) {
             super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName,
@@ -94,6 +102,8 @@ public class ShowItemsCommand extends ServiceCommand {
         }
         return true;
     }
+
+    public void setMessage(String s) { this.message = s; }
 
 
     public void setNumbers(ArrayList<Integer> numbers) {
