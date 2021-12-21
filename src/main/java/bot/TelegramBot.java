@@ -114,7 +114,7 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
                         userNumbers.get(chatId).remove(userNumbers.get(chatId).size() - 1);
                     } else if (msg.getText().contains(",")) {
                         NonCommand nonComand = new NonCommand();
-                        if (!nonComand.checkValid(msg.getText())) {
+                        if (nonComand.checkValid(msg.getText())) {
                             int[] array = nonComand.getNumbers(msg.getText());
                             for (int elem : array) {
                                 userNumbers.get(chatId).add(elem);
@@ -159,11 +159,7 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
                         break;
                     } else if (msg.getText().contains(",")) {
                         NonCommand nonComand = new NonCommand();
-                        String pattern  = "\"((,*[ ]*)*[0-9]+(,*[ ]*)*)+";
-                        System.out.println("pattern " + pattern);
-                        System.out.println("bytes" + Arrays.toString(toBytes(pattern.toCharArray())));
-                        System.out.println("bytes" + Arrays.toString(toBytes(msg.getText().toCharArray())));
-                        if (!nonComand.checkValid(msg.getText())) {
+                        if (nonComand.checkValid(msg.getText())) {
                             int[] array = nonComand.getNumbers(msg.getText());
                             for (int elem : array) {
                                 userNumbers.get(chatId).add(elem);
@@ -211,15 +207,6 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
         }
 //        String answer = nonCommand.nonCommandExecute(chatId, userName, msg.getText());
 //        setAnswer(chatId, userName, answer);
-    }
-
-    byte[] toBytes(char[] chars) {
-        CharBuffer charBuffer = CharBuffer.wrap(chars);
-        ByteBuffer byteBuffer = Charset.forName("UTF-8").encode(charBuffer);
-        byte[] bytes = Arrays.copyOfRange(byteBuffer.array(),
-                byteBuffer.position(), byteBuffer.limit());
-        Arrays.fill(byteBuffer.array(), (byte) 0); // clear sensitive data
-        return bytes;
     }
 
     private boolean isNumeric(String s) {
