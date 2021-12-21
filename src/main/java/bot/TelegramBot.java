@@ -128,7 +128,13 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
                         } else {
                             SendMessage sendMessage = new SendMessage();
                             sendMessage.setChatId(String.valueOf(chatId));
-                            sendMessage.setText("Пожалуйста, введите номера торговых сетей через запятую");
+                            sendMessage.setText("Пожалуйста, введите номера торговых сетей через запятую," +
+                                    " или воспользуйтесь клавиатурой для ввода чисел");
+                            try {
+                                execute(sendMessage);
+                            } catch (TelegramApiException e) {
+                                e.printStackTrace();
+                            }
                         }
                     } else if (msg.getText().equals("Далее")) {
                         chooseShopsCommand.setNumbers(userNumbers.get(chatId));
@@ -152,6 +158,19 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
                             e.printStackTrace();
                         }
 
+                    } else {
+                        NonCommand nonComand = new NonCommand();
+                        if (!nonComand.checkValid(msg.getText())) {
+                            SendMessage sendMessage = new SendMessage();
+                            sendMessage.setChatId(String.valueOf(chatId));
+                            sendMessage.setText("Пожалуйста, введите номера торговых сетей через запятую," +
+                                    " или воспользуйтесь клавиатурой для ввода чисел");
+                            try {
+                                execute(sendMessage);
+                            } catch (TelegramApiException e) {
+                                e.printStackTrace();
+                            }
+                        }
                     }
 
                     //
@@ -168,7 +187,13 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
                         } else {
                             SendMessage sendMessage = new SendMessage();
                             sendMessage.setChatId(String.valueOf(chatId));
-                            sendMessage.setText("Пожалуйста, введите номера категорий товаров через запятую");
+                            sendMessage.setText("Пожалуйста, введите номера категорий товаров через запятую " +
+                                    "или воспользуйтесь клавиатурой для ввода чисел\");");
+                            try {
+                                execute(sendMessage);
+                            } catch (TelegramApiException e) {
+                                e.printStackTrace();
+                            }
                         }
                     } else if (msg.getText().equals("Стереть последний") && userNumbers.get(chatId).size() > 0) {
                         userNumbers.get(chatId).remove(userNumbers.get(chatId).size() - 1);
@@ -196,6 +221,19 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
                             execute(sendMessage);
                         } catch (TelegramApiException e) {
                             e.printStackTrace();
+                        }
+                    } else {
+                        NonCommand nonComand = new NonCommand();
+                        if (!nonComand.checkValid(msg.getText())) {
+                            SendMessage sendMessage = new SendMessage();
+                            sendMessage.setChatId(String.valueOf(chatId));
+                            sendMessage.setText("Пожалуйста, введите номера категорий товаров через запятую " +
+                                    "или воспользуйтесь клавиатурой для ввода чисел\");");
+                            try {
+                                execute(sendMessage);
+                            } catch (TelegramApiException e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
                 }
