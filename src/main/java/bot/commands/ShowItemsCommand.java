@@ -74,11 +74,12 @@ public class ShowItemsCommand extends ServiceCommand {
         for (Shop shop : selectedShops) {
             super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName,
                     shop.getName());
+            boolean hasItems = false;
             for (int i : numbers) {
                 System.out.println("findElem " + i);
                 if (i > categories.size()) {
                     super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName,
-                            "Нет категории с таким номером: " + i );
+                            "Номера категории " + i + " нет в списке");
                     return false;
                 }
                 super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName,
@@ -87,10 +88,20 @@ public class ShowItemsCommand extends ServiceCommand {
                 System.out.println("name " + shop.getName());
                 System.out.println("website " + shop.getWebsite());
                 List<Item> items = Parser.findItemsByCategory(categories.get(i-1), city, shop);
+                if (items.isEmpty()) {
+                    super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName,
+                            "Акционных товаров в данной категории нет");
+                    continue;
+                }
+                hasItems = true;
                 items.sort(Comparator.naturalOrder());
                 for (Item item : items) {
                     super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName, item.toString());
                 }
+            }
+            if (!hasItems) {
+                super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName,
+                        "Акционных товаров в данной сети нет");
             }
         }
 
