@@ -118,6 +118,12 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
                         userNumbers.get(chatId).add(Integer.valueOf(msg.getText()));
                     } else if (msg.getText().equals("Стереть последний") && userNumbers.get(chatId).size() > 0) {
                         userNumbers.get(chatId).remove(userNumbers.get(chatId).size() - 1);
+                    } else if (msg.getText().contains(",") && userNumbers.get(chatId).size() > 0) {
+                        NonCommand nonComand = new NonCommand();
+                        int[] array = nonComand.getNumbers(msg.getText());
+                        for (int elem: array) {
+                            userNumbers.get(chatId).add(elem);
+                        }
                     } else if (msg.getText().equals("Далее")) {
                         chooseShopsCommand.setNumbers(userNumbers.get(chatId));
                         userNumbers.put(chatId, new ArrayList<>()); // передали числа команде и очищаем мапу для пользователя
