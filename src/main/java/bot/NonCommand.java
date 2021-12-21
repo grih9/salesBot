@@ -3,6 +3,7 @@ package bot;
 import javax.ws.rs.core.Link;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 
@@ -11,7 +12,15 @@ import java.util.stream.IntStream;
  */
 public class NonCommand {
     public Boolean checkValid(String text) {
-        Pattern pattern = Pattern.compile("((,*[ \\t\\s]*)*[0-9]+(,*[ \\t\\s]*)*)+");
+        //Pattern pattern = Pattern.compile("((,*[ \\t\\s]*)*[0-9]+(,*[ \\t\\s]*)*)+");
+        Pattern pattern = Pattern.compile(", ");
+        System.out.println(pattern.matcher(text).pattern());
+
+        Matcher m = pattern.matcher(text);
+        if(m.find())
+        {
+            System.out.println("TAG " + m.group());
+        }
 
         return pattern.matcher(text).matches();
     }
