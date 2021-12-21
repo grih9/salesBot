@@ -53,7 +53,8 @@ public class Keyboards {
         }
 
         keyboardThirdRow.add(new KeyboardButton("Назад"));
-        keyboardThirdRow.add(new KeyboardButton("Стереть последний"));
+        keyboardThirdRow.add(new KeyboardButton(","));
+        keyboardThirdRow.add(new KeyboardButton("Стереть"));
         keyboardThirdRow.add(new KeyboardButton("Далее"));
         keyboard.add(keyboardFirstRow);
         keyboard.add(keyboardSecondRow);

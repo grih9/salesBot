@@ -1,7 +1,6 @@
 package bot.commands;
 
 import bot.Item;
-import bot.NonCommand;
 import bot.keyboards.Keyboards;
 import database.City;
 import database.JDBCConnector;
@@ -9,7 +8,6 @@ import database.Shop;
 
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Chat;
-import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -23,7 +21,10 @@ import java.util.*;
  * Команда "Отобразить товары"
  */
 public class ShowItemsCommand extends ServiceCommand {
-    String message = null;//поле теперь не нужно
+    private static final String MESSAGE_FOR_SENDING_KEYBOARD_TO_RESEARCH = "Хотите выполнить повторный поиск?\n" +
+            "Найти товар - поиск акционных товаров по названию" +
+            "Отобразить товары - поиск акционных товаров по категориям\n" +
+            "/shops - вернуться к выбору магазинов";
     ArrayList<Integer> numbers = new ArrayList<>();
 
     public ShowItemsCommand(String identifier, String description) {
@@ -32,7 +33,6 @@ public class ShowItemsCommand extends ServiceCommand {
 
     @Override
     public void execute(AbsSender absSender, User user, Chat chat, String[] strings) {
-        //String userName = Utils.getUserName(user);
         JDBCConnector jdbcConnector = new JDBCConnector();
         List<String> categories = jdbcConnector.getCategories();
 
@@ -42,8 +42,6 @@ public class ShowItemsCommand extends ServiceCommand {
             msg.append(String.format("%d %s\n", iter, category));
             iter++;
         }
-
-        //super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName, msg.toString());
 
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(String.valueOf(chat.getId()));
@@ -69,26 +67,19 @@ public class ShowItemsCommand extends ServiceCommand {
                     "Выберите одну или более категорию");
             return false;
         }
-//        if (message != null) {
-//            String[] words = message.split(",");
-//            int i = 0;
-//            for (String word : words) {
-//                numbers.set(i, Integer.parseInt(word));
-//                i++;
-//            }
-//        } else {
-        LinkedHashSet<Integer> noDuplArray =  new LinkedHashSet<>(numbers);
+
+        LinkedHashSet<Integer> noDuplArray = new LinkedHashSet<>(numbers);
         numbers = new ArrayList<>(noDuplArray);
-       // }
 
         for (Shop shop : selectedShops) {
             super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName,
                     shop.getName());
+            boolean hasItems = false;
             for (int i : numbers) {
                 System.out.println("findElem " + i);
                 if (i > categories.size()) {
                     super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName,
-                            "Нет категории с таким номером: " + i );
+                            "Номера категории " + i + " нет в списке");
                     return false;
                 }
                 super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName,
@@ -97,17 +88,39 @@ public class ShowItemsCommand extends ServiceCommand {
                 System.out.println("name " + shop.getName());
                 System.out.println("website " + shop.getWebsite());
                 List<Item> items = Parser.findItemsByCategory(categories.get(i-1), city, shop);
+                if (items.isEmpty()) {
+                    super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName,
+                            "Акционных товаров в данной категории нет");
+                    continue;
+                }
+                hasItems = true;
                 items.sort(Comparator.naturalOrder());
                 for (Item item : items) {
                     super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName, item.toString());
                 }
             }
+            if (!hasItems) {
+                super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName,
+                        "Акционных товаров в данной сети нет");
+            }
         }
+
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.setChatId(String.valueOf(chat.getId()));
+        sendMessage.setText(MESSAGE_FOR_SENDING_KEYBOARD_TO_RESEARCH);
+        Keyboards keyboards = new Keyboards();
+        List<String> commands = new ArrayList<>();
+        commands.add("Найти товар");
+        commands.add("Отобразить товары");
+        keyboards.setButtonToCallCommand(sendMessage, commands);
+        try {
+            absSender.execute(sendMessage);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+
         return true;
     }
-
-    public void setMessage(String s) {this.message = s;}
-
 
     public void setNumbers(ArrayList<Integer> numbers) {
         this.numbers = numbers;

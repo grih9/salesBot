@@ -5,7 +5,6 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
-import org.telegram.telegrambots.meta.bots.AbsSender;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.ArrayList;
@@ -39,14 +38,7 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
         super();
         this.BOT_NAME = botName;
         this.BOT_TOKEN = botToken;
-        //создаём вспомогательный класс для работы с сообщениями, не являющимися командами
         this.nonCommand = new NonCommand();
-        //регистрируем команды
-//        register(new StartCommand("start", "Старт"));
-//        register(new ChooseCityCommand("city", "Город"));
-//        register(new ChooseShopsCommand("shops", "Выбрать магазины"));
-//        register(new FindItemCommand("finditem", "Найти товар"));
-//        register(new ShowItemsCommand("showitems", "Отобразить товары"));
         userCommand = new HashMap<>();
         userNumbers = new HashMap<>();
     }
@@ -101,7 +93,7 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
                 break;
             default: //получили текст
                 if (userCommand.get(chatId) == null) {
-                    break; // + какая-то логика
+                    break;
                 }
                 if (userCommand.get(chatId).equals(Command.CITY)) { // получили город
                     chooseCityCommand.setMessage(msg.getText());
@@ -116,7 +108,9 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
                 } else if (userCommand.get(chatId).equals(Command.CHOSE_SHOPS)) { // получили результат нажатия кнопки клавиатуры
                     if (isNumeric(msg.getText())) {
                         userNumbers.get(chatId).add(Integer.valueOf(msg.getText()));
-                    } else if (msg.getText().equals("Стереть последний") && userNumbers.get(chatId).size() > 0) {
+                    } else if (msg.getText().equals(",")) {
+                        break;
+                    } else if (msg.getText().equals("Стереть") && userNumbers.get(chatId).size() > 0) {
                         userNumbers.get(chatId).remove(userNumbers.get(chatId).size() - 1);
                     } else if (msg.getText().contains(",")) {
                         NonCommand nonComand = new NonCommand();
@@ -157,13 +151,12 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
                         } catch (TelegramApiException e) {
                             e.printStackTrace();
                         }
-
                     }
-
-                    //
                 } else if (userCommand.get(chatId).equals(Command.SHOW_ITEMS)) { // получили список номеров категорий (он запрашивается в команде showItems)
                     if (isNumeric(msg.getText())) {
                         userNumbers.get(chatId).add(Integer.valueOf(msg.getText()));
+                    } else if (msg.getText().equals(",")) {
+                        break;
                     } else if (msg.getText().contains(",")) {
                         NonCommand nonComand = new NonCommand();
                         if (!nonComand.checkValid(msg.getText())) {
@@ -182,7 +175,7 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
                                 e.printStackTrace();
                             }
                         }
-                    } else if (msg.getText().equals("Стереть последний") && userNumbers.get(chatId).size() > 0) {
+                    } else if (msg.getText().equals("Стереть") && userNumbers.get(chatId).size() > 0) {
                         userNumbers.get(chatId).remove(userNumbers.get(chatId).size() - 1);
                     } else if (msg.getText().equals("Далее")) {
                         showItemsCommand.setNumbers(userNumbers.get(chatId));
@@ -212,7 +205,6 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
                     }
                 }
         }
-
 //        String answer = nonCommand.nonCommandExecute(chatId, userName, msg.getText());
 //        setAnswer(chatId, userName, answer);
     }
@@ -226,19 +218,6 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
         }
         return true;
     }
-
-    /**
-     * Получение города по id чата. Если ранее для этого чата в ходе сеанса работы бота настройки не были установлены,
-     * вызывается команда выбора города
-     */
-   /* public City getUserCity(Long chatId) {
-        JDBCConnector jdbcConnector = new JDBCConnector();
-        City city = jdbcConnector.getUserCity(getUserSettings().get(chatId));
-        if (city == null) {
-            setAnswer(chatId, "Пожалуйста, выполните команду /city");
-        }
-        return city;
-    }*/
 
     /**
      * Формирование имени пользователя

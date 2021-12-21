@@ -21,7 +21,7 @@ import utils.Utils;
  * Команда "Найти товар"
  */
 public class FindItemCommand extends ServiceCommand {
-    private final String MESSAGE_FOR_SENDING_KEYBOARD_TO_RESEARCH = "Хотите выполнить повторный поиск?\n" +
+    private static final String MESSAGE_FOR_SENDING_KEYBOARD_TO_RESEARCH = "Хотите выполнить повторный поиск?\n" +
             "Найти товар - поиск акционных товаров по названию" +
             "Отобразить товары - поиск акционных товаров по категориям\n" +
             "/shops - вернуться к выбору магазинов";
