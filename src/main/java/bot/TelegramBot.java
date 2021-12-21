@@ -120,7 +120,6 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
                         userNumbers.get(chatId).remove(userNumbers.get(chatId).size() - 1);
                     } else if (msg.getText().contains(",")) {
                         NonCommand nonComand = new NonCommand();
-                        System.out.println("message" + msg.getText());
                         if (!nonComand.checkValid(msg.getText())) {
                             int[] array = nonComand.getNumbers(msg.getText());
                             for (int elem : array) {
@@ -167,7 +166,6 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
                         userNumbers.get(chatId).add(Integer.valueOf(msg.getText()));
                     } else if (msg.getText().contains(",")) {
                         NonCommand nonComand = new NonCommand();
-                        System.out.println("message" + msg.getText());
                         if (!nonComand.checkValid(msg.getText())) {
                             int[] array = nonComand.getNumbers(msg.getText());
                             for (int elem : array) {
