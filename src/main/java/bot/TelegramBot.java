@@ -20,7 +20,7 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
     private final String BOT_NAME;
     private final String BOT_TOKEN;
 
-    StartCommand startCommand= new StartCommand("start", "Старт");
+    StartCommand startCommand = new StartCommand("start", "Старт");
     ChooseCityCommand chooseCityCommand = new ChooseCityCommand("city", "Город");
     ChooseShopsCommand chooseShopsCommand = new ChooseShopsCommand("shops", "Выбрать магазины");
     FindItemCommand findItemCommand = new FindItemCommand("finditem", "Найти товар");
@@ -120,9 +120,15 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
                         userNumbers.get(chatId).remove(userNumbers.get(chatId).size() - 1);
                     } else if (msg.getText().contains(",")) {
                         NonCommand nonComand = new NonCommand();
-                        int[] array = nonComand.getNumbers(msg.getText());
-                        for (int elem: array) {
-                            userNumbers.get(chatId).add(elem);
+                        if (!nonComand.checkValid(msg.getText())) {
+                            int[] array = nonComand.getNumbers(msg.getText());
+                            for (int elem : array) {
+                                userNumbers.get(chatId).add(elem);
+                            }
+                        } else {
+                            SendMessage sendMessage = new SendMessage();
+                            sendMessage.setChatId(String.valueOf(chatId));
+                            sendMessage.setText("Пожалуйста, введите номера торговых сетей через запятую");
                         }
                     } else if (msg.getText().equals("Далее")) {
                         chooseShopsCommand.setNumbers(userNumbers.get(chatId));
@@ -154,16 +160,22 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
                         userNumbers.get(chatId).add(Integer.valueOf(msg.getText()));
                     } else if (msg.getText().contains(",")) {
                         NonCommand nonComand = new NonCommand();
-                        int[] array = nonComand.getNumbers(msg.getText());
-                        for (int elem: array) {
-                            userNumbers.get(chatId).add(elem);
+                        if (!nonComand.checkValid(msg.getText())) {
+                            int[] array = nonComand.getNumbers(msg.getText());
+                            for (int elem : array) {
+                                userNumbers.get(chatId).add(elem);
+                            }
+                        } else {
+                            SendMessage sendMessage = new SendMessage();
+                            sendMessage.setChatId(String.valueOf(chatId));
+                            sendMessage.setText("Пожалуйста, введите номера категорий товаров через запятую");
                         }
                     } else if (msg.getText().equals("Стереть последний") && userNumbers.get(chatId).size() > 0) {
                         userNumbers.get(chatId).remove(userNumbers.get(chatId).size() - 1);
                     } else if (msg.getText().equals("Далее")) {
                         showItemsCommand.setNumbers(userNumbers.get(chatId));
                         userNumbers.put(chatId, new ArrayList<>()); // передали числа команде и очищаем мапу для пользователя
-                        if (showItemsCommand.execute2(this, update.getMessage().getFrom(), update.getMessage().getChat(), null)){
+                        if (showItemsCommand.execute2(this, update.getMessage().getFrom(), update.getMessage().getChat(), null)) {
                             userCommand.put(chatId, null);
                         }
                     } else if (msg.getText().equals("Назад")) {
@@ -195,7 +207,7 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
 
     private boolean isNumeric(String s) {
         char[] chars = s.toCharArray();
-        for (char c: chars) {
+        for (char c : chars) {
             if (!Character.isDigit(c)) {
                 return false;
             }
@@ -218,6 +230,7 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
 
     /**
      * Формирование имени пользователя
+     *
      * @param msg сообщение
      */
     private String getUserName(Message msg) {
@@ -228,8 +241,9 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
 
     /**
      * Отправка ответа
+     *
      * @param chatId id чата
-     * @param text текст ответа
+     * @param text   текст ответа
      */
     private void setAnswer(Long chatId, String text) {
         SendMessage answer = new SendMessage();
