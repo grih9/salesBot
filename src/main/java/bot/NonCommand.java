@@ -16,7 +16,7 @@ public class NonCommand {
         text = text.replaceAll("\\t", "");
         text = text.replaceAll("\\s", "");
         //Pattern pattern = Pattern.compile("((,*[ ]*)*[0-9]+(,*[ ]*)*)+");
-        Pattern pattern = Pattern.compile(",*[0-9]+");
+        Pattern pattern = Pattern.compile("[,]*[0-9]+");
         System.out.println(pattern.matcher(text).pattern());
 
         Matcher m = pattern.matcher(text);
