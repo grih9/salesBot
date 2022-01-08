@@ -57,10 +57,8 @@ public class Parser {
                 case ("Prisma"):
                 case ("Лента"):
                 case ("Карусель"):
-                    items = findItemsByCathegoryEdadil(category, shop.getName(), city, driver);
-                    break;
                 case ("Перекрёсток"):
-                    items = findItemsByCathegoryPerekryostok(category, city, driver);
+                    items = findItemsByCathegoryEdadil(category, shop.getName(), city, driver);
                     break;
                 case ("Дикси"):
                     items = findItemsByCathegoryDiksi(category, driver);
@@ -111,11 +109,6 @@ public class Parser {
             driver.get(shop.getWebsite());
             switch (shop.getName()) {
                 case ("Перекрёсток"):
-                    pItems = findItemsByNamePerekryostok(itemName, city, driver);
-                    if (pItems != null && !pItems.isEmpty()) {
-                        items.addAll(pItems);
-                    }
-                    break;
                 case ("Магнит"):
                 case ("Ашан"):
                 case ("Spar (Eurospar)"):
@@ -155,6 +148,7 @@ public class Parser {
         map.put("О'КЕЙ", "okmarket-giper");
         map.put("Prisma", "prismamarket_giper");
         map.put("Лента", "lenta-giper");
+        map.put("Перекрёсток", "perekrestok");
 
         Document doc = null;
         try {
@@ -180,6 +174,7 @@ public class Parser {
         map.put("О'КЕЙ", "okmarket-giper");
         map.put("Prisma", "prismamarket_giper");
         map.put("Лента", "lenta-giper");
+        map.put("Перекрёсток", "perekrestok");
 
         driver.get(driver.getCurrentUrl() + "?q=" + itemName + "&sort=aprice&retailer=" + map.get(shopName));
         if (driver.findElements(By.className("p-not-found__big-header")).size() != 0) {
