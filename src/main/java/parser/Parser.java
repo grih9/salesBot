@@ -111,7 +111,10 @@ public class Parser {
             driver.get(shop.getWebsite());
             switch (shop.getName()) {
                 case ("Перекрёсток"):
-                    items.addAll(findItemsByNamePerekryostok(itemName, city, driver));
+                    pItems = findItemsByNamePerekryostok(itemName, city, driver);
+                    if (pItems != null && !pItems.isEmpty()) {
+                        items.addAll(pItems);
+                    }
                     break;
                 case ("Магнит"):
                 case ("Ашан"):
@@ -529,7 +532,7 @@ public class Parser {
             noItems = false;
         }
         if (noItems) {
-            return items;
+            return Collections.emptyList();
         }
         wait = new WebDriverWait(driver, 30);
         wait.until(visibilityOfElementLocated(By.className("product-card__image-wrapper")));
