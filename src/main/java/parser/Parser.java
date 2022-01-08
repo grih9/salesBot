@@ -111,6 +111,8 @@ public class Parser {
             driver.get(shop.getWebsite());
             switch (shop.getName()) {
                 case ("Перекрёсток"):
+                    items.addAll(findItemsByNamePerekryostok(itemName, city, driver));
+                    break;
                 case ("Магнит"):
                 case ("Ашан"):
                 case ("Spar (Eurospar)"):
@@ -519,28 +521,43 @@ public class Parser {
     public static List<Item> findItemsByNamePerekryostok(String itemName, City city, WebDriver driver) {
         List<Item> items = new ArrayList<>();
         driver.findElement(By.cssSelector("input[name='search']")).sendKeys(itemName, Keys.ENTER);
-        WebDriverWait wait = new WebDriverWait(driver, 10);
+        WebDriverWait wait = new WebDriverWait(driver, 5);
+        boolean noItems = true;
+        try {
+            wait.until(visibilityOfElementLocated(By.className("notify-image")));
+        } catch (Exception e) {
+            noItems = false;
+        }
+        if (noItems) {
+            return items;
+        }
+        wait = new WebDriverWait(driver, 30);
+        wait.until(visibilityOfElementLocated(By.className("product-card__image-wrapper")));
         wait.until(visibilityOfElementLocated(By.id("onlyDiscount")));
         try {
             driver.findElement(By.id("onlyDiscount")).sendKeys(Keys.SPACE);
-            wait.until(visibilityOfElementLocated(By.xpath("//*[@id=\"app\"]/div/main/div[1]/div/div/div[6]/div/div[1]/div/div")));
-            WebElement webElement = driver.findElement(By.xpath("//*[@id=\"app\"]/div/main/div[1]/div/div/div[6]/div/div[1]/div/div"));
-            List<WebElement> webElements = webElement.findElements(By.tagName("a"));
-            for (WebElement element : webElements) {
-                Item item = new Item();
-                element = element.findElement(By.xpath("./.."));
-                if (element.findElements(By.className("price-old")).isEmpty()) {
+            List<WebElement> webElements = driver.findElements(By.className("product-card__image-wrapper"));
+            for (int i = 0; i < webElements.size(); i++) {
+                webElements = driver.findElements(By.className("product-card__image-wrapper"));
+                if (i >= webElements.size()) {
+                    break;
+                }
+                WebElement element = webElements.get(i);
+                WebElement innerElement = element.findElement(By.xpath("./.."));
+                if (innerElement.findElements(By.className("price-old")).isEmpty()) {
                     continue;
                 }
-                item.setImageURL(element.findElement(By.className("product-card__image-wrapper")).findElement(By.tagName("img"))
+                Item item = new Item();
+                item.setImageURL(innerElement.findElement(By.className("product-card__image-wrapper")).findElement(By.tagName("img"))
                         .getAttribute("src"));
-                item.setName(element.findElement(By.className("product-card__title")).getText());
-                item.setPrice(element.findElement(By.className("price-old")).getText());
-                item.setSalePrice(element.findElement(By.className("price-new")).getText());
+                item.setName(innerElement.findElement(By.className("product-card__title")).getText());
+                item.setPrice(innerElement.findElement(By.className("price-old")).getText());
+                item.setSalePrice(innerElement.findElement(By.className("price-new")).getText());
                 item.setShopName("Перекрёсток");
                 items.add(item);
             }
         } catch (Exception e) {
+            e.printStackTrace();
             return items;
         }
         return items;
