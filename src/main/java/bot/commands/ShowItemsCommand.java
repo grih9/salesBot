@@ -22,7 +22,7 @@ import java.util.*;
  */
 public class ShowItemsCommand extends ServiceCommand {
     private static final String MESSAGE_FOR_SENDING_KEYBOARD_TO_RESEARCH = "Хотите выполнить повторный поиск?\n" +
-            "Найти товар - поиск акционных товаров по названию" +
+            "Найти товар - поиск акционных товаров по названию\n" +
             "Отобразить товары - поиск акционных товаров по категориям\n" +
             "/shops - вернуться к выбору магазинов";
     ArrayList<Integer> numbers = new ArrayList<>();
