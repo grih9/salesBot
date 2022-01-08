@@ -535,7 +535,7 @@ public class Parser {
             return Collections.emptyList();
         }
         wait = new WebDriverWait(driver, 30);
-        wait.until(visibilityOfElementLocated(By.className("product-card__image-wrapper")));
+        wait.until(visibilityOfElementLocated(By.className("catalog-content")));
         try {
 //            try {
 //                //wait.until(visibilityOfElementLocated(By.id("onlyDiscount")));
@@ -543,9 +543,9 @@ public class Parser {
 //            } catch (Exception e) {
 //                e.printStackTrace();
 //            }
-            List<WebElement> webElements = driver.findElements(By.className("product-card__image-wrapper"));
+            List<WebElement> webElements = driver.findElement(By.className("catalog-content")).findElements(By.tagName("a"));
             for (int i = 0; i < webElements.size(); i++) {
-                webElements = driver.findElements(By.className("product-card__image-wrapper"));
+                webElements = driver.findElement(By.className("catalog-content")).findElements(By.tagName("a"));
                 if (i >= webElements.size()) {
                     break;
                 }
