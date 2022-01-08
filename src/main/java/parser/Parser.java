@@ -533,9 +533,13 @@ public class Parser {
         }
         wait = new WebDriverWait(driver, 30);
         wait.until(visibilityOfElementLocated(By.className("product-card__image-wrapper")));
-        wait.until(visibilityOfElementLocated(By.id("onlyDiscount")));
         try {
-            driver.findElement(By.id("onlyDiscount")).sendKeys(Keys.SPACE);
+            try {
+                wait.until(visibilityOfElementLocated(By.id("onlyDiscount")));
+                driver.findElement(By.id("onlyDiscount")).sendKeys(Keys.SPACE);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             List<WebElement> webElements = driver.findElements(By.className("product-card__image-wrapper"));
             for (int i = 0; i < webElements.size(); i++) {
                 webElements = driver.findElements(By.className("product-card__image-wrapper"));
