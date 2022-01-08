@@ -538,7 +538,7 @@ public class Parser {
         wait.until(visibilityOfElementLocated(By.className("product-card__image-wrapper")));
         try {
             try {
-                wait.until(visibilityOfElementLocated(By.id("onlyDiscount")));
+                //wait.until(visibilityOfElementLocated(By.id("onlyDiscount")));
                 driver.findElement(By.id("onlyDiscount")).sendKeys(Keys.SPACE);
             } catch (Exception e) {
                 e.printStackTrace();
