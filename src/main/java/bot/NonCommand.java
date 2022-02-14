@@ -1,11 +1,7 @@
 package bot;
 
-import javax.ws.rs.core.Link;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.IntStream;
 
 /**
  * Обработка сообщения, не являющегося командой (т.е. обычного текста не начинающегося с "/")

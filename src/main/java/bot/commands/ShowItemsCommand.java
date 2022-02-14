@@ -77,7 +77,7 @@ public class ShowItemsCommand extends ServiceCommand {
             boolean hasItems = false;
             for (int i : numbers) {
                 System.out.println("findElem " + i);
-                if (i > categories.size()) {
+                if (i > categories.size() || i < 1) {
                     super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName,
                             "Номера категории " + i + " нет в списке");
                     return false;
