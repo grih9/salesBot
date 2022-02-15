@@ -97,8 +97,11 @@ public class ShowItemsCommand extends ServiceCommand {
                 }
                 hasItems = true;
                 items.sort(Comparator.naturalOrder());
+                int ii = 0;
                 for (Item item : items) {
+                    System.out.println("items " + ii + " " + item);
                     super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName, item.toString());
+                    ii++;
                 }
             }
             if (!hasItems) {
