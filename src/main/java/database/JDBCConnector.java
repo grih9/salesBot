@@ -13,14 +13,29 @@ import java.util.List;
 import java.util.Objects;
 
 public class JDBCConnector {
-	private Connection connection;
+	private static Connection connection = null;
 
-	public void createTable() {
+	static
+	{
+		String url = "jdbc:postgresql://ec2-63-32-12-208.eu-west-1.compute.amazonaws.com:5432/d7ova8n0gd539v";
+		String user = "ytfrrtlrtiiyoc";
+		String password = "29237129f83a4c97eaa600ffccbc164a91ebbe370468b3984d5d436ba8481c04";
+
 		try {
-			Statement stmt = this.connection.createStatement();
+			Class.forName("org.postgresql.Driver");
+			connection = DriverManager.getConnection(url, user, password);
+		}
+		catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void createTable() {
+		try {
+			Statement stmt = connection.createStatement();
 
 			String CreateSql = "DROP SCHEMA public CASCADE;" +
-					"CREATE SCHEMA public;" +
+					"CREATE SCHEMA public static;" +
 					"Create Table cities(id serial primary key, name varchar, region varchar); " +
 					"Create Table shops(id serial primary key, name varchar, website varchar);" +
 					"Create Table users(id serial primary key, name varchar UNIQUE, cityId int REFERENCES cities(id)); " +
@@ -38,35 +53,12 @@ public class JDBCConnector {
 		}
 	}
 
-	public JDBCConnector() {
-		try {
-			Class.forName("org.postgresql.Driver");
-
-			String url = "jdbc:postgresql://ec2-63-32-12-208.eu-west-1.compute.amazonaws.com:5432/d7ova8n0gd539v";
-			String user = "ytfrrtlrtiiyoc";
-			String password = "29237129f83a4c97eaa600ffccbc164a91ebbe370468b3984d5d436ba8481c04";
-
-			this.connection = DriverManager.getConnection(url, user, password);
-		} catch (SQLException | ClassNotFoundException e) {
-			e.printStackTrace();
-		}
-	}
-
 	//Добавление пользователя без города
-	public Boolean addUser(String username) {
+	public static Boolean addUser(String username) {
 		try {
-			/*String sql = "select id from users where name = ?";
-			PreparedStatement ps = this.connection.prepareStatement(sql);
-
-			ps.setString(1, username);
-			ResultSet rs = ps.executeQuery();
-			if (rs.next()) {
-				return false; // Пользователь c таким именем уже был добавлен
-			}*/
-
 			String sqlUser = "insert into users(name) values(?);";
 
-			PreparedStatement psUser = this.connection.prepareStatement(sqlUser);
+			PreparedStatement psUser = connection.prepareStatement(sqlUser);
 
 			psUser.setString(1, username);
 
@@ -85,11 +77,11 @@ public class JDBCConnector {
 	}
 
 	//Добавление города для пользователя по имени
-	public Boolean addCity(String username, String cityName) {
+	public static Boolean addCity(String username, String cityName) {
 
 		try {
 			String sql = "select id from cities where name = ?;";
-			PreparedStatement ps = this.connection.prepareStatement(sql);
+			PreparedStatement ps = connection.prepareStatement(sql);
 
 			ps.setString(1, cityName);
 			ResultSet rs = ps.executeQuery();
@@ -103,7 +95,7 @@ public class JDBCConnector {
 
 			String sqlUser = "UPDATE users SET cityId = ? WHERE name = ?;";
 
-			PreparedStatement psUser = this.connection.prepareStatement(sqlUser);
+			PreparedStatement psUser = connection.prepareStatement(sqlUser);
 
 			psUser.setInt(1, cityId);
 			psUser.setString(2, username);
@@ -118,7 +110,7 @@ public class JDBCConnector {
 	}
 
 	//Добавление списка городов
-	public Boolean addCities() {
+	public static Boolean addCities() {
 		String sqlInsert = "insert into cities(name, region) values(?, ?);";
 		String sqlSelect = "select id from cities where name = ? AND region = ?;";
 		String fileName = "city_1.csv";
@@ -128,8 +120,8 @@ public class JDBCConnector {
 			String name;
 			String region;
 
-			PreparedStatement ps = this.connection.prepareStatement(sqlInsert);
-			PreparedStatement psSelect = this.connection.prepareStatement(sqlSelect);
+			PreparedStatement ps = connection.prepareStatement(sqlInsert);
+			PreparedStatement psSelect = connection.prepareStatement(sqlSelect);
 			reader.readNext();
 			for (int i = 0; i < 10; i++) {
 				lineInArray = reader.readNext();
@@ -170,19 +162,19 @@ public class JDBCConnector {
 	}
 
 	//Добавление списка категорий
-	public Boolean addCategories() {
+	public static Boolean addCategories() {
 		String sqlInsert = "insert into categories(name) values(?)";
 		String sqlTruncate = "TRUNCATE TABLE categories";
 		String fileName = "categories.csv";
 
 		try (CSVReader reader = new CSVReader(new FileReader(fileName))) {
-			Statement stmt = this.connection.createStatement();
+			Statement stmt = connection.createStatement();
 
 			stmt.executeUpdate(sqlTruncate);
 			stmt.close();
 
 			String[] lineInArray;
-			PreparedStatement ps = this.connection.prepareStatement(sqlInsert);
+			PreparedStatement ps = connection.prepareStatement(sqlInsert);
 			reader.readNext();
 
 			while ((lineInArray = reader.readNext()) != null) {
@@ -198,19 +190,19 @@ public class JDBCConnector {
 		return true; // Список городов успешно изменен;
 	}
 
-	public Boolean addShops() {
+	public static Boolean addShops() {
 		String sqlInsert = "insert into shops(name, website) values(?, ?)";
 		String sqlTruncate = "TRUNCATE TABLE shops CASCADE";
 		String fileName = "shops.csv";
 
 		try (CSVReader reader = new CSVReader(new FileReader(fileName))) {
-			Statement stmt = this.connection.createStatement();
+			Statement stmt = connection.createStatement();
 
 			stmt.executeUpdate(sqlTruncate);
 			stmt.close();
 
 			String[] lineInArray;
-			PreparedStatement ps = this.connection.prepareStatement(sqlInsert);
+			PreparedStatement ps = connection.prepareStatement(sqlInsert);
 			reader.readNext();
 
 			while ((lineInArray = reader.readNext()) != null) {
@@ -227,23 +219,23 @@ public class JDBCConnector {
 		return true; // Список магазинов успешно обновлен
 	}
 
-	public Boolean addShopsForSities() {
+	public static Boolean addShopsForSities() {
 		String sqlInsert = "insert into cities_shops(cityId, shopId) values(?, ?);";
 		String sqlTruncate = "TRUNCATE TABLE cities_shops;";
 		String sqlShop = "select id from shops;";
 		String sqlCity = "select id from cities limit 10;";
 
 		try {
-			Statement stmt = this.connection.createStatement();
+			Statement stmt = connection.createStatement();
 
 			stmt.executeUpdate(sqlTruncate);
 			stmt.close();
 
-			Statement stmtCity = this.connection.createStatement();
+			Statement stmtCity = connection.createStatement();
 			ResultSet rs = stmtCity.executeQuery(sqlCity);
-			PreparedStatement ps = this.connection.prepareStatement(sqlInsert);
+			PreparedStatement ps = connection.prepareStatement(sqlInsert);
 			while (rs.next()) {
-				Statement shops = this.connection.createStatement();
+				Statement shops = connection.createStatement();
 				ResultSet shopsRs = shops.executeQuery(sqlShop);
 				while (shopsRs.next()) {
 					ps.setInt(1, rs.getInt("id"));
@@ -263,18 +255,18 @@ public class JDBCConnector {
 		return true; // Список магазинов успешно обновлен
 	}
 
-	public Boolean setSelectedShops(String username, List<Shop> shops) {
+	public static Boolean setSelectedShops(String username, List<Shop> shops) {
 		String sqlInsert = "insert into users_shops(userId, shopId) values((select id from users where name = ?), " +
 				"(select id from shops where name = ? and website =?));";
 		String sqlTruncate = "DELETE FROM users_shops WHERE userId = (select id from users where name = ?)";
 
 		try {
-			PreparedStatement tr = this.connection.prepareStatement(sqlTruncate);
+			PreparedStatement tr = connection.prepareStatement(sqlTruncate);
 			tr.setString(1, username);
 			tr.executeUpdate();
 			tr.close();
 
-			PreparedStatement ps = this.connection.prepareStatement(sqlInsert);
+			PreparedStatement ps = connection.prepareStatement(sqlInsert);
 
 			for (Shop shop : shops) {
 				ps.setString(1, username);
@@ -291,12 +283,12 @@ public class JDBCConnector {
 		return true; // Список выбранных магазинов изменен
 	}
 
-	public Boolean addItems(String categoty, Shop shop, List<Item> items) {
+	public static Boolean addItems(String categoty, Shop shop, List<Item> items) {
 		String sqlInsert = "insert into items(name, imageurl, price, salePrice, saleBeginDate, saleEndDate, cityId, categoryId) " +
 				"values(?, ?, ?, ?, ?, ?, (select id from shops where name = ? and website =?), (select id from categories where name = ?));";
 
 		try {
-			PreparedStatement ps = this.connection.prepareStatement(sqlInsert);
+			PreparedStatement ps = connection.prepareStatement(sqlInsert);
 
 			for (Item item : items) {
 				ps.setString(1, item.getName());
@@ -319,14 +311,14 @@ public class JDBCConnector {
 		return true;
 	}
 
-	public List<Item> getItemsByCategory(String categoty, Shop shop) {
+	public static List<Item> getItemsByCategory(String categoty, Shop shop) {
 		List<Item> items= new ArrayList<>();
 		try {
 			String sql = "select items.name, imageURL, price, salePrice, saleBeginDate, saleEndDate, shops.name from items join categories " +
 					"on items.categoryId = categories.id join shops " +
 					"on items.cityId = shops.id where categories.name =? AND shops.name =? AND shops.website =? ";
 
-			PreparedStatement ps = this.connection.prepareStatement(sql);
+			PreparedStatement ps = connection.prepareStatement(sql);
 			ps.setString(1, categoty);
 			ps.setString(2, shop.getName());
 			ps.setString(3, shop.getWebsite());
@@ -360,13 +352,13 @@ public class JDBCConnector {
 		return items;
 	}
 
-	public List<Item> getItemsByName(String itemName, Shop shop) {
+	public static List<Item> getItemsByName(String itemName, Shop shop) {
 		List<Item> items= new ArrayList<>();
 		try {
 			String sql = "select items.name, imageURL, price, salePrice, saleBeginDate, saleEndDate, shops.name from items join shops " +
 					"on items.cityId = shops.id where shops.name = ? AND shops.website = ? AND LOWER(items.name) LIKE LOWER(?);";
 
-			PreparedStatement ps = this.connection.prepareStatement(sql);
+			PreparedStatement ps = connection.prepareStatement(sql);
 			ps.setString(1, shop.getName());
 			ps.setString(2, shop.getWebsite());
 			ps.setString(3, "%" + itemName.toLowerCase() + "%");
@@ -401,13 +393,13 @@ public class JDBCConnector {
 		return items;
 	}
 
-	public List<String> getCategories() {
+	public static List<String> getCategories() {
 		List<String> result = new LinkedList<>();
 
 		try {
 			String sql = "select name from categories";
 
-			Statement stmt = this.connection.createStatement();
+			Statement stmt = connection.createStatement();
 			ResultSet rs = stmt.executeQuery(sql);
 
 			while (rs.next()) {
@@ -424,14 +416,14 @@ public class JDBCConnector {
 	}
 
 
-	public List<Shop> getSelectedShops(String username) {
+	public static List<Shop> getSelectedShops(String username) {
 		List<Shop> result = new LinkedList<>();
 		int[] a = {12};
 		try {
 			String sql = "select shops.name, website from shops join users_shops on shops.id = users_shops.shopId join" +
 					" users on users.id = users_shops.userId where users.name = ?";
 
-			PreparedStatement ps = this.connection.prepareStatement(sql);
+			PreparedStatement ps = connection.prepareStatement(sql);
 			ps.setString(1, username);
 			ResultSet rs = ps.executeQuery();
 
@@ -447,17 +439,17 @@ public class JDBCConnector {
 		return result;
 	}
 
-	public List<Shop> getShops(String username) {
+	public static List<Shop> getShops(String username) {
 		List<Shop> result = new LinkedList<>();
 
 		try {
 			/*String sql = "select shops.name, website from shops join cities_shops on shops.id = cities_shops.shopId join" +
 					"cities on cities_shops.cityId = cities.id join users on users.cityId = cities.id where users.name like ?";*/
 			String sql = "select shops.name, website from shops;";
-			/*PreparedStatement ps = this.connection.prepareStatement(sql);
+			/*PreparedStatement ps = connection.prepareStatement(sql);
 			//ps.setString(1, username);
 			ResultSet rs = ps.executeQuery(sql);*/
-			Statement stmt = this.connection.createStatement();
+			Statement stmt = connection.createStatement();
 			ResultSet rs = stmt.executeQuery(sql);
 
 			while (rs.next()) {
@@ -472,13 +464,13 @@ public class JDBCConnector {
 		return result;
 	}
 
-	public City getUserCity(String username) {
+	public static City getUserCity(String username) {
 		City result = null;
 		try {
 			String sql = "select cities.name, region from cities join users " +
 					"on users.cityId = cities.id where users.name = ?";
 
-			PreparedStatement ps = this.connection.prepareStatement(sql);
+			PreparedStatement ps = connection.prepareStatement(sql);
 			ps.setString(1, username);
 			ResultSet rs = ps.executeQuery();
 			rs.next();
