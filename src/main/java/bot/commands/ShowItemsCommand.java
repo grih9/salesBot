@@ -88,6 +88,8 @@ public class ShowItemsCommand extends ServiceCommand {
                 System.out.println("name " + shop.getName());
                 System.out.println("website " + shop.getWebsite());
                 List<Item> items = Parser.findItemsByCategory(categories.get(i-1), city, shop);
+                System.out.println("items after parser ");
+                System.out.println(items);
                 if (items.isEmpty()) {
                     super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName,
                             "Акционных товаров в данной категории нет");
