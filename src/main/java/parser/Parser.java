@@ -79,6 +79,7 @@ public class Parser {
             }
         } finally {
             System.out.println("finally");
+
             return items.isEmpty() ? JDBCConnector.getItemsByCategory(category, shop) : items;
         }
     }
