@@ -119,7 +119,7 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
                         } else {
                             SendMessage sendMessage = new SendMessage();
                             sendMessage.setChatId(String.valueOf(chatId));
-                            sendMessage.setText("Пожалуйста, введите номера торговых сетей через запятую," +
+                            sendMessage.setText("Пожалуйста, введите номера торговых сетей через запятую" +
                                     " или воспользуйтесь клавиатурой для ввода чисел");
                             try {
                                 execute(sendMessage);
