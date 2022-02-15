@@ -27,9 +27,8 @@ public class ChooseShopsCommand extends ServiceCommand {
     @Override
     public void execute(AbsSender absSender, User user, Chat chat, String[] strings) {
         String userName = Utils.getUserName(user);
-        JDBCConnector jdbcConnector = new JDBCConnector();
 
-        List<Shop> shops = jdbcConnector.getShops(userName);
+        List<Shop> shops = JDBCConnector.getShops(userName);
         StringBuilder msg = new StringBuilder("Выберите одну или более торговую сеть\n");
         int iter = 1;
         for (Shop shop : shops) {
@@ -51,8 +50,7 @@ public class ChooseShopsCommand extends ServiceCommand {
 
     public Boolean execute2(AbsSender absSender, User user, Chat chat, String[] strings) {
         String userName = Utils.getUserName(user);
-        JDBCConnector jdbcConnector = new JDBCConnector();
-        List<Shop> shops = jdbcConnector.getShops(userName);
+        List<Shop> shops = JDBCConnector.getShops(userName);
         List<Shop> selectedShops = new ArrayList<>();
 
         if (numbers.size() == 0) {
@@ -75,7 +73,7 @@ public class ChooseShopsCommand extends ServiceCommand {
             selectedShops.add(shops.get(elem - 1));
         }
 
-        jdbcConnector.setSelectedShops(userName, selectedShops);
+        JDBCConnector.setSelectedShops(userName, selectedShops);
 
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(String.valueOf(chat.getId()));

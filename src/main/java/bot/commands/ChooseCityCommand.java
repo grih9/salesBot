@@ -31,8 +31,7 @@ public class ChooseCityCommand extends ServiceCommand {
 
     public boolean executePart2(AbsSender absSender, User user, Chat chat, String[] strings) {
         String userName = Utils.getUserName(user);
-        JDBCConnector jdbcConnector = new JDBCConnector();
-        if (!jdbcConnector.addCity(userName,message.trim())) {
+        if (!JDBCConnector.addCity(userName,message.trim())) {
             super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName,
                     "Город не найден, пожалуйста, повторите ввод");
             return false;

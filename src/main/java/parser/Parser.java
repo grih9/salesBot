@@ -14,6 +14,7 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
 import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfElementLocated;
 
 import bot.Item;
@@ -62,22 +63,24 @@ public class Parser {
             driver.close();
             driver.quit();
         } catch (Exception e) {
-            if (driver != null) {
-                driver.close();
-                driver.quit();
+            try {
+                if (driver != null) {
+                    driver.close();
+                    driver.quit();
+                }
+                System.out.println("exception1");
+                e.printStackTrace();
+                return JDBCConnector.getItemsByCategory(category, shop);
+            } catch (Exception ee) {
+                System.out.println("exception2");
+                ee.printStackTrace();
             }
-            e.printStackTrace();
-            JDBCConnector jdbcConnector = new JDBCConnector();
-            return jdbcConnector.getItemsByCategory(category, shop);
         }
-        JDBCConnector jdbcConnector = new JDBCConnector();
-        if(items.isEmpty()) {
+        if (items.isEmpty()) {
             System.out.println("isEmpty()");
             System.out.println(items.isEmpty());
-        } else {
-            System.out.println(items.isEmpty());
         }
-        return items.isEmpty() ? jdbcConnector.getItemsByCategory(category, shop) : items;
+        return items.isEmpty() ? JDBCConnector.getItemsByCategory(category, shop) : items;
     }
 
     public static List<Item> findItemsByName(String itemName, City city, Shop shop) {
@@ -121,19 +124,23 @@ public class Parser {
             driver.close();
             driver.quit();
         } catch (Exception e) {
-            if (driver != null) {
-                driver.close();
-                driver.quit();
+            try {
+                if (driver != null) {
+                    driver.close();
+                    driver.quit();
+                }
+                System.out.println("exception1");
+                e.printStackTrace();
+                return JDBCConnector.getItemsByName(itemName, shop);
+            } catch (Exception ee) {
+                System.out.println("exception2");
+                ee.printStackTrace();
             }
-            e.printStackTrace();
-            JDBCConnector jdbcConnector = new JDBCConnector();
-            return jdbcConnector.getItemsByName(itemName, shop);
         }
-        JDBCConnector jdbcConnector = new JDBCConnector();
-        return items.isEmpty() ? jdbcConnector.getItemsByName(itemName, shop) : items;
+        return items.isEmpty() ? JDBCConnector.getItemsByName(itemName, shop) : items;
     }
 
-    public static List<Item> findItemsByNameEdadilJsoup(String itemName, String shopName, City city, String  url) {
+    public static List<Item> findItemsByNameEdadilJsoup(String itemName, String shopName, City city, String url) {
         List<Item> items = new ArrayList<>();
 
         Map<String, String> map = new HashMap<>();

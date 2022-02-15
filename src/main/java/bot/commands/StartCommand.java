@@ -25,8 +25,7 @@ public class StartCommand extends ServiceCommand {
     public void execute(AbsSender absSender, User user, Chat chat, String[] strings) {
         String userName = Utils.getUserName(user);
 
-        JDBCConnector jdbcConnector = new JDBCConnector();
-        jdbcConnector.addUser(userName);
+        JDBCConnector.addUser(userName);
 
         String botInfo = "Давайте начнём!\n" +
                 "С помощью бота Вы можете искать акционные товары\n\n" +

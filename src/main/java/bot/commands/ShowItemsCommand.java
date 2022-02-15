@@ -33,8 +33,8 @@ public class ShowItemsCommand extends ServiceCommand {
 
     @Override
     public void execute(AbsSender absSender, User user, Chat chat, String[] strings) {
-        JDBCConnector jdbcConnector = new JDBCConnector();
-        List<String> categories = jdbcConnector.getCategories();
+
+        List<String> categories = JDBCConnector.getCategories();
 
         StringBuilder msg = new StringBuilder("Введите категории товаров\n");
         int iter = 1;
@@ -57,10 +57,10 @@ public class ShowItemsCommand extends ServiceCommand {
 
     public Boolean execute2(AbsSender absSender, User user, Chat chat, String[] strings) {
         String userName = Utils.getUserName(user);
-        JDBCConnector jdbcConnector = new JDBCConnector();
-        List<String> categories = jdbcConnector.getCategories();
-        List<Shop> selectedShops = jdbcConnector.getSelectedShops(userName);
-        City city = jdbcConnector.getUserCity(userName);
+
+        List<String> categories = JDBCConnector.getCategories();
+        List<Shop> selectedShops = JDBCConnector.getSelectedShops(userName);
+        City city = JDBCConnector.getUserCity(userName);
 
         if (numbers.size() == 0) {
             super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName,

@@ -41,8 +41,7 @@ public class FindItemCommand extends ServiceCommand {
     public void executePart2(AbsSender absSender, User user, Chat chat, String[] strings) {
         String userName = Utils.getUserName(user);
 
-        JDBCConnector jdbcConnector = new JDBCConnector();
-        List<Shop> selectedShops = jdbcConnector.getSelectedShops(Utils.getUserName(user));
+        List<Shop> selectedShops = JDBCConnector.getSelectedShops(Utils.getUserName(user));
 
         if (selectedShops == null || selectedShops.isEmpty()) {
             super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName,
@@ -55,7 +54,7 @@ public class FindItemCommand extends ServiceCommand {
         boolean hasItems = false;
         super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName, "Выполняется поиск");
         for (Shop shop: selectedShops) {
-            items = Parser.findItemsByName(message.trim(), jdbcConnector.getUserCity(Utils.getUserName(user)), shop);
+            items = Parser.findItemsByName(message.trim(), JDBCConnector.getUserCity(Utils.getUserName(user)), shop);
             if (items == null || items.isEmpty()) {
                 continue;
             }
