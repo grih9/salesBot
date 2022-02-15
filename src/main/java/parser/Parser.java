@@ -70,17 +70,17 @@ public class Parser {
                 }
                 System.out.println("exception1");
                 e.printStackTrace();
-                return JDBCConnector.getItemsByCategory(category, shop);
+                items = JDBCConnector.getItemsByCategory(category, shop);
+                System.out.println("after jdbc");
+                return items;
             } catch (Exception ee) {
                 System.out.println("exception2");
                 ee.printStackTrace();
             }
+        } finally {
+            System.out.println("finally");
+            return items.isEmpty() ? JDBCConnector.getItemsByCategory(category, shop) : items;
         }
-        if (items.isEmpty()) {
-            System.out.println("isEmpty()");
-            System.out.println(items.isEmpty());
-        }
-        return items.isEmpty() ? JDBCConnector.getItemsByCategory(category, shop) : items;
     }
 
     public static List<Item> findItemsByName(String itemName, City city, Shop shop) {
@@ -131,13 +131,17 @@ public class Parser {
                 }
                 System.out.println("exception1");
                 e.printStackTrace();
-                return JDBCConnector.getItemsByName(itemName, shop);
+                items = JDBCConnector.getItemsByName(itemName, shop);
+                System.out.println("after jdbc");
+                return items;
             } catch (Exception ee) {
                 System.out.println("exception2");
                 ee.printStackTrace();
             }
+        } finally {
+            System.out.println("finally");
+            return items.isEmpty() ? JDBCConnector.getItemsByName(itemName, shop) : items;
         }
-        return items.isEmpty() ? JDBCConnector.getItemsByName(itemName, shop) : items;
     }
 
     public static List<Item> findItemsByNameEdadilJsoup(String itemName, String shopName, City city, String url) {
