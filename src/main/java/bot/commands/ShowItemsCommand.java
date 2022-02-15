@@ -96,13 +96,17 @@ public class ShowItemsCommand extends ServiceCommand {
                     continue;
                 }
                 hasItems = true;
+                System.out.println("items before sort" + items.size());
                 items.sort(Comparator.naturalOrder());
+                System.out.println("items after sort" + items.size());
                 int ii = 0;
+                System.out.println("items before loop" + items.size());
                 for (Item item : items) {
                     System.out.println("items " + ii + " " + item);
                     super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName, item.toString());
                     ii++;
                 }
+                System.out.println("items after loop" + items.size());
             }
             if (!hasItems) {
                 super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName,
