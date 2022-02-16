@@ -213,8 +213,4 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
         }
         return true;
     }
-
-    public static Map<Long, Command> getUserCommand() {
-        return userCommand;
-    }
 }
