@@ -50,6 +50,12 @@ public class FindItemCommand extends ServiceCommand {
             return false;
         }
 
+        if (message == null || message.isEmpty()) {
+            super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName,
+                    "Введите название товара");
+            return false;
+        }
+
         List<Item> items;
         boolean hasItems = false;
         super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName, "Выполняется поиск");

@@ -62,7 +62,7 @@ public class ShowItemsCommand extends ServiceCommand {
         List<Shop> selectedShops = JDBCConnector.getSelectedShops(userName);
         City city = JDBCConnector.getUserCity(userName);
 
-        if (numbers.size() == 0) {
+        if (numbers == null || numbers.size() == 0) {
             super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName,
                     "Выберите одну или более категорию");
             return false;

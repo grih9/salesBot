@@ -53,7 +53,7 @@ public class ChooseShopsCommand extends ServiceCommand {
         List<Shop> shops = JDBCConnector.getShops(userName);
         List<Shop> selectedShops = new ArrayList<>();
 
-        if (numbers.size() == 0) {
+        if (numbers == null || numbers.size() == 0) {
             super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName,
                     "Выберите одну или более торговую сеть");
             return false;
