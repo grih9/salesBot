@@ -25,7 +25,7 @@ public class FindItemCommand extends ServiceCommand {
             "Найти товар - поиск акционных товаров по названию\n" +
             "Отобразить товары - поиск акционных товаров по категориям\n" +
             "/shops - вернуться к выбору магазинов";
-    private String message = null;
+    String message = null;
 
     public FindItemCommand(String identifier, String description) {
         super(identifier, description);
@@ -38,7 +38,7 @@ public class FindItemCommand extends ServiceCommand {
         super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName, "Введите название товара");
     }
 
-    public void executePart2(AbsSender absSender, User user, Chat chat, String[] strings) {
+    public Boolean executePart2(AbsSender absSender, User user, Chat chat, String[] strings) {
         String userName = Utils.getUserName(user);
 
         List<Shop> selectedShops = JDBCConnector.getSelectedShops(Utils.getUserName(user));
@@ -47,7 +47,7 @@ public class FindItemCommand extends ServiceCommand {
             super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName,
                     "Выберите одну или более торговую сеть");
             showKeyboard(absSender, chat, "Выберите интересующие магазины", 1);
-            return;
+            return false;
         }
 
         List<Item> items;
@@ -71,10 +71,11 @@ public class FindItemCommand extends ServiceCommand {
             super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName,
                     "Такого товара нет в каталогах акций выбранных магазинов");
             showKeyboard(absSender, chat, MESSAGE_FOR_SENDING_KEYBOARD_TO_RESEARCH, 2);
-            return;
+            return false;
         }
 
         showKeyboard(absSender, chat, MESSAGE_FOR_SENDING_KEYBOARD_TO_RESEARCH, 2);
+        return true;
     }
 
     private void showKeyboard(AbsSender absSender, Chat chat, String text, int buttonsCount) {

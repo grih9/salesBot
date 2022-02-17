@@ -90,19 +90,19 @@ public class ChooseShopsCommand extends ServiceCommand {
         }
         return true;
     }
-
-    public static ArrayList<Integer> justUniques(ArrayList<Integer> list) {
-        Collections.sort(list);
-        ArrayList<Integer> res = new ArrayList<>();
-
-        res.add(list.get(0));
-        for (int i = 1; i < list.size(); i++) {
-            if (!Objects.equals(list.get(i), list.get(i - 1))) {
-                res.add(list.get(i));
-            }
-        }
-        return res;
-    }
+//
+//    public static ArrayList<Integer> justUniques(ArrayList<Integer> list) {
+//        Collections.sort(list);
+//        ArrayList<Integer> res = new ArrayList<>();
+//
+//        res.add(list.get(0));
+//        for (int i = 1; i < list.size(); i++) {
+//            if (!Objects.equals(list.get(i), list.get(i - 1))) {
+//                res.add(list.get(i));
+//            }
+//        }
+//        return res;
+//    }
 
     public void setNumbers(ArrayList<Integer> numbers) {
         this.numbers = numbers;
