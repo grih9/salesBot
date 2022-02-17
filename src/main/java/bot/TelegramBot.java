@@ -204,7 +204,7 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
         }
     }
 
-    private boolean isNumeric(String s) {
+    public boolean isNumeric(String s) {
         char[] chars = s.toCharArray();
         for (char c : chars) {
             if (!Character.isDigit(c)) {
