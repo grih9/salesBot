@@ -134,6 +134,8 @@ public class ItemTest {
     @Test
     public void testToStringWithNullableFields() {
         setItem();
+        Assert.assertEquals(item.toString(), itemString);
+
         item.setWeight(0);
         itemString = itemString.replace("Вес: " + WEIGHT + "\n", "");
         Assert.assertEquals(item.toString(), itemString);
@@ -149,6 +151,21 @@ public class ItemTest {
         item.setSaleEndDate(null);
         itemString = itemString.replace("Окончание акции: " + SALE_END_DATE + "\n", "");
         Assert.assertEquals(item.toString(), itemString);
+
+        item.setName(null);
+        Assert.assertNotEquals(item.toString(), itemString.replace("Название: " + NAME + "\n", ""));
+
+        item.setName(NAME);
+        item.setSalePrice(null);
+        Assert.assertNotEquals(item.toString(), itemString.replace("Цена со скидкой: " + SALE_PRICE + "\n", ""));
+
+        item.setSalePrice(SALE_PRICE);
+        item.setShopName(null);
+        Assert.assertNotEquals(item.toString(), itemString.replace("Сеть: " + SHOP_NAME + "\n", ""));
+
+        item.setShopName(SHOP_NAME);
+        item.setImageURL(null);
+        Assert.assertNotEquals(item.toString(), itemString.replace(IMAGE_URL, ""));
     }
 
     @Test
