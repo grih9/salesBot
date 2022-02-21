@@ -1,7 +1,7 @@
 package bot;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class NonCommandTest {
     private final String testStringWithoutSpaces = "1,2,30";
@@ -24,35 +24,35 @@ public class NonCommandTest {
 
     @Test
     public void checkValid() {
-        Assert.assertTrue(nonCommand.checkValid(testStringWithoutSpaces));
-        Assert.assertTrue(nonCommand.checkValid(testStringWithSpaces));
-        Assert.assertTrue(nonCommand.checkValid(testStringWithDoubledCommasWithSpaces));
-        Assert.assertTrue(nonCommand.checkValid(testStringWithDoubledCommasWithoutSpaces));
-        Assert.assertTrue(nonCommand.checkValid(testStringWithDoubledCommasInBeginningWithSpace));
-        Assert.assertTrue(nonCommand.checkValid(testStringWithDoubledCommasWithSpace));
+        Assertions.assertTrue(nonCommand.checkValid(testStringWithoutSpaces));
+        Assertions.assertTrue(nonCommand.checkValid(testStringWithSpaces));
+        Assertions.assertTrue(nonCommand.checkValid(testStringWithDoubledCommasWithSpaces));
+        Assertions.assertTrue(nonCommand.checkValid(testStringWithDoubledCommasWithoutSpaces));
+        Assertions.assertTrue(nonCommand.checkValid(testStringWithDoubledCommasInBeginningWithSpace));
+        Assertions.assertTrue(nonCommand.checkValid(testStringWithDoubledCommasWithSpace));
 
-        Assert.assertTrue(nonCommand.checkValid(testStringWithDigitOnly));
-        Assert.assertTrue(nonCommand.checkValid(testStringWithDuplicatedDigits));
-        Assert.assertTrue(nonCommand.checkValid(testStringWithZero));
-        Assert.assertFalse(nonCommand.checkValid(testStringWithNegativeNumber));
-        Assert.assertFalse(nonCommand.checkValid(testStringWithDotOnly));
-        Assert.assertFalse(nonCommand.checkValid(testStringWithCommaOnly));
+        Assertions.assertTrue(nonCommand.checkValid(testStringWithDigitOnly));
+        Assertions.assertTrue(nonCommand.checkValid(testStringWithDuplicatedDigits));
+        Assertions.assertTrue(nonCommand.checkValid(testStringWithZero));
+        Assertions.assertFalse(nonCommand.checkValid(testStringWithNegativeNumber));
+        Assertions.assertFalse(nonCommand.checkValid(testStringWithDotOnly));
+        Assertions.assertFalse(nonCommand.checkValid(testStringWithCommaOnly));
     }
 
     @Test
     public void getNumbers() {
-        Assert.assertTrue(checkArraysAreEqual(NUMBERS, nonCommand.getNumbers(testStringWithoutSpaces)));
-        Assert.assertTrue(checkArraysAreEqual(NUMBERS, nonCommand.getNumbers(testStringWithSpaces)));
-        Assert.assertTrue(checkArraysAreEqual(NUMBERS, nonCommand.getNumbers(testStringWithDoubledCommasWithSpaces)));
-        Assert.assertTrue(checkArraysAreEqual(NUMBERS, nonCommand.getNumbers(testStringWithDoubledCommasWithoutSpaces)));
-        Assert.assertTrue(checkArraysAreEqual(NUMBERS, nonCommand.getNumbers(testStringWithDoubledCommasInBeginningWithSpace)));
-        Assert.assertTrue(checkArraysAreEqual(NUMBERS, nonCommand.getNumbers(testStringWithDoubledCommasWithSpace)));
+        Assertions.assertTrue(checkArraysAreEqual(NUMBERS, nonCommand.getNumbers(testStringWithoutSpaces)));
+        Assertions.assertTrue(checkArraysAreEqual(NUMBERS, nonCommand.getNumbers(testStringWithSpaces)));
+        Assertions.assertTrue(checkArraysAreEqual(NUMBERS, nonCommand.getNumbers(testStringWithDoubledCommasWithSpaces)));
+        Assertions.assertTrue(checkArraysAreEqual(NUMBERS, nonCommand.getNumbers(testStringWithDoubledCommasWithoutSpaces)));
+        Assertions.assertTrue(checkArraysAreEqual(NUMBERS, nonCommand.getNumbers(testStringWithDoubledCommasInBeginningWithSpace)));
+        Assertions.assertTrue(checkArraysAreEqual(NUMBERS, nonCommand.getNumbers(testStringWithDoubledCommasWithSpace)));
 
-        Assert.assertTrue(checkArraysAreEqual(new int[]{1}, nonCommand.getNumbers(testStringWithDigitOnly)));
-        Assert.assertTrue(checkArraysAreEqual(NUMBERS, nonCommand.getNumbers(testStringWithDuplicatedDigits)));
-        Assert.assertTrue(checkArraysAreEqual(new int[]{0}, nonCommand.getNumbers(testStringWithZero)));
-        Assert.assertTrue(checkArraysAreEqual(new int[]{-1}, nonCommand.getNumbers(testStringWithNegativeNumber)));
-        Assert.assertTrue(checkArraysAreEqual(new int[]{}, nonCommand.getNumbers(testStringWithCommaOnly)));
+        Assertions.assertTrue(checkArraysAreEqual(new int[]{1}, nonCommand.getNumbers(testStringWithDigitOnly)));
+        Assertions.assertTrue(checkArraysAreEqual(NUMBERS, nonCommand.getNumbers(testStringWithDuplicatedDigits)));
+        Assertions.assertTrue(checkArraysAreEqual(new int[]{0}, nonCommand.getNumbers(testStringWithZero)));
+        Assertions.assertTrue(checkArraysAreEqual(new int[]{-1}, nonCommand.getNumbers(testStringWithNegativeNumber)));
+        Assertions.assertTrue(checkArraysAreEqual(new int[]{}, nonCommand.getNumbers(testStringWithCommaOnly)));
     }
 
     private boolean checkArraysAreEqual(int[] a, int[] b) {
@@ -69,19 +69,19 @@ public class NonCommandTest {
 
     @Test
     public void removeDuplicatesCommas() {
-        Assert.assertEquals(nonCommand.removeDuplicatesCommas(testStringWithoutSpaces), testStringWithoutSpaces);
-        Assert.assertEquals(nonCommand.removeDuplicatesCommas(testStringWithSpaces), testStringWithSpaces);
-        Assert.assertEquals(nonCommand.removeDuplicatesCommas(testStringWithDoubledCommasWithSpaces), testStringWithDoubledCommasWithSpaces);
+        Assertions.assertEquals(nonCommand.removeDuplicatesCommas(testStringWithoutSpaces), testStringWithoutSpaces);
+        Assertions.assertEquals(nonCommand.removeDuplicatesCommas(testStringWithSpaces), testStringWithSpaces);
+        Assertions.assertEquals(nonCommand.removeDuplicatesCommas(testStringWithDoubledCommasWithSpaces), testStringWithDoubledCommasWithSpaces);
 
-        Assert.assertEquals(nonCommand.removeDuplicatesCommas(testStringWithDoubledCommasWithoutSpaces), testStringWithoutSpaces);
-        Assert.assertEquals(nonCommand.removeDuplicatesCommas(testStringWithDoubledCommasInBeginningWithSpace), testStringWithDoubledCommasWithSpaces);
-        Assert.assertEquals(nonCommand.removeDuplicatesCommas(testStringWithDoubledCommasWithSpace), testStringWithSpaces);
+        Assertions.assertEquals(nonCommand.removeDuplicatesCommas(testStringWithDoubledCommasWithoutSpaces), testStringWithoutSpaces);
+        Assertions.assertEquals(nonCommand.removeDuplicatesCommas(testStringWithDoubledCommasInBeginningWithSpace), testStringWithDoubledCommasWithSpaces);
+        Assertions.assertEquals(nonCommand.removeDuplicatesCommas(testStringWithDoubledCommasWithSpace), testStringWithSpaces);
 
-        Assert.assertEquals(nonCommand.removeDuplicatesCommas(testStringWithDigitOnly),testStringWithDigitOnly);
-        Assert.assertEquals(nonCommand.removeDuplicatesCommas(testStringWithDuplicatedDigits),testStringWithDuplicatedDigits);
-        Assert.assertEquals(nonCommand.removeDuplicatesCommas(testStringWithZero),testStringWithZero);
-        Assert.assertEquals(nonCommand.removeDuplicatesCommas(testStringWithNegativeNumber),testStringWithNegativeNumber);
-        Assert.assertEquals(nonCommand.removeDuplicatesCommas(testStringWithCommaOnly),testStringWithCommaOnly);
-        Assert.assertEquals(nonCommand.removeDuplicatesCommas(testStringWithDotOnly),testStringWithDotOnly);
+        Assertions.assertEquals(nonCommand.removeDuplicatesCommas(testStringWithDigitOnly),testStringWithDigitOnly);
+        Assertions.assertEquals(nonCommand.removeDuplicatesCommas(testStringWithDuplicatedDigits),testStringWithDuplicatedDigits);
+        Assertions.assertEquals(nonCommand.removeDuplicatesCommas(testStringWithZero),testStringWithZero);
+        Assertions.assertEquals(nonCommand.removeDuplicatesCommas(testStringWithNegativeNumber),testStringWithNegativeNumber);
+        Assertions.assertEquals(nonCommand.removeDuplicatesCommas(testStringWithCommaOnly),testStringWithCommaOnly);
+        Assertions.assertEquals(nonCommand.removeDuplicatesCommas(testStringWithDotOnly),testStringWithDotOnly);
     }
 }

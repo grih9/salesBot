@@ -1,7 +1,7 @@
 package bot;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class TelegramBotTest {
     private final String NAME = "name";
@@ -10,19 +10,19 @@ public class TelegramBotTest {
 
     @Test
     public void getBotToken() {
-        Assert.assertEquals(TOKEN, telegramBot.getBotToken());
+        Assertions.assertEquals(TOKEN, telegramBot.getBotToken());
     }
 
     @Test
     public void getBotUsername() {
-        Assert.assertEquals(NAME, telegramBot.getBotUsername());
+        Assertions.assertEquals(NAME, telegramBot.getBotUsername());
     }
 
     @Test
     public void testIsNumeric() {
-        Assert.assertTrue(telegramBot.isNumeric("12"));
-        Assert.assertFalse(telegramBot.isNumeric("1,2"));
-        Assert.assertFalse(telegramBot.isNumeric("abc"));
+        Assertions.assertTrue(telegramBot.isNumeric("12"));
+        Assertions.assertFalse(telegramBot.isNumeric("1,2"));
+        Assertions.assertFalse(telegramBot.isNumeric("abc"));
     }
 /*
     @Test
