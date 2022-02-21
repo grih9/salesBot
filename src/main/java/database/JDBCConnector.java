@@ -1,11 +1,7 @@
 package database;
 
 import bot.Item;
-import com.opencsv.CSVReader;
-import com.opencsv.exceptions.CsvValidationException;
 
-import java.io.FileReader;
-import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -30,12 +26,29 @@ public class JDBCConnector {
 		}
 	}
 
-	public static void createTable() {
+	public static void setTestConn() {
+		String url = "jdbc:postgresql://ec2-44-193-188-118.compute-1.amazonaws.com:5432/d7ba6v4jgke23f";
+		String user = "ntallivuhxtyjm";
+		String password = "94e3bf3270467ff2cc81e3dad31bcd8f592794fb78d08793b429218ab160b0a5";
+
+		try {
+			Class.forName("org.postgresql.Driver");
+			connection = DriverManager.getConnection(url, user, password);
+		}
+		catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static Connection getConnection() {
+		return connection;
+	}
+
+	public static void createTables() {
 		try {
 			Statement stmt = connection.createStatement();
 
-			String CreateSql = "DROP SCHEMA public CASCADE;" +
-					"CREATE SCHEMA public static;" +
+			String CreateSql = "DROP SCHEMA public CASCADE; CREATE SCHEMA public;" +
 					"Create Table cities(id serial primary key, name varchar, region varchar); " +
 					"Create Table shops(id serial primary key, name varchar, website varchar);" +
 					"Create Table users(id serial primary key, name varchar UNIQUE, cityId int REFERENCES cities(id)); " +
@@ -43,8 +56,29 @@ public class JDBCConnector {
 					"int REFERENCES shops(id)); " +
 					"Create Table users_shops(id serial primary key, userId int REFERENCES users(id), shopId " +
 					"int REFERENCES shops(id)); " +
-					"Create Table categories(id serial primary key, name varchar); ";
+					"Create Table categories(id serial primary key, name varchar);" +
+					"Create Table items(id serial primary key, name varchar, imageurl varchar, price varchar, salePrice varchar," +
+					" saleBeginDate varchar, saleEndDate varchar, cityId int REFERENCES shops(id), categoryId int REFERENCES categories(id)) ";
 
+			stmt.executeUpdate(CreateSql);
+
+			stmt.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void truncateTables() {
+		try {
+			Statement stmt = connection.createStatement();
+
+			String CreateSql = "TRUNCATE TABLE cities CASCADE;" +
+					"TRUNCATE TABLE shops CASCADE;" +
+					"TRUNCATE TABLE users CASCADE;" +
+					"TRUNCATE TABLE cities_shops CASCADE;" +
+					"TRUNCATE TABLE users_shops CASCADE;" +
+					"TRUNCATE TABLE categories CASCADE;" +
+					"TRUNCATE TABLE items CASCADE;";
 			stmt.executeUpdate(CreateSql);
 
 			stmt.close();
@@ -78,7 +112,6 @@ public class JDBCConnector {
 
 	//Добавление города для пользователя по имени
 	public static Boolean addCity(String username, String cityName) {
-
 		try {
 			String sql = "select id from cities where name = ?;";
 			PreparedStatement ps = connection.prepareStatement(sql);
@@ -113,48 +146,28 @@ public class JDBCConnector {
 	public static Boolean addCities() {
 		String sqlInsert = "insert into cities(name, region) values(?, ?);";
 		String sqlSelect = "select id from cities where name = ? AND region = ?;";
-		String fileName = "city_1.csv";
 
-		try (CSVReader reader = new CSVReader(new FileReader(fileName))) {
-			String[] lineInArray;
-			String name;
-			String region;
-
+		try {
 			PreparedStatement ps = connection.prepareStatement(sqlInsert);
 			PreparedStatement psSelect = connection.prepareStatement(sqlSelect);
-			reader.readNext();
+
+			List<City> cities = JDBCUtils.getCitiesFromCSV();
+
 			for (int i = 0; i < 10; i++) {
-				lineInArray = reader.readNext();
-				name = lineInArray[0];
-
-				int ind = lineInArray[0].indexOf("г ");
-				while (ind > 0 && name.charAt(ind) != ' ') {
-					name = name.substring(ind + 1);
-					ind = name.indexOf("г ");
-				}
-				name = name.substring(ind + 2);
-
-				int index = lineInArray[5].indexOf(" - ");
-				if (index == -1) {
-					region = lineInArray[5];
-				} else {
-					region = lineInArray[5].substring(0, index);
-				}
-
-				psSelect.setString(1, name);
-				psSelect.setString(2, region);
+				psSelect.setString(1, cities.get(i).getName());
+				psSelect.setString(2, cities.get(i).getRegion());
 				ResultSet rs = psSelect.executeQuery();
 
 				if (!rs.next()) {
-					ps.setString(1, name);
-					ps.setString(2, region);
+					ps.setString(1, cities.get(i).getName());
+					ps.setString(2, cities.get(i).getRegion());
 					ps.executeUpdate();
 				}
 			}
 
 			ps.close();
 			psSelect.close();
-		} catch (IOException | CsvValidationException | SQLException e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 
@@ -164,26 +177,24 @@ public class JDBCConnector {
 	//Добавление списка категорий
 	public static Boolean addCategories() {
 		String sqlInsert = "insert into categories(name) values(?)";
-		String sqlTruncate = "TRUNCATE TABLE categories";
-		String fileName = "categories.csv";
+		String sqlTruncate = "TRUNCATE TABLE categories CASCADE";
 
-		try (CSVReader reader = new CSVReader(new FileReader(fileName))) {
+		try {
 			Statement stmt = connection.createStatement();
 
 			stmt.executeUpdate(sqlTruncate);
 			stmt.close();
-
-			String[] lineInArray;
 			PreparedStatement ps = connection.prepareStatement(sqlInsert);
-			reader.readNext();
 
-			while ((lineInArray = reader.readNext()) != null) {
-				ps.setString(1, lineInArray[0]);
+			List<String> categories = JDBCUtils.getCategoriesFromCSV();
+
+			for (String category: categories) {
+				ps.setString(1, category);
 				ps.executeUpdate();
 			}
 
 			ps.close();
-		} catch (IOException | CsvValidationException | SQLException e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 
@@ -193,26 +204,23 @@ public class JDBCConnector {
 	public static Boolean addShops() {
 		String sqlInsert = "insert into shops(name, website) values(?, ?)";
 		String sqlTruncate = "TRUNCATE TABLE shops CASCADE";
-		String fileName = "shops.csv";
 
-		try (CSVReader reader = new CSVReader(new FileReader(fileName))) {
+		try {
 			Statement stmt = connection.createStatement();
 
 			stmt.executeUpdate(sqlTruncate);
 			stmt.close();
-
-			String[] lineInArray;
 			PreparedStatement ps = connection.prepareStatement(sqlInsert);
-			reader.readNext();
+			List<Shop> shops = JDBCUtils.getShopsFromCSV();
 
-			while ((lineInArray = reader.readNext()) != null) {
-				ps.setString(1, lineInArray[0]);
-				ps.setString(2, lineInArray[1]);
+			for (Shop shop: shops) {
+				ps.setString(1, shop.getName());
+				ps.setString(2, shop.getWebsite());
 				ps.executeUpdate();
 			}
 
 			ps.close();
-		} catch (IOException | CsvValidationException | SQLException e) {
+		} catch ( SQLException e) {
 			e.printStackTrace();
 		}
 
@@ -276,8 +284,9 @@ public class JDBCConnector {
 			}
 
 			ps.close();
-		} catch (SQLException e) {
+		} catch (SQLException | NullPointerException e) {
 			e.printStackTrace();
+			return false;
 		}
 
 		return true; // Список выбранных магазинов изменен
@@ -304,8 +313,9 @@ public class JDBCConnector {
 			}
 
 			ps.close();
-		} catch (SQLException e) {
+		} catch (SQLException | NullPointerException e) {
 			e.printStackTrace();
+			return false;
 		}
 
 		return true;
@@ -345,7 +355,7 @@ public class JDBCConnector {
 			}
 
 			ps.close();
-		} catch (SQLException e) {
+		} catch (SQLException | NullPointerException e) {
 			e.printStackTrace();
 		}
 
@@ -386,11 +396,33 @@ public class JDBCConnector {
 			}
 
 			ps.close();
-		} catch (SQLException e) {
+		} catch (SQLException | NullPointerException e) {
 			e.printStackTrace();
 		}
 
 		return items;
+	}
+
+	public static List<City> getCities() {
+		List<City> result = new LinkedList<>();
+
+		try {
+			String sql = "select name, region from cities";
+
+			Statement stmt = connection.createStatement();
+			ResultSet rs = stmt.executeQuery(sql);
+
+			while (rs.next()) {
+				result.add(new City(rs.getString("name"), rs.getString("region")));
+			}
+
+			stmt.close();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return result;
 	}
 
 	public static List<String> getCategories() {
@@ -439,7 +471,7 @@ public class JDBCConnector {
 		return result;
 	}
 
-	public static List<Shop> getShops(String username) {
+	public static List<Shop> getShops() {
 		List<Shop> result = new LinkedList<>();
 
 		try {
@@ -473,8 +505,28 @@ public class JDBCConnector {
 			PreparedStatement ps = connection.prepareStatement(sql);
 			ps.setString(1, username);
 			ResultSet rs = ps.executeQuery();
+			if (rs.next()) {
+				result = new City(rs.getString(1), rs.getString(2));
+			}
+
+			ps.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return result;
+	}
+
+	public static String getUserId(String username) {
+		String result = null;
+		try {
+			String sql = "select id from users where users.name = ?";
+
+			PreparedStatement ps = connection.prepareStatement(sql);
+			ps.setString(1, username);
+			ResultSet rs = ps.executeQuery();
 			rs.next();
-			result = new City(rs.getString("name"), rs.getString("region"));
+			result = rs.getString("id");
 
 			ps.close();
 		} catch (SQLException e) {

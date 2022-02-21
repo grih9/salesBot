@@ -14,7 +14,7 @@ public class NonCommand {
         return pattern.matcher(text).matches();
     }
 
-    public int[] getNumbers(String text){
+    public int[] getNumbers(String text) {
         text = text.replaceAll(" ", "");
         text = text.replaceAll("\\t", "");
         text = text.replaceAll("\\s", "");
@@ -25,24 +25,35 @@ public class NonCommand {
         }
 
         if (removeDuplicates.indexOf(",") == 0) {
-            removeDuplicates = removeDuplicates.substring(1, removeDuplicates.length());
+            removeDuplicates = removeDuplicates.substring(1);
         }
+
+        if (removeDuplicates.equals("")) {
+            return new int[]{};
+        }
+
         String[] words = removeDuplicates.split(",");
 
         LinkedHashSet<Integer> numbers = new LinkedHashSet<>();
-        for (String word : words) {
-            numbers.add(Integer.valueOf(word));
+
+        try {
+            for (String word : words) {
+                numbers.add(Integer.parseInt(word));
+            }
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            return new int[]{};
         }
 
         return numbers.stream().mapToInt(Number::intValue).toArray();
     }
 
-    public String removeDuplicatesCommas(String input){
+    public String removeDuplicatesCommas(String input) {
         StringBuilder result = new StringBuilder(String.valueOf(input.charAt(0)));
         for (int i = 1; i < input.length(); i++) {
             if (!String.valueOf(input.charAt(i)).equals(String.valueOf(input.charAt(i - 1))) ||
                     (String.valueOf(input.charAt(i)).equals(String.valueOf(input.charAt(i - 1))) && !String.valueOf(input.charAt(i)).equals(","))) {
-                result.append(String.valueOf(input.charAt(i)));
+                result.append((input.charAt(i)));
             }
         }
         return result.toString();
