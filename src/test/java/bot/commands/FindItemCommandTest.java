@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -15,16 +14,18 @@ import database.JDBCConnector;
 import database.Shop;
 
 public class FindItemCommandTest {
-    private final User user = Mockito.mock(User.class);
-    private final Chat chat = Mockito.mock(Chat.class);
+    private User user = new User();
+    private Chat chat = Mockito.mock(Chat.class);
     private final AbsSenderMock absSenderMock = new AbsSenderMock();
-    private FindItemCommand findItemCommand;
+    private FindItemCommand findItemCommand = new FindItemCommand("finditem", "Найти товар");
 
     @BeforeEach
     public void setUp() {
-        findItemCommand = new FindItemCommand("finditem", "Найти товар");
         findItemCommand.execute(absSenderMock, user, chat, null);
         user.setUserName("anilochka");
+        List<Shop> shops = new ArrayList<>();
+        shops.add(new Shop("Дикси","https://dixy.ru"));
+        JDBCConnector.setSelectedShops(user.getUserName(), shops);
     }
 
 //    @Test
@@ -33,11 +34,7 @@ public class FindItemCommandTest {
 
     @Test
     public void executePart2() {
-        List<Shop> shops = new ArrayList<>();
-        findItemCommand.setMessage("м");
-        shops.add(new Shop("Дикси","https://dixy.ru"));
-        JDBCConnector.setSelectedShops(user.getUserName(), shops);
-
+        findItemCommand.setMessage("сок");
         //Assertions.assertTrue(findItemCommand.executePart2(absSenderMock, user, chat, null));
 
         findItemCommand.setMessage(null);
@@ -48,9 +45,6 @@ public class FindItemCommandTest {
 
         findItemCommand.setMessage("abcdefghijklmnopqrstuvwxwz");
         Assertions.assertFalse(findItemCommand.executePart2(absSenderMock, user, chat, null));
-
-        shops = new ArrayList<>();
-        JDBCConnector.setSelectedShops(user.getUserName(), shops);
     }
 
     @Test

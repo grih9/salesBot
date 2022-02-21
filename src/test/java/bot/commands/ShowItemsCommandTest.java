@@ -16,13 +16,14 @@ import database.Shop;
 
 public class ShowItemsCommandTest {
     private ArrayList<Integer> numbers = new ArrayList<>();
-    private final User user = Mockito.mock(User.class);
-    private final Chat chat = Mockito.mock(Chat.class);
+    private User user = new User();
+    private Chat chat = Mockito.mock(Chat.class);
     private final AbsSenderMock absSenderMock = new AbsSenderMock();
     private ShowItemsCommand showItemsCommand = new ShowItemsCommand("showitems", "Отобразить товары");
 
     @BeforeEach
     public void setUp() {
+        showItemsCommand.execute(absSenderMock, user, chat, null);
         user.setUserName("anilochka");
         List<Shop> shops = new ArrayList<>();
         shops.add(new Shop("Дикси","https://dixy.ru"));
@@ -39,13 +40,13 @@ public class ShowItemsCommandTest {
         showItemsCommand.setNumbers(numbers);
         Assertions.assertFalse(showItemsCommand.execute2(absSenderMock, user, chat, null));
         showItemsCommand.setNumbers(setupNumber(0));
-        //Assertions.assertFalse(showItemsCommand.execute2(absSenderMock, user, chat, null));
+        Assertions.assertFalse(showItemsCommand.execute2(absSenderMock, user, chat, null));
         showItemsCommand.setNumbers(setupNumber(1));
         Assertions.assertTrue(showItemsCommand.execute2(absSenderMock, user, chat, null));
         showItemsCommand.setNumbers(setupNumber(16));
         Assertions.assertTrue(showItemsCommand.execute2(absSenderMock, user, chat, null));
         showItemsCommand.setNumbers(setupNumber(17));
-        //Assertions.assertFalse(showItemsCommand.execute2(absSenderMock, user, chat, null));
+        Assertions.assertFalse(showItemsCommand.execute2(absSenderMock, user, chat, null));
     }
 
     @Test
@@ -55,11 +56,11 @@ public class ShowItemsCommandTest {
         showItemsCommand.setNumbers(numbers);
         Assertions.assertFalse(showItemsCommand.execute2(absSenderMock, user, chat, null));
         showItemsCommand.setNumbers(setupNumber(-10));
-        //Assertions.assertFalse(showItemsCommand.execute2(absSenderMock, user, chat, null));
+        Assertions.assertFalse(showItemsCommand.execute2(absSenderMock, user, chat, null));
         showItemsCommand.setNumbers(setupNumber(10));
         Assertions.assertTrue(showItemsCommand.execute2(absSenderMock, user, chat, null));
         showItemsCommand.setNumbers(setupNumber(25));
-        //Assertions.assertFalse(showItemsCommand.execute2(absSenderMock, user, chat, null));
+        Assertions.assertFalse(showItemsCommand.execute2(absSenderMock, user, chat, null));
     }
 
     @Test
@@ -70,7 +71,6 @@ public class ShowItemsCommandTest {
     }
 
     private ArrayList<Integer> setupNumber(int a) {
-        showItemsCommand.execute(absSenderMock, user, chat, null);
         ArrayList<Integer> nums = new ArrayList<>();
         nums.add(a);
         return nums;
