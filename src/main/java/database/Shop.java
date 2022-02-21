@@ -1,5 +1,7 @@
 package database;
 
+import java.util.Objects;
+
 public class Shop {
     private String name;
     private String website;
@@ -23,5 +25,18 @@ public class Shop {
 
     public void setWebsite(String website) {
         this.website = website;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Shop shop = (Shop) o;
+        return Objects.equals(name, shop.name) && Objects.equals(website, shop.website);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, website);
     }
 }

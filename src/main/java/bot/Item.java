@@ -1,5 +1,7 @@
 package bot;
 
+import java.util.Objects;
+
 public class Item implements Comparable<Item>  {
     private String name;
     private int weight;
@@ -103,8 +105,8 @@ public class Item implements Comparable<Item>  {
 
     @Override
     public int compareTo(Item o) {
-        String firstDouble = salePrice.split(" ")[0].replaceAll(" ", "").replaceAll(",", ".");
-        String secondDouble =o.getSalePrice().split(" ")[0].replaceAll(" ", "").replaceAll(",", ".");
+        String firstDouble = salePrice.replaceAll(" ", "").replaceAll(",", ".");
+        String secondDouble =o.getSalePrice().replaceAll(" ", "").replaceAll(",", ".");
         double firstPrice = Double.parseDouble(firstDouble);
         double secondPrice = Double.parseDouble(secondDouble);
 
@@ -113,5 +115,18 @@ public class Item implements Comparable<Item>  {
         else if(firstPrice < secondPrice)
             return -1;
         return 0;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Item item = (Item) o;
+        return weight == item.weight && Objects.equals(name, item.name) && Objects.equals(price, item.price) && Objects.equals(salePrice, item.salePrice) && Objects.equals(saleBeginDate, item.saleBeginDate) && Objects.equals(saleEndDate, item.saleEndDate) && Objects.equals(shopName, item.shopName) && Objects.equals(imageURL, item.imageURL);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, weight, price, salePrice, saleBeginDate, saleEndDate, shopName, imageURL);
     }
 }
