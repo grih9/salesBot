@@ -1,22 +1,22 @@
 package utils;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.User;
 
 public class UtilsTest {
-    private final String USERNAME = "username";
-    private final String FIRSTNAME = "Ivan";
-    private final String LASTNAME = "Ivanov";
-    private User userWithUsername;
-    private User userWithoutUsername;
-    private Utils utils;
+    private static final String USERNAME = "username";
+    private static final String FIRSTNAME = "Ivan";
+    private static final String LASTNAME = "Ivanov";
+    private static User userWithUsername;
+    private static User userWithoutUsername;
+    private static Utils utils;
 
-    @Before
-    public void setUser() {
+    @BeforeAll
+    static void setUser() {
         utils = new Utils();
         userWithUsername = new User();
         userWithUsername.setUserName(USERNAME);
@@ -32,18 +32,18 @@ public class UtilsTest {
     public void getUserName() {
         Message message = new Message();
         message.setFrom(userWithUsername);
-        Assert.assertEquals(Utils.getUserName(message), USERNAME);
+        Assertions.assertEquals(Utils.getUserName(message), USERNAME);
 
         message.setFrom(userWithoutUsername);
-        Assert.assertEquals(Utils.getUserName(message), LASTNAME + " " + FIRSTNAME);
+        Assertions.assertEquals(Utils.getUserName(message), LASTNAME + " " + FIRSTNAME);
     }
 
     @Test
     public void testGetUserName() {
-        Assert.assertEquals(Utils.getUserName(userWithUsername), USERNAME);
+        Assertions.assertEquals(Utils.getUserName(userWithUsername), USERNAME);
 
         StringBuilder sb = new StringBuilder();
         sb.append(LASTNAME).append(" ").append(FIRSTNAME);
-        Assert.assertEquals(Utils.getUserName(userWithoutUsername), sb.toString());
+        Assertions.assertEquals(Utils.getUserName(userWithoutUsername), sb.toString());
     }
 }

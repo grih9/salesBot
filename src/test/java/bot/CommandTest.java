@@ -1,14 +1,12 @@
 package bot;
 
-import org.junit.Assert;
-import org.junit.Test;
-
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class CommandTest {
 
     @Test
     public void values() {
-        Assert.assertEquals(Command.values().length, 5);
+        Assertions.assertEquals(Command.values().length, 5);
     }
 }
