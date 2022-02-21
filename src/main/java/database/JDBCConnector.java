@@ -284,8 +284,10 @@ public class JDBCConnector {
 			}
 
 			ps.close();
-		} catch (SQLException | NullPointerException e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
+			return false;
+		} catch (NullPointerException e) {
 			return false;
 		}
 
@@ -313,8 +315,10 @@ public class JDBCConnector {
 			}
 
 			ps.close();
-		} catch (SQLException | NullPointerException e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
+			return false;
+		} catch (NullPointerException e) {
 			return false;
 		}
 
