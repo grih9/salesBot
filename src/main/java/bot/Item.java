@@ -105,8 +105,8 @@ public class Item implements Comparable<Item>  {
 
     @Override
     public int compareTo(Item o) {
-        String firstDouble = salePrice.replaceAll(" ", "").replaceAll(",", ".");
-        String secondDouble =o.getSalePrice().replaceAll(" ", "").replaceAll(",", ".");
+        String firstDouble = salePrice.split(" ")[0].replaceAll(" ", "").replaceAll(",", ".");
+        String secondDouble =o.getSalePrice().split(" ")[0].replaceAll(" ", "").replaceAll(",", ".");
         double firstPrice = Double.parseDouble(firstDouble);
         double secondPrice = Double.parseDouble(secondDouble);
 
