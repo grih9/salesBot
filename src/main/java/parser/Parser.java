@@ -41,6 +41,7 @@ public class Parser {
         String userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36";
         options.addArguments("--user-agent=" + userAgent);
         try {
+            //System.setProperty("webdriver.chrome.driver", "D:\\Testing\\chromedriver3\\chromedriver.exe");
             driver = new ChromeDriver();
             driver.get(shop.getWebsite());
 
@@ -86,7 +87,6 @@ public class Parser {
 
     public static List<Item> findItemsByName(String itemName, City city, Shop shop) {
         List<Item> items = new ArrayList<>();
-
         WebDriver driver = null;
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--disable-gpu");
@@ -104,6 +104,7 @@ public class Parser {
         List<Item> pItems;
 
         try {
+            //System.setProperty("webdriver.chrome.driver", "D:\\Testing\\chromedriver3\\chromedriver.exe");
             driver = new ChromeDriver();
             driver.get(shop.getWebsite());
             switch (shop.getName()) {
@@ -145,7 +146,7 @@ public class Parser {
         }
     }
 
-    public static List<Item> findItemsByNameEdadilJsoup(String itemName, String shopName, City city, String url) {
+    /*public static List<Item> findItemsByNameEdadilJsoup(String itemName, String shopName, City city, String url) {
         List<Item> items = new ArrayList<>();
 
         Map<String, String> map = new HashMap<>();
@@ -168,7 +169,7 @@ public class Parser {
 
         element.get(0).getElementsByClass("b-image__root").get(0).getElementsByTag("img").get(0).attr("alt");
         return items;
-    }
+    }*/
 
     public static List<Item> findItemsByNameEdadil(String itemName, String shopName, City city, WebDriver driver) {
         List<Item> items = new ArrayList<>();
@@ -356,7 +357,7 @@ public class Parser {
         return items;
     }
 
-    public static List<Item> findItemsByNameKarusel(String itemName, WebDriver driver) {
+    /*public static List<Item> findItemsByNameKarusel(String itemName, WebDriver driver) {
         List<Item> items = new ArrayList<>();
         int page = 1;
 
@@ -368,9 +369,9 @@ public class Parser {
         }
         items.sort(Comparator.naturalOrder());
         return items;
-    }
+    }*/
 
-    public static List<Item> findItemsKarusel(WebDriver driver) {
+    /*public static List<Item> findItemsKarusel(WebDriver driver) {
         List<Item> items = new ArrayList<>();
 
         List<WebElement> webElements = driver
@@ -416,9 +417,9 @@ public class Parser {
             items.add(item);
         }
         return items;
-    }
+    }*/
 
-    public static List<Item> findItemsByCathegoryKarusel(String cathegoryName, WebDriver driver) {
+    /*public static List<Item> findItemsByCathegoryKarusel(String cathegoryName, WebDriver driver) {
         List<Item> items = new ArrayList<>();
 
         cathegoryName = cathegoryName.toLowerCase();
@@ -430,9 +431,9 @@ public class Parser {
         WebDriverWait wait = new WebDriverWait(driver, 20);
         wait.until(visibilityOfElementLocated(By.cssSelector(".promo-catalog-menu-list.promo-catalog-menu-list--root")));
 
-       /* wait.until(ExpectedConditions.
+       *//* wait.until(ExpectedConditions.
                 elementToBeClickable(By.xpath("//*[@class='app-button app-button--transparent app-button--rounded app-button--regular promo-catalog-menu-list__more']")));
-*/
+*//*
         driver.findElement(By.cssSelector(".promo-catalog-menu-list.promo-catalog-menu-list--root"))
                 .findElement(By.tagName("button")).click();
 
@@ -481,8 +482,8 @@ public class Parser {
         items.sort(Comparator.naturalOrder());
         return items;
     }
-
-    public static List<Item> findItemsByNamePyatyorochka(String itemName, City city, WebDriver driver) {
+*/
+    /*public static List<Item> findItemsByNamePyatyorochka(String itemName, City city, WebDriver driver) {
         List<Item> items = new ArrayList<>();
         driver.findElement(By.cssSelector("input[placeholder='Поиск по товарам']")).sendKeys(itemName, Keys.ENTER);
         WebDriverWait wait = new WebDriverWait(driver, 10);
@@ -508,7 +509,7 @@ public class Parser {
             return null;
         }
         return items;
-    }
+    }*/
 
     public static List<Item> findItemsByNameDiksi(String itemName, WebDriver driver) {
         List<Item> items;
@@ -523,7 +524,7 @@ public class Parser {
         return items;
     }
 
-    public static List<Item> findItemsByNamePerekryostok(String itemName, City city, WebDriver driver) {
+    /*public static List<Item> findItemsByNamePerekryostok(String itemName, City city, WebDriver driver) {
         List<Item> items = new ArrayList<>();
         driver.findElement(By.cssSelector("input[name='search']")).sendKeys(itemName, Keys.ENTER);
         WebDriverWait wait = new WebDriverWait(driver, 5);
@@ -570,7 +571,7 @@ public class Parser {
             return items;
         }
         return items;
-    }
+    }*/
 
     public static List<Item> findItemsByCathegoryDiksi(String cathegory, WebDriver driver) {
         List<Item> items = new ArrayList<>();
@@ -745,7 +746,7 @@ public class Parser {
         return items;
     }
 
-    public static List<Item> findItemsByCathegoryPerekryostok(String cathegoryS, City city, WebDriver driver) {
+    /*public static List<Item> findItemsByCathegoryPerekryostok(String cathegoryS, City city, WebDriver driver) {
         List<Item> items = new ArrayList<>();
         List<String> keywords = getKeywordsFromCathegories(cathegoryS);
         driver.get("https://www.perekrestok.ru/cat");
@@ -815,7 +816,7 @@ public class Parser {
             driver.get("https://www.perekrestok.ru/cat");
         }
         return items;
-    }
+    }*/
 
     public static ArrayList<String> getKeywordsFromCathegories(String cathegory) {
         ArrayList<String> keywords = new ArrayList<>();
