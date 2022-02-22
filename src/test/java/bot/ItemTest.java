@@ -182,4 +182,12 @@ public class ItemTest {
         itemToCompare.setSalePrice("150 Р");
         Assertions.assertEquals(0, item.compareTo(itemToCompare));
     }
+
+    @Test
+    void testHashCode() {
+        Item item1 = new Item();
+        Item item2 = new Item();
+        Assertions.assertNotSame(item1, item2);
+        Assertions.assertEquals(item1.hashCode(), item2.hashCode());
+    }
 }
