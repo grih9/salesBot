@@ -21,7 +21,7 @@ class JDBCConnectorTests {
     }
 
     @Test
-    public void testConnectionIsNotNull() {
+    public void connectionIsNotNull() {
         Assertions.assertNotNull(JDBCConnector.getConnection());
     }
 
