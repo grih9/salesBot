@@ -11,8 +11,7 @@ import java.util.Objects;
 public class JDBCConnector {
 	private static Connection connection = null;
 
-	static
-	{
+	static {
 		String url = "jdbc:postgresql://ec2-63-32-12-208.eu-west-1.compute.amazonaws.com:5432/d7ova8n0gd539v";
 		String user = "ytfrrtlrtiiyoc";
 		String password = "29237129f83a4c97eaa600ffccbc164a91ebbe370468b3984d5d436ba8481c04";
@@ -20,8 +19,7 @@ public class JDBCConnector {
 		try {
 			Class.forName("org.postgresql.Driver");
 			connection = DriverManager.getConnection(url, user, password);
-		}
-		catch (ClassNotFoundException | SQLException e) {
+		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
 	}
@@ -34,8 +32,7 @@ public class JDBCConnector {
 		try {
 			Class.forName("org.postgresql.Driver");
 			connection = DriverManager.getConnection(url, user, password);
-		}
-		catch (ClassNotFoundException | SQLException e) {
+		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
 	}
@@ -100,11 +97,8 @@ public class JDBCConnector {
 			psUser.close();
 
 		} catch (SQLException e) {
-			if (Objects.equals(e.getSQLState(), "23505")) {
-				return false; // Пользователь c таким именем уже был добавлен
-			} else {
-				e.printStackTrace();
-			}
+			e.printStackTrace();
+			return false; // Пользователь c таким именем уже был добавлен
 		}
 
 		return true; // Пользователь успешно добавлен
@@ -188,7 +182,7 @@ public class JDBCConnector {
 
 			List<String> categories = JDBCUtils.getCategoriesFromCSV();
 
-			for (String category: categories) {
+			for (String category : categories) {
 				ps.setString(1, category);
 				ps.executeUpdate();
 			}
@@ -213,14 +207,14 @@ public class JDBCConnector {
 			PreparedStatement ps = connection.prepareStatement(sqlInsert);
 			List<Shop> shops = JDBCUtils.getShopsFromCSV();
 
-			for (Shop shop: shops) {
+			for (Shop shop : shops) {
 				ps.setString(1, shop.getName());
 				ps.setString(2, shop.getWebsite());
 				ps.executeUpdate();
 			}
 
 			ps.close();
-		} catch ( SQLException e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 
@@ -326,7 +320,7 @@ public class JDBCConnector {
 	}
 
 	public static List<Item> getItemsByCategory(String categoty, Shop shop) {
-		List<Item> items= new ArrayList<>();
+		List<Item> items = new ArrayList<>();
 		try {
 			String sql = "select items.name, imageURL, price, salePrice, saleBeginDate, saleEndDate, shops.name from items join categories " +
 					"on items.categoryId = categories.id join shops " +
@@ -367,7 +361,7 @@ public class JDBCConnector {
 	}
 
 	public static List<Item> getItemsByName(String itemName, Shop shop) {
-		List<Item> items= new ArrayList<>();
+		List<Item> items = new ArrayList<>();
 		try {
 			String sql = "select items.name, imageURL, price, salePrice, saleBeginDate, saleEndDate, shops.name from items join shops " +
 					"on items.cityId = shops.id where shops.name = ? AND shops.website = ? AND LOWER(items.name) LIKE LOWER(?);";

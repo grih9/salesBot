@@ -1,6 +1,7 @@
 package database;
 
 import bot.Item;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -20,6 +21,11 @@ class JDBCConnectorTests {
         JDBCConnector.createTables();
     }
 
+    @AfterEach
+    public void truncateTables() {
+        JDBCConnector.truncateTables();
+    }
+
     @Test
     public void connectionIsNotNull() {
         Assertions.assertNotNull(JDBCConnector.getConnection());
@@ -29,26 +35,21 @@ class JDBCConnectorTests {
     public void addUser() {
         JDBCConnector.addUser("Denis");
         Assertions.assertNotNull(JDBCConnector.getUserId("Denis"));
-        JDBCConnector.truncateTables();
     }
 
     @Test
     public void addAlreadyExistedUser() {
         JDBCConnector.addUser("Denis");
         Assertions.assertFalse(JDBCConnector.addUser("Denis"));
-
-        JDBCConnector.truncateTables();
     }
 
     @Test
     public void addCity() {
-        JDBCConnector.addUser("Denis");
-        JDBCConnector.addCities();
-        JDBCConnector.addCity("Denis", "Санкт-Петербург");
+        Assertions.assertTrue(JDBCConnector.addUser("Denis"));
+        Assertions.assertTrue(JDBCConnector.addCities());
+        Assertions.assertTrue(JDBCConnector.addCity("Denis", "Санкт-Петербург"));
 
         Assertions.assertEquals(JDBCConnector.getUserCity("Denis").getName(), "Санкт-Петербург");
-
-        JDBCConnector.truncateTables();
     }
 
     @Test
@@ -56,8 +57,6 @@ class JDBCConnectorTests {
         List<City> cities = JDBCUtils.getCitiesFromCSV();
         Assertions.assertTrue(JDBCConnector.addCities());
         Assertions.assertEquals(JDBCConnector.getCities(), cities);
-
-        JDBCConnector.truncateTables();
     }
 
     @Test
@@ -65,8 +64,6 @@ class JDBCConnectorTests {
         List<String> categories = JDBCUtils.getCategoriesFromCSV();
         Assertions.assertTrue(JDBCConnector.addCategories());
         Assertions.assertEquals(JDBCConnector.getCategories(), categories);
-
-        JDBCConnector.truncateTables();
     }
 
     @Test
@@ -74,8 +71,6 @@ class JDBCConnectorTests {
         List<Shop> shops = JDBCUtils.getShopsFromCSV();
         Assertions.assertTrue(JDBCConnector.addShops());
         Assertions.assertEquals(JDBCConnector.getShops(), shops);
-
-        JDBCConnector.truncateTables();
     }
 
     @Test
@@ -84,8 +79,6 @@ class JDBCConnectorTests {
 
         Assertions.assertFalse(JDBCConnector.setSelectedShops("Denis", null));
         Assertions.assertTrue(JDBCConnector.getSelectedShops("Denis").isEmpty());
-
-        JDBCConnector.truncateTables();
     }
 
     @Test
@@ -97,8 +90,6 @@ class JDBCConnectorTests {
 
         Assertions.assertTrue(JDBCConnector.setSelectedShops("Denis", shops));
         Assertions.assertEquals(JDBCConnector.getSelectedShops("Denis"), shops);
-
-        JDBCConnector.truncateTables();
     }
 
     @Test
@@ -110,8 +101,6 @@ class JDBCConnectorTests {
 
         Assertions.assertTrue(JDBCConnector.setSelectedShops("Denis", shops));
         Assertions.assertEquals(JDBCConnector.getSelectedShops("Denis"), shops);
-
-        JDBCConnector.truncateTables();
     }
 
     @Test
@@ -128,8 +117,6 @@ class JDBCConnectorTests {
 
         Assertions.assertTrue(JDBCConnector.setSelectedShops("Denis", selectedShops));
         Assertions.assertEquals(JDBCConnector.getSelectedShops("Denis"), selectedShops);
-
-        JDBCConnector.truncateTables();
     }
 
     @Test
@@ -142,8 +129,6 @@ class JDBCConnectorTests {
 
         Assertions.assertFalse(JDBCConnector.addItems(categories.get(0), shops.get(0), null));
         Assertions.assertTrue(JDBCConnector.getItemsByCategory(categories.get(0), shops.get(0)).isEmpty());
-
-        JDBCConnector.truncateTables();
     }
 
     private static Stream<Arguments> shopAndCategoriesProvider() {
@@ -175,8 +160,6 @@ class JDBCConnectorTests {
 
         Assertions.assertTrue(JDBCConnector.addItems(category, shop, items));
         Assertions.assertEquals(JDBCConnector.getItemsByCategory(category, shop), items);
-
-        JDBCConnector.truncateTables();
     }
 
     @ParameterizedTest
@@ -195,7 +178,5 @@ class JDBCConnectorTests {
 
         Assertions.assertTrue(JDBCConnector.addItems(category, shop, items));
         Assertions.assertEquals(JDBCConnector.getItemsByCategory(category, shop), items);
-
-        JDBCConnector.truncateTables();
     }
 }
