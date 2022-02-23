@@ -107,4 +107,8 @@ public class ChooseShopsCommand extends ServiceCommand {
     public void setNumbers(ArrayList<Integer> numbers) {
         this.numbers = numbers;
     }
+
+    public ArrayList<Integer> getNumbers() {
+        return numbers;
+    }
 }

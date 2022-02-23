@@ -28,8 +28,8 @@ public final class TelegramBot extends TelegramLongPollingCommandBot {
     /**
      * Настройки для разных пользователей. Ключ - уникальный id чата, значение - имя пользователя
      */
-    private static Map<Long, Command> userCommand;
-    private static Map<Long, ArrayList<Integer>> userNumbers;
+    public static Map<Long, Command> userCommand;
+    public static Map<Long, ArrayList<Integer>> userNumbers;
 
     public TelegramBot(String botName, String botToken) {
         super();

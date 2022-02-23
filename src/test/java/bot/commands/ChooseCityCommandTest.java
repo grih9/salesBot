@@ -12,11 +12,13 @@ public class ChooseCityCommandTest {
     private static Chat chat = Mockito.mock(Chat.class);
     private static AbsSenderMock absSenderMock = new AbsSenderMock();
     private static ChooseCityCommand chooseCityCommand;
+    private static final String MESSAGE = "message";
 
     @BeforeAll
     static void setUp() {
         chooseCityCommand = new ChooseCityCommand("city", "Город");
         chooseCityCommand.execute(absSenderMock, user, chat, null);
+        chooseCityCommand.setMessage(MESSAGE);
     }
 
     @Test
@@ -34,9 +36,15 @@ public class ChooseCityCommandTest {
     }
 
     @Test
+    public void getMessage() {
+        Assertions.assertEquals(MESSAGE, chooseCityCommand.getMessage());
+    }
+
+    @Test
     public void setMessage() {
-        String message = "message";
+        String message = "message1";
         chooseCityCommand.setMessage(message);
-        Assertions.assertEquals(message, chooseCityCommand.message);
+        Assertions.assertEquals(message, chooseCityCommand.getMessage());
+        chooseCityCommand.setMessage(MESSAGE);
     }
 }
