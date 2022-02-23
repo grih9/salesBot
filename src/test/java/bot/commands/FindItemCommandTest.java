@@ -28,14 +28,10 @@ public class FindItemCommandTest {
         JDBCConnector.setSelectedShops(user.getUserName(), shops);
     }
 
-//    @Test
-//    public void execute() {
-//    }
-
     @Test
     public void executePart2() {
         findItemCommand.setMessage("сок");
-        //Assertions.assertTrue(findItemCommand.executePart2(absSenderMock, user, chat, null));
+        Assertions.assertTrue(findItemCommand.executePart2(absSenderMock, user, chat, null));
 
         findItemCommand.setMessage(null);
         Assertions.assertFalse(findItemCommand.executePart2(absSenderMock, user, chat, null));

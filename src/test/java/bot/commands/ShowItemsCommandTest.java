@@ -29,11 +29,6 @@ public class ShowItemsCommandTest {
         shops.add(new Shop("Дикси","https://dixy.ru"));
         JDBCConnector.setSelectedShops(user.getUserName(), shops);
     }
-//    @Test
-//    public void execute() {
-//        ShowItemsCommand showItemsCommand = new ShowItemsCommand("showitems", "Отобразить товары");
-//        showItemsCommand.execute(absSenderMock, user, chat, null);
-//    }
 
     @Test
     public void execute2BoundaryValueAnalysis() {

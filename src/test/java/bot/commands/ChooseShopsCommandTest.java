@@ -22,10 +22,6 @@ public class ChooseShopsCommandTest {
         chooseShopsCommand.execute(absSenderMock, user, chat, null);
     }
 
-//    @Test
-//    public void execute() {
-//    }
-
     @Test
     public void execute2BoundaryValueAnalysis() {
         chooseShopsCommand.setNumbers(null);
