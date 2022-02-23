@@ -48,7 +48,6 @@ class JDBCConnectorTests {
         Assertions.assertTrue(JDBCConnector.addUser("Denis"));
         Assertions.assertTrue(JDBCConnector.addCities());
         Assertions.assertTrue(JDBCConnector.addCity("Denis", "Санкт-Петербург"));
-
         Assertions.assertEquals(JDBCConnector.getUserCity("Denis").getName(), "Санкт-Петербург");
     }
 
