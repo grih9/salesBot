@@ -59,6 +59,12 @@ public class ShowItemsCommandTest {
     }
 
     @Test
+    public void getNumbers() {
+        showItemsCommand.setNumbers(numbers);
+        Assertions.assertEquals(numbers, showItemsCommand.getNumbers());
+    }
+
+    @Test
     public void setNumbers() {
         numbers.add(1);
         showItemsCommand.setNumbers(numbers);

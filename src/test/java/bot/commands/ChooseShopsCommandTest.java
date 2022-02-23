@@ -51,6 +51,12 @@ public class ChooseShopsCommandTest {
     }
 
     @Test
+    public void getNumbers() {
+        chooseShopsCommand.setNumbers(numbers);
+        Assertions.assertEquals(numbers, chooseShopsCommand.getNumbers());
+    }
+
+    @Test
     public void setNumbers() {
         numbers.add(1);
         ChooseShopsCommand chooseShopsCommand = new ChooseShopsCommand("shops", "Выбрать магазины");
