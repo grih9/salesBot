@@ -19,10 +19,6 @@ public class ChooseCityCommandTest {
         chooseCityCommand.execute(absSenderMock, user, chat, null);
     }
 
-//    @Test
-//    public void execute() {
-//    }
-
     @Test
     public void executePart2() {
         chooseCityCommand.setMessage(null);
