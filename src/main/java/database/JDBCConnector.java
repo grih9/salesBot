@@ -11,7 +11,7 @@ import java.util.Objects;
 public class JDBCConnector {
 	private static Connection connection = null;
 
-	static {
+	public static void setDevConn() {
 		String url = "jdbc:postgresql://ec2-63-32-12-208.eu-west-1.compute.amazonaws.com:5432/d7ova8n0gd539v";
 		String user = "ytfrrtlrtiiyoc";
 		String password = "29237129f83a4c97eaa600ffccbc164a91ebbe370468b3984d5d436ba8481c04";
