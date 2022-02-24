@@ -134,6 +134,147 @@ class ParserTest {
     }
 
     @Test
+    void findItemsByCathegoryDiksi2() {
+        driver = new ChromeDriver();
+        driver.get(shop.getWebsite());
+        String cat = "Молочные продукты и яйца";
+        List<Item> items = Parser.findItemsByCathegoryDiksi(cat, driver);
+        driver.quit();
+        Assertions.assertFalse(items.isEmpty());
+    }
+
+    @Test
+    void findItemsByCathegoryDiksi3() {
+        driver = new ChromeDriver();
+        driver.get(shop.getWebsite());
+        String cat = "Мясо и птица";
+        List<Item> items = Parser.findItemsByCathegoryDiksi(cat, driver);
+        driver.quit();
+        Assertions.assertFalse(items.isEmpty());
+    }
+
+    @Test
+    void findItemsByCathegoryDiksi4() {
+        driver = new ChromeDriver();
+        driver.get(shop.getWebsite());
+        String cat = "Колбаса и сосиски";
+        List<Item> items = Parser.findItemsByCathegoryDiksi(cat, driver);
+        driver.quit();
+        Assertions.assertFalse(items.isEmpty());
+    }
+
+    @Test
+    void findItemsByCathegoryDiksi5() {
+        driver = new ChromeDriver();
+        driver.get(shop.getWebsite());
+        String cat = "Замороженные продукты";
+        List<Item> items = Parser.findItemsByCathegoryDiksi(cat, driver);
+        driver.quit();
+        Assertions.assertFalse(items.isEmpty());
+    }
+
+    @Test
+    void findItemsByCathegoryDiksi6() {
+        driver = new ChromeDriver();
+        driver.get(shop.getWebsite());
+        String cat = "Бакалея";
+        List<Item> items = Parser.findItemsByCathegoryDiksi(cat, driver);
+        driver.quit();
+        Assertions.assertFalse(items.isEmpty());
+    }
+
+    @Test
+    void findItemsByCathegoryDiksi7() {
+        driver = new ChromeDriver();
+        driver.get(shop.getWebsite());
+        String cat = "Сладости";
+        List<Item> items = Parser.findItemsByCathegoryDiksi(cat, driver);
+        driver.quit();
+        Assertions.assertFalse(items.isEmpty());
+    }
+
+    @Test
+    void findItemsByCathegoryDiksi8() {
+        driver = new ChromeDriver();
+        driver.get(shop.getWebsite());
+        String cat = "Чай, кофе и какао";
+        List<Item> items = Parser.findItemsByCathegoryDiksi(cat, driver);
+        driver.quit();
+        Assertions.assertFalse(items.isEmpty());
+    }
+
+    @Test
+    void findItemsByCathegoryDiksi9() {
+        driver = new ChromeDriver();
+        driver.get(shop.getWebsite());
+        String cat = "Напитки";
+        List<Item> items = Parser.findItemsByCathegoryDiksi(cat, driver);
+        driver.quit();
+        Assertions.assertFalse(items.isEmpty());
+    }
+
+    @Test
+    void findItemsByCathegoryDiksi10() {
+        driver = new ChromeDriver();
+        driver.get(shop.getWebsite());
+        String cat = "Товары для животных";
+        List<Item> items = Parser.findItemsByCathegoryDiksi(cat, driver);
+        driver.quit();
+        Assertions.assertFalse(items.isEmpty());
+    }
+
+    @Test
+    void findItemsByCathegoryDiksi11() {
+        driver = new ChromeDriver();
+        driver.get(shop.getWebsite());
+        String cat = "Гигиена и уход";
+        List<Item> items = Parser.findItemsByCathegoryDiksi(cat, driver);
+        driver.quit();
+        Assertions.assertFalse(items.isEmpty());
+    }
+
+    @Test
+    void findItemsByCathegoryDiksi12() {
+        driver = new ChromeDriver();
+        driver.get(shop.getWebsite());
+        String cat = "Товары для детей";
+        List<Item> items = Parser.findItemsByCathegoryDiksi(cat, driver);
+        driver.quit();
+        Assertions.assertFalse(items.isEmpty());
+    }
+
+    @Test
+    void findItemsByCathegoryDiksi13() {
+        driver = new ChromeDriver();
+        driver.get(shop.getWebsite());
+        String cat = "Товары для дома";
+        List<Item> items = Parser.findItemsByCathegoryDiksi(cat, driver);
+        driver.quit();
+        Assertions.assertFalse(items.isEmpty());
+    }
+
+    @Test
+    void findItemsByCathegoryDiksi14() {
+        driver = new ChromeDriver();
+        driver.get(shop.getWebsite());
+        String cat = "Консервы и соленья";
+        List<Item> items = Parser.findItemsByCathegoryDiksi(cat, driver);
+        driver.quit();
+        Assertions.assertFalse(items.isEmpty());
+    }
+
+    @Test
+    void findItemsByCathegoryDiksi15() {
+        driver = new ChromeDriver();
+        driver.get(shop.getWebsite());
+        String cat = "Фрукты и овощи";
+        List<Item> items = Parser.findItemsByCathegoryDiksi(cat, driver);
+        driver.quit();
+        Assertions.assertFalse(items.isEmpty());
+    }
+
+
+    @Test
     void getKeywordsFromCathegories() {
         ArrayList<String> keywords = Parser.getKeywordsFromCathegories(category);
         Assertions.assertFalse(keywords.isEmpty());

@@ -729,8 +729,14 @@ public class Parser {
             item.setImageURL(element.findElement(By.className("dixyCatalogItem__picplacer")).findElement(By.tagName("img")).getAttribute("src"));
             //item.setName(element.findElement(By.className("dixyCatalogItem__title")).getText());
             item.setName(element.findElement(By.className("dixyCatalogItem__picplacer")).findElement(By.tagName("img")).getAttribute("alt"));
-            String priceRub = element.findElement(By.className("dixyCatalogItemPrice__new")).findElement(By.tagName("p")).getText();
-            String priceKop = element.findElement(By.className("dixyCatalogItemPrice__kopeck")).getText();
+            String priceRub = "no price";
+            String priceKop = "";
+            try {
+                priceRub = element.findElement(By.className("dixyCatalogItemPrice__new")).findElement(By.tagName("p")).getText();
+                priceKop = element.findElement(By.className("dixyCatalogItemPrice__kopeck")).getText();
+            } catch (NoSuchElementException e) {
+                //
+            }
             String finalPrice = priceRub + "." + priceKop;
             item.setSalePrice(finalPrice);
             try {
