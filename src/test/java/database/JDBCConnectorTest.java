@@ -1,10 +1,7 @@
 package database;
 
 import bot.Item;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -14,11 +11,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-class JDBCConnectorTests {
+class JDBCConnectorTest {
     @BeforeAll
-    static public void initAll() {
+    static public void beforeAll() {
         JDBCConnector.setTestConn();
         JDBCConnector.createTables();
+    }
+
+    @AfterAll
+    static public void afterAll() {
+        JDBCConnector.setDevConn();
     }
 
     @AfterEach
