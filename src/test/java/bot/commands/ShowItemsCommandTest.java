@@ -19,7 +19,8 @@ public class ShowItemsCommandTest {
     private User user = new User();
     private Chat chat = Mockito.mock(Chat.class);
     private final AbsSenderMock absSenderMock = new AbsSenderMock();
-    private ShowItemsCommand showItemsCommand = new ShowItemsCommand("showitems", "Отобразить товары");
+    private final JDBCConnector jdbc = new JDBCConnector(false);
+    private ShowItemsCommand showItemsCommand = new ShowItemsCommand("showitems", "Отобразить товары", jdbc);
 
     @BeforeEach
     public void setUp() {
@@ -27,7 +28,7 @@ public class ShowItemsCommandTest {
         user.setUserName("anilochka");
         List<Shop> shops = new ArrayList<>();
         shops.add(new Shop("Дикси","https://dixy.ru"));
-        JDBCConnector.setSelectedShops(user.getUserName(), shops);
+        jdbc.setSelectedShops(user.getUserName(), shops);
     }
 
     @Test

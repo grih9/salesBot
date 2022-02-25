@@ -1,5 +1,6 @@
 package bot;
 
+import database.JDBCConnector;
 import org.telegram.telegrambots.extensions.bots.commandbot.TelegramLongPollingCommandBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -15,12 +16,13 @@ import utils.Utils;
 public final class TelegramBot extends TelegramLongPollingCommandBot {
     private final String BOT_NAME;
     private final String BOT_TOKEN;
+    private final JDBCConnector jdbc = new JDBCConnector(false);
 
-    StartCommand startCommand = new StartCommand("start", "Старт");
-    ChooseCityCommand chooseCityCommand = new ChooseCityCommand("city", "Город");
-    ChooseShopsCommand chooseShopsCommand = new ChooseShopsCommand("shops", "Выбрать магазины");
-    FindItemCommand findItemCommand = new FindItemCommand("finditem", "Найти товар");
-    ShowItemsCommand showItemsCommand = new ShowItemsCommand("showitems", "Отобразить товары");
+    StartCommand startCommand = new StartCommand("start", "Старт", this.jdbc);
+    ChooseCityCommand chooseCityCommand = new ChooseCityCommand("city", "Город", this.jdbc);
+    ChooseShopsCommand chooseShopsCommand = new ChooseShopsCommand("shops", "Выбрать магазины", this.jdbc);
+    FindItemCommand findItemCommand = new FindItemCommand("finditem", "Найти товар", this.jdbc);
+    ShowItemsCommand showItemsCommand = new ShowItemsCommand("showitems", "Отобразить товары", this.jdbc);
 
     //Класс для обработки сообщений, не являющихся командой
     private final NonCommand nonCommand;

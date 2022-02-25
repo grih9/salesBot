@@ -1,5 +1,6 @@
 package bot.commands;
 
+import database.JDBCConnector;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -13,10 +14,11 @@ public class ChooseCityCommandTest {
     private static AbsSenderMock absSenderMock = new AbsSenderMock();
     private static ChooseCityCommand chooseCityCommand;
     private static final String MESSAGE = "message";
+    private static final JDBCConnector jdbc = new JDBCConnector(false);
 
     @BeforeAll
     static void setUp() {
-        chooseCityCommand = new ChooseCityCommand("city", "Город");
+        chooseCityCommand = new ChooseCityCommand("city", "Город", jdbc);
         chooseCityCommand.execute(absSenderMock, user, chat, null);
         chooseCityCommand.setMessage(MESSAGE);
     }

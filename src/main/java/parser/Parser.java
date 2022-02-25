@@ -23,9 +23,10 @@ import database.JDBCConnector;
 import database.Shop;
 
 public class Parser {
+    private final static JDBCConnector jdbc = new JDBCConnector(false);
+
     public static List<Item> findItemsByCategory(String category, City city, Shop shop) {
         List<Item> items = new ArrayList<>();
-
         WebDriver driver = null;
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--disable-gpu");
@@ -71,7 +72,7 @@ public class Parser {
                 }
                 System.out.println("exception1");
                 e.printStackTrace();
-                items = JDBCConnector.getItemsByCategory(category, shop);
+                items = jdbc.getItemsByCategory(category, shop);
                 System.out.println("after jdbc");
                 return items;
             } catch (Exception ee) {
@@ -81,7 +82,7 @@ public class Parser {
         } finally {
             System.out.println("finally");
 
-            return items.isEmpty() ? JDBCConnector.getItemsByCategory(category, shop) : items;
+            return items.isEmpty() ? jdbc.getItemsByCategory(category, shop) : items;
         }
     }
 
@@ -134,7 +135,7 @@ public class Parser {
                 }
                 System.out.println("exception1");
                 e.printStackTrace();
-                items = JDBCConnector.getItemsByName(itemName, shop);
+                items = jdbc.getItemsByName(itemName, shop);
                 System.out.println("after jdbc");
                 return items;
             } catch (Exception ee) {
@@ -143,7 +144,7 @@ public class Parser {
             }
         } finally {
             System.out.println("finally");
-            return items.isEmpty() ? JDBCConnector.getItemsByName(itemName, shop) : items;
+            return items.isEmpty() ? jdbc.getItemsByName(itemName, shop) : items;
         }
     }
 

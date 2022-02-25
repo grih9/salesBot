@@ -17,7 +17,8 @@ public class FindItemCommandTest {
     private User user = new User();
     private Chat chat = Mockito.mock(Chat.class);
     private final AbsSenderMock absSenderMock = new AbsSenderMock();
-    private FindItemCommand findItemCommand = new FindItemCommand("finditem", "Найти товар");
+    private final JDBCConnector jdbc = new JDBCConnector(false);
+    private FindItemCommand findItemCommand = new FindItemCommand("finditem", "Найти товар", jdbc);
     private final String MESSAGE = "message";
 
     @BeforeEach
@@ -26,7 +27,7 @@ public class FindItemCommandTest {
         user.setUserName("anilochka");
         List<Shop> shops = new ArrayList<>();
         shops.add(new Shop("Дикси","https://dixy.ru"));
-        JDBCConnector.setSelectedShops(user.getUserName(), shops);
+        jdbc.setSelectedShops(user.getUserName(), shops);
         findItemCommand.setMessage(MESSAGE);
     }
 
@@ -52,7 +53,7 @@ public class FindItemCommandTest {
 
     @Test
     public void setMessage() {
-        FindItemCommand findItemCommand = new FindItemCommand("finditem", "Найти товар");
+        FindItemCommand findItemCommand = new FindItemCommand("finditem", "Найти товар", jdbc);
         String message = "message";
         findItemCommand.setMessage(message);
         Assertions.assertEquals(message, findItemCommand.getMessage());

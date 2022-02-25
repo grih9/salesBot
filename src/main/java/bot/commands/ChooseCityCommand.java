@@ -18,8 +18,11 @@ import utils.Utils;
  */
 public class ChooseCityCommand extends ServiceCommand {
     String message = null;
-    public ChooseCityCommand(String identifier, String description) {
+    private final JDBCConnector jdbc;
+
+    public ChooseCityCommand(String identifier, String description, JDBCConnector jdbc) {
         super(identifier, description);
+        this.jdbc = jdbc;
     }
 
     @Override
@@ -31,7 +34,7 @@ public class ChooseCityCommand extends ServiceCommand {
 
     public boolean executePart2(AbsSender absSender, User user, Chat chat, String[] strings) {
         String userName = Utils.getUserName(user);
-        if (message == null || !JDBCConnector.addCity(userName,message.trim())) {
+        if (message == null || !jdbc.addCity(userName,message.trim())) {
             super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName,
                     "Город не найден, пожалуйста, повторите ввод");
             return false;
