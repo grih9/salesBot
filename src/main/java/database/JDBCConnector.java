@@ -9,13 +9,19 @@ import java.util.List;
 import java.util.Objects;
 
 public class JDBCConnector {
-	private static Connection connection = null;
+	private Connection connection = null;
 
-	public static void setDevConn() {
+	public JDBCConnector(Boolean isTestConn) {
 		String url = "jdbc:postgresql://ec2-63-32-12-208.eu-west-1.compute.amazonaws.com:5432/d7ova8n0gd539v";
 		String user = "ytfrrtlrtiiyoc";
 		String password = "29237129f83a4c97eaa600ffccbc164a91ebbe370468b3984d5d436ba8481c04";
 
+		if (isTestConn) {
+			url = "jdbc:postgresql://ec2-44-193-188-118.compute-1.amazonaws.com:5432/d7ba6v4jgke23f";
+			user = "ntallivuhxtyjm";
+			password = "94e3bf3270467ff2cc81e3dad31bcd8f592794fb78d08793b429218ab160b0a5";
+		}
+
 		try {
 			Class.forName("org.postgresql.Driver");
 			connection = DriverManager.getConnection(url, user, password);
@@ -24,24 +30,11 @@ public class JDBCConnector {
 		}
 	}
 
-	public static void setTestConn() {
-		String url = "jdbc:postgresql://ec2-44-193-188-118.compute-1.amazonaws.com:5432/d7ba6v4jgke23f";
-		String user = "ntallivuhxtyjm";
-		String password = "94e3bf3270467ff2cc81e3dad31bcd8f592794fb78d08793b429218ab160b0a5";
-
-		try {
-			Class.forName("org.postgresql.Driver");
-			connection = DriverManager.getConnection(url, user, password);
-		} catch (ClassNotFoundException | SQLException e) {
-			e.printStackTrace();
-		}
-	}
-
-	public static Connection getConnection() {
+	public Connection getConnection() {
 		return connection;
 	}
 
-	public static void createTables() {
+	public void createTables() {
 		try {
 			Statement stmt = connection.createStatement();
 
@@ -65,7 +58,7 @@ public class JDBCConnector {
 		}
 	}
 
-	public static void truncateTables() {
+	public void truncateTables() {
 		try {
 			Statement stmt = connection.createStatement();
 
@@ -85,7 +78,7 @@ public class JDBCConnector {
 	}
 
 	//Добавление пользователя без города
-	public static Boolean addUser(String username) {
+	public Boolean addUser(String username) {
 		try {
 			String sqlUser = "insert into users(name) values(?);";
 
@@ -105,7 +98,7 @@ public class JDBCConnector {
 	}
 
 	//Добавление города для пользователя по имени
-	public static Boolean addCity(String username, String cityName) {
+	public Boolean addCity(String username, String cityName) {
 		try {
 			String sql = "select id from cities where name LIKE ?;";
 			PreparedStatement ps = connection.prepareStatement(sql);
@@ -138,7 +131,7 @@ public class JDBCConnector {
 	}
 
 	//Добавление списка городов
-	public static Boolean addCities() {
+	public Boolean addCities() {
 		String sqlInsert = "insert into cities(name, region) values(?, ?);";
 		String sqlSelect = "select id from cities where name LIKE ? AND region LIKE ?;";
 
@@ -170,7 +163,7 @@ public class JDBCConnector {
 	}
 
 	//Добавление списка категорий
-	public static Boolean addCategories() {
+	public Boolean addCategories() {
 		String sqlInsert = "insert into categories(name) values(?)";
 		String sqlTruncate = "TRUNCATE TABLE categories CASCADE";
 
@@ -196,7 +189,7 @@ public class JDBCConnector {
 		return true; // Список городов успешно изменен;
 	}
 
-	public static Boolean addShops() {
+	public Boolean addShops() {
 		String sqlInsert = "insert into shops(name, website) values(?, ?)";
 		String sqlTruncate = "TRUNCATE TABLE shops CASCADE";
 
@@ -222,7 +215,7 @@ public class JDBCConnector {
 		return true; // Список магазинов успешно обновлен
 	}
 
-	public static Boolean addShopsForSities() {
+	public Boolean addShopsForSities() {
 		String sqlInsert = "insert into cities_shops(cityId, shopId) values(?, ?);";
 		String sqlTruncate = "TRUNCATE TABLE cities_shops;";
 		String sqlShop = "select id from shops;";
@@ -258,7 +251,7 @@ public class JDBCConnector {
 		return true; // Список магазинов успешно обновлен
 	}
 
-	public static Boolean setSelectedShops(String username, List<Shop> shops) {
+	public Boolean setSelectedShops(String username, List<Shop> shops) {
 		String sqlInsert = "insert into users_shops(userId, shopId) values((select id from users where name LIKE ?), " +
 				"(select id from shops where name LIKE ? and website LIKE ?));";
 		String sqlTruncate = "DELETE FROM users_shops WHERE userId = (select id from users where name LIKE ?)";
@@ -289,7 +282,7 @@ public class JDBCConnector {
 		return true; // Список выбранных магазинов изменен
 	}
 
-	public static Boolean addItems(String categoty, Shop shop, List<Item> items) {
+	public Boolean addItems(String categoty, Shop shop, List<Item> items) {
 		String sqlInsert = "insert into items(name, imageurl, price, salePrice, saleBeginDate, saleEndDate, cityId, categoryId) " +
 				"values(?, ?, ?, ?, ?, ?, (select id from shops where name LIKE ? and website LIKE ?), (select id from categories where name LIKE ?));";
 
@@ -320,7 +313,7 @@ public class JDBCConnector {
 		return true;
 	}
 
-	public static List<Item> getItemsByCategory(String categoty, Shop shop) {
+	public List<Item> getItemsByCategory(String categoty, Shop shop) {
 		List<Item> items = new ArrayList<>();
 		try {
 			String sql = "select items.name, imageURL, price, salePrice, saleBeginDate, saleEndDate, shops.name from items join categories " +
@@ -361,7 +354,7 @@ public class JDBCConnector {
 		return items;
 	}
 
-	public static List<Item> getItemsByName(String itemName, Shop shop) {
+	public List<Item> getItemsByName(String itemName, Shop shop) {
 		List<Item> items = new ArrayList<>();
 		try {
 			String sql = "select items.name, imageURL, price, salePrice, saleBeginDate, saleEndDate, shops.name from items join shops " +
@@ -402,7 +395,7 @@ public class JDBCConnector {
 		return items;
 	}
 
-	public static List<City> getCities() {
+	public List<City> getCities() {
 		List<City> result = new LinkedList<>();
 
 		try {
@@ -424,7 +417,7 @@ public class JDBCConnector {
 		return result;
 	}
 
-	public static List<String> getCategories() {
+	public List<String> getCategories() {
 		List<String> result = new LinkedList<>();
 
 		try {
@@ -447,7 +440,7 @@ public class JDBCConnector {
 	}
 
 
-	public static List<Shop> getSelectedShops(String username) {
+	public List<Shop> getSelectedShops(String username) {
 		List<Shop> result = new LinkedList<>();
 		int[] a = {12};
 		try {
@@ -470,7 +463,7 @@ public class JDBCConnector {
 		return result;
 	}
 
-	public static List<Shop> getShops() {
+	public List<Shop> getShops() {
 		List<Shop> result = new LinkedList<>();
 
 		try {
@@ -495,7 +488,7 @@ public class JDBCConnector {
 		return result;
 	}
 
-	public static City getUserCity(String username) {
+	public City getUserCity(String username) {
 		City result = null;
 		try {
 			String sql = "select cities.name, region from cities join users " +
@@ -516,7 +509,7 @@ public class JDBCConnector {
 		return result;
 	}
 
-	public static String getUserId(String username) {
+	public String getUserId(String username) {
 		String result = null;
 		try {
 			String sql = "select id from users where users.name LIKE ?";

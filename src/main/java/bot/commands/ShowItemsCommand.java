@@ -26,15 +26,17 @@ public class ShowItemsCommand extends ServiceCommand {
             "Отобразить товары - поиск акционных товаров по категориям\n" +
             "/shops - вернуться к выбору магазинов";
     ArrayList<Integer> numbers = new ArrayList<>();
+    private final JDBCConnector jdbc;
 
-    public ShowItemsCommand(String identifier, String description) {
+    public ShowItemsCommand(String identifier, String description, JDBCConnector jdbc) {
         super(identifier, description);
+        this.jdbc = jdbc;
     }
 
     @Override
     public void execute(AbsSender absSender, User user, Chat chat, String[] strings) {
 
-        List<String> categories = JDBCConnector.getCategories();
+        List<String> categories = jdbc.getCategories();
 
         StringBuilder msg = new StringBuilder("Введите категории товаров\n");
         int iter = 1;
@@ -58,9 +60,9 @@ public class ShowItemsCommand extends ServiceCommand {
     public Boolean execute2(AbsSender absSender, User user, Chat chat, String[] strings) {
         String userName = Utils.getUserName(user);
 
-        List<String> categories = JDBCConnector.getCategories();
-        List<Shop> selectedShops = JDBCConnector.getSelectedShops(userName);
-        City city = JDBCConnector.getUserCity(userName);
+        List<String> categories = jdbc.getCategories();
+        List<Shop> selectedShops = jdbc.getSelectedShops(userName);
+        City city = jdbc.getUserCity(userName);
 
         if (numbers == null || numbers.size() == 0) {
             super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName,

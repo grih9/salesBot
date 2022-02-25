@@ -2,6 +2,7 @@ package bot.commands;
 
 import java.util.ArrayList;
 
+import database.JDBCConnector;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -15,10 +16,12 @@ public class ChooseShopsCommandTest {
     private static Chat chat = Mockito.mock(Chat.class);
     private static AbsSenderMock absSenderMock = new AbsSenderMock();
     private static ChooseShopsCommand chooseShopsCommand;
+    private static final JDBCConnector jdbc = new JDBCConnector(false);
 
     @BeforeAll
     static void setUp() {
-        chooseShopsCommand = new ChooseShopsCommand("shops", "Выбрать магазины");
+
+        chooseShopsCommand = new ChooseShopsCommand("shops", "Выбрать магазины", jdbc);
         chooseShopsCommand.execute(absSenderMock, user, chat, null);
     }
 
@@ -59,7 +62,7 @@ public class ChooseShopsCommandTest {
     @Test
     public void setNumbers() {
         numbers.add(1);
-        ChooseShopsCommand chooseShopsCommand = new ChooseShopsCommand("shops", "Выбрать магазины");
+        ChooseShopsCommand chooseShopsCommand = new ChooseShopsCommand("shops", "Выбрать магазины", jdbc);
         chooseShopsCommand.setNumbers(numbers);
         Assertions.assertEquals(numbers, chooseShopsCommand.numbers);
     }

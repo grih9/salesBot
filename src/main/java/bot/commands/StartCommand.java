@@ -17,15 +17,18 @@ import utils.Utils;
  * Команда "Старт"
  */
 public class StartCommand extends ServiceCommand {
-    public StartCommand(String identifier, String description) {
+    private final JDBCConnector jdbc;
+
+    public StartCommand(String identifier, String description, JDBCConnector jdbc) {
         super(identifier, description);
+        this.jdbc = jdbc;
     }
 
     @Override
     public void execute(AbsSender absSender, User user, Chat chat, String[] strings) {
         String userName = Utils.getUserName(user);
 
-        JDBCConnector.addUser(userName);
+        jdbc.addUser(userName);
 
         String botInfo = "Давайте начнём!\n" +
                 "С помощью бота Вы можете искать акционные товары\n\n" +

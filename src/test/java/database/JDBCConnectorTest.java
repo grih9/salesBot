@@ -12,103 +12,99 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 class JDBCConnectorTest {
+    static JDBCConnector jdbc = new JDBCConnector(true);
+
     @BeforeAll
     static public void beforeAll() {
-        JDBCConnector.setTestConn();
-        JDBCConnector.createTables();
-    }
-
-    @AfterAll
-    static public void afterAll() {
-        JDBCConnector.setDevConn();
+        jdbc.createTables();
     }
 
     @AfterEach
     public void truncateTables() {
-        JDBCConnector.truncateTables();
+        jdbc.truncateTables();
     }
 
     @Test
     public void connectionIsNotNull() {
-        Assertions.assertNotNull(JDBCConnector.getConnection());
+        Assertions.assertNotNull(jdbc.getConnection());
     }
 
     @Test
     public void addUser() {
-        JDBCConnector.addUser("Denis");
-        Assertions.assertNotNull(JDBCConnector.getUserId("Denis"));
+        jdbc.addUser("Denis");
+        Assertions.assertNotNull(jdbc.getUserId("Denis"));
     }
 
     @Test
     public void addAlreadyExistedUser() {
-        JDBCConnector.addUser("Denis");
-        Assertions.assertFalse(JDBCConnector.addUser("Denis"));
+        jdbc.addUser("Denis");
+        Assertions.assertFalse(jdbc.addUser("Denis"));
     }
 
     @Test
     public void addCity() {
-        Assertions.assertTrue(JDBCConnector.addUser("Denis"));
-        Assertions.assertTrue(JDBCConnector.addCities());
-        Assertions.assertTrue(JDBCConnector.addCity("Denis", "Санкт-Петербург"));
-        Assertions.assertEquals(JDBCConnector.getUserCity("Denis").getName(), "Санкт-Петербург");
+        Assertions.assertTrue(jdbc.addUser("Denis"));
+        Assertions.assertTrue(jdbc.addCities());
+        Assertions.assertTrue(jdbc.addCity("Denis", "Санкт-Петербург"));
+        Assertions.assertEquals(jdbc.getUserCity("Denis").getName(), "Санкт-Петербург");
     }
 
     @Test
     public void addCities() {
         List<City> cities = JDBCUtils.getCitiesFromCSV();
-        Assertions.assertTrue(JDBCConnector.addCities());
-        Assertions.assertEquals(JDBCConnector.getCities(), cities);
+        Assertions.assertTrue(jdbc.addCities());
+        Assertions.assertEquals(jdbc.getCities(), cities);
     }
 
     @Test
     public void addCategories() {
         List<String> categories = JDBCUtils.getCategoriesFromCSV();
-        Assertions.assertTrue(JDBCConnector.addCategories());
-        Assertions.assertEquals(JDBCConnector.getCategories(), categories);
+        Assertions.assertTrue(jdbc.addCategories());
+        Assertions.assertEquals(jdbc.getCategories(), categories);
     }
 
     @Test
     public void addShops() {
         List<Shop> shops = JDBCUtils.getShopsFromCSV();
-        Assertions.assertTrue(JDBCConnector.addShops());
-        Assertions.assertEquals(JDBCConnector.getShops(), shops);
+        Assertions.assertTrue(jdbc.addShops());
+        Assertions.assertEquals(jdbc.getShops(), shops);
     }
 
     @Test
     public void setNullSelectedShopsList() {
-        JDBCConnector.addUser("Denis");
+        jdbc.addUser("Denis");
 
-        Assertions.assertFalse(JDBCConnector.setSelectedShops("Denis", null));
-        Assertions.assertTrue(JDBCConnector.getSelectedShops("Denis").isEmpty());
+        Assertions.assertFalse(jdbc.setSelectedShops("Denis", null));
+        Assertions.assertTrue(jdbc.getSelectedShops("Denis").isEmpty());
     }
 
     @Test
     public void setAllSelectedShops() {
-        JDBCConnector.addUser("Denis");
+        jdbc.addUser("Denis");
 
         List<Shop> shops = JDBCUtils.getShopsFromCSV();
-        JDBCConnector.addShops();
+        jdbc.addShops();
 
-        Assertions.assertTrue(JDBCConnector.setSelectedShops("Denis", shops));
-        Assertions.assertEquals(JDBCConnector.getSelectedShops("Denis"), shops);
+        Assertions.assertTrue(jdbc.setSelectedShops("Denis", shops));
+        Assertions.assertEquals(jdbc.getSelectedShops("Denis"), shops);
     }
 
     @Test
     public void setZeroSelectedShops() {
-        JDBCConnector.addUser("Denis");
+        jdbc.addUser("Denis");
 
         List<Shop> shops = new ArrayList<>();
-        JDBCConnector.addShops();
+        jdbc.addShops();
 
-        Assertions.assertTrue(JDBCConnector.setSelectedShops("Denis", shops));
-        Assertions.assertEquals(JDBCConnector.getSelectedShops("Denis"), shops);
+        Assertions.assertTrue(jdbc.setSelectedShops("Denis", shops));
+        Assertions.assertEquals(jdbc.getSelectedShops("Denis"), shops);
     }
 
     @Test
     public void setHalfSelectedShops() {
-        JDBCConnector.addUser("Denis");
+        jdbc.addUser("Denis");
 
-        JDBCConnector.addShops();
+        jdbc.addShops();
         List<Shop> selectedShops = new ArrayList<>();
         List<Shop> shops = JDBCUtils.getShopsFromCSV();
 
@@ -116,20 +112,20 @@ class JDBCConnectorTest {
             selectedShops.add(shops.get(i));
         }
 
-        Assertions.assertTrue(JDBCConnector.setSelectedShops("Denis", selectedShops));
-        Assertions.assertEquals(JDBCConnector.getSelectedShops("Denis"), selectedShops);
+        Assertions.assertTrue(jdbc.setSelectedShops("Denis", selectedShops));
+        Assertions.assertEquals(jdbc.getSelectedShops("Denis"), selectedShops);
     }
 
     @Test
     public void addNullItems() {
-        JDBCConnector.addShops();
-        JDBCConnector.addCategories();
+        jdbc.addShops();
+        jdbc.addCategories();
 
         List<String> categories = JDBCUtils.getCategoriesFromCSV();
         List<Shop> shops = JDBCUtils.getShopsFromCSV();
 
-        Assertions.assertFalse(JDBCConnector.addItems(categories.get(0), shops.get(0), null));
-        Assertions.assertTrue(JDBCConnector.getItemsByCategory(categories.get(0), shops.get(0)).isEmpty());
+        Assertions.assertFalse(jdbc.addItems(categories.get(0), shops.get(0), null));
+        Assertions.assertTrue(jdbc.getItemsByCategory(categories.get(0), shops.get(0)).isEmpty());
     }
 
     private static Stream<Arguments> shopAndCategoriesProvider() {
@@ -148,8 +144,8 @@ class JDBCConnectorTest {
     @MethodSource("shopAndCategoriesProvider")
     public void getItemsByCategory(Shop shop, String category) {
 
-        JDBCConnector.addShops();
-        JDBCConnector.addCategories();
+        jdbc.addShops();
+        jdbc.addCategories();
 
         List<Item> items = new ArrayList<>();
         items.add(new Item("Сыр БЕЛЕБЕЕВСКИЙ полутвердый, 45%, 450 г", 0, "409.10", "269.99",
@@ -159,8 +155,8 @@ class JDBCConnectorTest {
                 null, "9 марта", shop.getName(),
                 "https://leonardo.edadeal.io/dyn/cr/catalyst/offers/rdvxulvl5llkp76lzgc7w5obgu.jpg"));
 
-        Assertions.assertTrue(JDBCConnector.addItems(category, shop, items));
-        Assertions.assertEquals(JDBCConnector.getItemsByCategory(category, shop), items);
+        Assertions.assertTrue(jdbc.addItems(category, shop, items));
+        Assertions.assertEquals(jdbc.getItemsByCategory(category, shop), items);
     }
 
     @ParameterizedTest
@@ -177,7 +173,7 @@ class JDBCConnectorTest {
 
         items = items.stream().filter(e -> e.getName().contains(name.toLowerCase())).collect(Collectors.toList());
 
-        Assertions.assertTrue(JDBCConnector.addItems(category, shop, items));
-        Assertions.assertEquals(JDBCConnector.getItemsByCategory(category, shop), items);
+        Assertions.assertTrue(jdbc.addItems(category, shop, items));
+        Assertions.assertEquals(jdbc.getItemsByCategory(category, shop), items);
     }
 }
