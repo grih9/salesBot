@@ -2,6 +2,7 @@ package bot.commands;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,8 +28,8 @@ public class AbsSenderMock extends TelegramLongPollingCommandBot {
     FindItemCommand findItemCommand = new FindItemCommand("finditem", "Найти товар", this.jdbc);
     ShowItemsCommand showItemsCommand = new ShowItemsCommand("showitems", "Отобразить товары", this.jdbc);
 
-    public static Map<Long, Command> userCommand;
-    public static Map<Long, ArrayList<Integer>> userNumbers;
+    public static Map<Long, Command> userCommand = new HashMap<>();
+    public static Map<Long, ArrayList<Integer>> userNumbers = new HashMap<>();
 
     @Override
     public String getBotUsername() {
