@@ -97,6 +97,25 @@ public class JDBCConnector {
 		return true; // Пользователь успешно добавлен
 	}
 
+	public Boolean deleteUser(String username) {
+		try {
+			String sqlUser = "delete from users where name = ?";
+
+			PreparedStatement psUser = connection.prepareStatement(sqlUser);
+
+			psUser.setString(1, username);
+
+			psUser.executeUpdate();
+			psUser.close();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+
+		return true;
+	}
+
 	//Добавление города для пользователя по имени
 	public Boolean addCity(String username, String cityName) {
 		try {

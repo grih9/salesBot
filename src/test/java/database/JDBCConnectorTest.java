@@ -36,6 +36,20 @@ class JDBCConnectorTest {
     }
 
     @Test
+    public void deleteUser() {
+        Assertions.assertTrue(jdbc.addUser("Denis"));
+        Assertions.assertTrue(jdbc.deleteUser("Denis"));
+        Assertions.assertNull(jdbc.getUserId("Denis"));
+    }
+
+    @Test
+    public void addUserAfterDelete() {
+        Assertions.assertTrue(jdbc.addUser("Denis"));
+        Assertions.assertTrue(jdbc.deleteUser("Denis"));
+        Assertions.assertTrue(jdbc.addUser("Denis"));
+    }
+
+    @Test
     public void addAlreadyExistedUser() {
         jdbc.addUser("Denis");
         Assertions.assertFalse(jdbc.addUser("Denis"));
