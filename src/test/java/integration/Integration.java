@@ -123,6 +123,21 @@ public class Integration {
         Assertions.assertEquals(numbers, jdbcConnector.getSelectedShops(user.getUserName()));
     }
 
+    @Test
+    void testScenario19() {
+        AbsSenderMock absSenderMock = new AbsSenderMock();
+        AbsSenderMock.userNumbers.put(chat.getId(), new ArrayList<>());
+
+        List<Shop> numbers = new ArrayList<>();
+        numbers.add(new Shop("О'КЕЙ","https://edadeal.ru/sankt-peterburg/retailers/okmarket-giper"));
+        jdbcConnector.setSelectedShops(user.getUserName(), numbers);
+
+        AbsSenderMock.userCommand.put(chat.getId(), Command.SHOW_ITEMS);
+        absSenderMock.processNonCommandUpdate(prepareUpdate("/showitems", chat, user));
+        absSenderMock.processNonCommandUpdateBoolean(prepareUpdate("8,8,8,8,5,8", chat, user));
+        Assertions.assertTrue(absSenderMock.processNonCommandUpdateBoolean(prepareUpdate("Далее", chat, user)));
+    }
+
     private Update prepareUpdate(String text, Chat chat, User user) {
         Update update = new Update();
         Message message = new Message();

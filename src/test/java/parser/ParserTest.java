@@ -33,7 +33,7 @@ class ParserTest {
         String shopName2 = "Магнит";
         String shopWebSite2 = "https://edadeal.ru/sankt-peterburg/retailers/magnit-univer";
         shop2 = new Shop(shopName2, shopWebSite2);
-        //System.setProperty("webdriver.chrome.driver", "D:\\Testing\\chromedriver3\\chromedriver.exe");
+        System.setProperty("webdriver.chrome.driver", "D:\\distrib\\chromedriver\\chromedriver.exe");
         driver = null;
     }
 
