@@ -4,13 +4,12 @@ import bot.Command;
 import bot.commands.AbsSenderMock;
 import database.JDBCConnector;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
 
 import java.util.ArrayList;
 
-public class UserIntegration {
+public class UserIntegrationIT {
     private static final User user = new User();
     private static final Chat chat = new Chat();
     private static final String username = "testUserr";
