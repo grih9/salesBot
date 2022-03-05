@@ -18,6 +18,7 @@ public class IntegrationIT {
     private static final User user = new User();
     private static final Chat chat = new Chat();
     private final JDBCConnector jdbcConnector = new JDBCConnector(false);
+    private final AbsSenderMock absSenderMock = new AbsSenderMock();
 
     @BeforeAll
     static void setUp() {
@@ -27,7 +28,6 @@ public class IntegrationIT {
 
     @Test
     void testScenario4() {
-        AbsSenderMock absSenderMock = new AbsSenderMock();
         AbsSenderMock.userNumbers.put(chat.getId(), new ArrayList<>());
         AbsSenderMock.userCommand.put(chat.getId(), Command.CHOSE_SHOPS);
 
@@ -49,7 +49,6 @@ public class IntegrationIT {
     void testScenario5() {
         user.setUserName("testUser");
 
-        AbsSenderMock absSenderMock = new AbsSenderMock();
         AbsSenderMock.userNumbers.put(chat.getId(), new ArrayList<>());
         AbsSenderMock.userCommand.put(chat.getId(), Command.START);
         absSenderMock.processNonCommandUpdateBoolean(Util.prepareUpdate("/start", chat, user));
@@ -83,7 +82,6 @@ public class IntegrationIT {
 
     @Test
     void testScenario6() {
-        AbsSenderMock absSenderMock = new AbsSenderMock();
         AbsSenderMock.userNumbers.put(chat.getId(), new ArrayList<>());
         AbsSenderMock.userCommand.put(chat.getId(), Command.CHOSE_SHOPS);
 
@@ -103,7 +101,6 @@ public class IntegrationIT {
 
     @Test
     void testScenario7() {
-        AbsSenderMock absSenderMock = new AbsSenderMock();
         AbsSenderMock.userNumbers.put(chat.getId(), new ArrayList<>());
         AbsSenderMock.userCommand.put(chat.getId(), Command.CHOSE_SHOPS);
 
@@ -119,7 +116,6 @@ public class IntegrationIT {
 
     @Test
     void testScenario8() {
-        AbsSenderMock absSenderMock = new AbsSenderMock();
         AbsSenderMock.userNumbers.put(chat.getId(), new ArrayList<>());
         AbsSenderMock.userCommand.put(chat.getId(), Command.CHOSE_SHOPS);
 
@@ -135,7 +131,6 @@ public class IntegrationIT {
 
     @Test
     void testScenario9() {
-        AbsSenderMock absSenderMock = new AbsSenderMock();
         AbsSenderMock.userNumbers.put(chat.getId(), new ArrayList<>());
         AbsSenderMock.userCommand.put(chat.getId(), Command.CHOSE_SHOPS);
 
@@ -150,7 +145,6 @@ public class IntegrationIT {
 
     @Test
     void testScenario10() {
-        AbsSenderMock absSenderMock = new AbsSenderMock();
         AbsSenderMock.userNumbers.put(chat.getId(), new ArrayList<>());
         AbsSenderMock.userCommand.put(chat.getId(), Command.CHOSE_SHOPS);
 
@@ -166,7 +160,6 @@ public class IntegrationIT {
 
     @Test
     void testScenario11() {
-        AbsSenderMock absSenderMock = new AbsSenderMock();
         AbsSenderMock.userNumbers.put(chat.getId(), new ArrayList<>());
         AbsSenderMock.userCommand.put(chat.getId(), Command.CHOSE_SHOPS);
 
@@ -182,7 +175,6 @@ public class IntegrationIT {
 
     @Test
     void testScenario12() {
-        AbsSenderMock absSenderMock = new AbsSenderMock();
         AbsSenderMock.userNumbers.put(chat.getId(), new ArrayList<>());
         AbsSenderMock.userCommand.put(chat.getId(), Command.CHOSE_SHOPS);
 
@@ -198,7 +190,6 @@ public class IntegrationIT {
 
     @Test
     void testScenario19() {
-        AbsSenderMock absSenderMock = new AbsSenderMock();
         AbsSenderMock.userNumbers.put(chat.getId(), new ArrayList<>());
 
         List<Shop> numbers = new ArrayList<>();
