@@ -3,13 +3,10 @@ package integration;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.telegram.telegrambots.meta.api.objects.Chat;
-import org.telegram.telegrambots.meta.api.objects.Message;
-import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 
 import bot.Command;
@@ -17,7 +14,7 @@ import bot.commands.AbsSenderMock;
 import database.JDBCConnector;
 import database.Shop;
 
-public class Integration {
+public class IntegrationIT {
     private static final User user = new User();
     private static final Chat chat = new Chat();
     private final JDBCConnector jdbcConnector = new JDBCConnector(false);
