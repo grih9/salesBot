@@ -30,6 +30,7 @@ public class AbsSenderMock extends TelegramLongPollingCommandBot {
 
     public static Map<Long, Command> userCommand = new HashMap<>();
     public static Map<Long, ArrayList<Integer>> userNumbers = new HashMap<>();
+    private Boolean userAdded = false;
 
     @Override
     public String getBotUsername() {
@@ -50,6 +51,7 @@ public class AbsSenderMock extends TelegramLongPollingCommandBot {
         }
         switch (msg.getText().trim()) {
             case "/start":
+                userAdded = false;
                 userCommand.put(chatId, Command.START);
                 userNumbers.put(chatId, new ArrayList<>());
                 startCommand.execute(this, update.getMessage().getFrom(), update.getMessage().getChat(), null);
@@ -207,5 +209,13 @@ public class AbsSenderMock extends TelegramLongPollingCommandBot {
     @Override
     public <T extends Serializable, Method extends BotApiMethod<T>> T execute(Method method) throws TelegramApiException {
         return null;
+    }
+
+    public Boolean getUserAdded() {
+        return userAdded;
+    }
+
+    public void setUserAdded(Boolean userAdded) {
+        this.userAdded = userAdded;
     }
 }

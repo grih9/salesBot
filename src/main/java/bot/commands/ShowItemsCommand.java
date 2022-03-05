@@ -70,6 +70,12 @@ public class ShowItemsCommand extends ServiceCommand {
             return false;
         }
 
+        if (selectedShops.size() == 0) {
+            super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName,
+                    "Выберите одну или более торговую сеть");
+            return false;
+        }
+
         LinkedHashSet<Integer> noDuplArray = new LinkedHashSet<>(numbers);
         numbers = new ArrayList<>(noDuplArray);
 
