@@ -14,9 +14,9 @@ public class ChooseShopsCommandTest {
     private final ArrayList<Integer> numbers = new ArrayList<>();
     private static User user = Mockito.mock(User.class);
     private static Chat chat = Mockito.mock(Chat.class);
-    private static AbsSenderMock absSenderMock = new AbsSenderMock();
-    private static ChooseShopsCommand chooseShopsCommand;
     private static final JDBCConnector jdbc = new JDBCConnector(false);
+    private static AbsSenderMock absSenderMock = new AbsSenderMock(jdbc);
+    private static ChooseShopsCommand chooseShopsCommand;
 
     @BeforeAll
     static void setUp() {

@@ -18,7 +18,7 @@ public class IntegrationIT {
     private static final User user = new User();
     private static final Chat chat = new Chat();
     private final JDBCConnector jdbcConnector = new JDBCConnector(false);
-    private final AbsSenderMock absSenderMock = new AbsSenderMock();
+    private final AbsSenderMock absSenderMock = new AbsSenderMock(jdbcConnector);
 
     @BeforeAll
     static void setUp() {

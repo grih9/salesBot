@@ -16,8 +16,8 @@ import database.Shop;
 public class FindItemCommandTest {
     private User user = new User();
     private Chat chat = Mockito.mock(Chat.class);
-    private final AbsSenderMock absSenderMock = new AbsSenderMock();
     private final JDBCConnector jdbc = new JDBCConnector(false);
+    private final AbsSenderMock absSenderMock = new AbsSenderMock(jdbc);
     private FindItemCommand findItemCommand = new FindItemCommand("finditem", "Найти товар", jdbc);
     private final String MESSAGE = "message";
 

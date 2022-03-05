@@ -11,10 +11,10 @@ import org.telegram.telegrambots.meta.api.objects.User;
 public class ChooseCityCommandTest {
     private static User user = Mockito.mock(User.class);
     private static Chat chat = Mockito.mock(Chat.class);
-    private static AbsSenderMock absSenderMock = new AbsSenderMock();
+    private static final JDBCConnector jdbc = new JDBCConnector(false);
+    private static final AbsSenderMock absSenderMock = new AbsSenderMock(jdbc);
     private static ChooseCityCommand chooseCityCommand;
     private static final String MESSAGE = "message";
-    private static final JDBCConnector jdbc = new JDBCConnector(false);
 
     @BeforeAll
     static void setUp() {

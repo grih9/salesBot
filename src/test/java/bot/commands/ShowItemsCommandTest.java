@@ -18,8 +18,8 @@ public class ShowItemsCommandTest {
     private ArrayList<Integer> numbers = new ArrayList<>();
     private User user = new User();
     private Chat chat = Mockito.mock(Chat.class);
-    private final AbsSenderMock absSenderMock = new AbsSenderMock();
     private final JDBCConnector jdbc = new JDBCConnector(false);
+    private final AbsSenderMock absSenderMock = new AbsSenderMock(jdbc);
     private ShowItemsCommand showItemsCommand = new ShowItemsCommand("showitems", "Отобразить товары", jdbc);
 
     @BeforeEach

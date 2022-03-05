@@ -14,7 +14,7 @@ public class UserIntegrationIT {
     private static final Chat chat = new Chat();
     private static final String username = "testUserr";
     private static final JDBCConnector jdbcConnector = new JDBCConnector(false);
-    private static final AbsSenderMock absSenderMock = new AbsSenderMock();
+    private static final AbsSenderMock absSenderMock = new AbsSenderMock(jdbcConnector);
 
     @BeforeAll
     static void allSetUp() {
