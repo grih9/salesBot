@@ -100,14 +100,17 @@ public class JDBCConnector {
 	public Boolean deleteUser(String username) {
 		try {
 			String sqlUser = "delete from users where name = ?";
+			String deleteUserFromUserShop = "delete from users_shops where userid = (select id from users where name = ?)";
+
+			PreparedStatement psDeleteUserFromUserShop = connection.prepareStatement(deleteUserFromUserShop);
+			psDeleteUserFromUserShop.setString(1, username);
+			psDeleteUserFromUserShop.executeUpdate();
+			psDeleteUserFromUserShop.close();
 
 			PreparedStatement psUser = connection.prepareStatement(sqlUser);
-
 			psUser.setString(1, username);
-
 			psUser.executeUpdate();
 			psUser.close();
-
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return false;
@@ -119,7 +122,7 @@ public class JDBCConnector {
 	//Добавление города для пользователя по имени
 	public Boolean addCity(String username, String cityName) {
 		try {
-			String sql = "select id from cities where name LIKE ?;";
+			String sql = "select id from cities where name = ?;";
 			PreparedStatement ps = connection.prepareStatement(sql);
 
 			ps.setString(1, cityName);
@@ -132,7 +135,7 @@ public class JDBCConnector {
 
 			ps.close();
 
-			String sqlUser = "UPDATE users SET cityId = ? WHERE name LIKE ?;";
+			String sqlUser = "UPDATE users SET cityId = ? WHERE name = ?;";
 
 			PreparedStatement psUser = connection.prepareStatement(sqlUser);
 
@@ -152,7 +155,7 @@ public class JDBCConnector {
 	//Добавление списка городов
 	public Boolean addCities() {
 		String sqlInsert = "insert into cities(name, region) values(?, ?);";
-		String sqlSelect = "select id from cities where name LIKE ? AND region LIKE ?;";
+		String sqlSelect = "select id from cities where name = ? AND region = ?;";
 
 		try {
 			PreparedStatement ps = connection.prepareStatement(sqlInsert);
@@ -271,9 +274,9 @@ public class JDBCConnector {
 	}
 
 	public Boolean setSelectedShops(String username, List<Shop> shops) {
-		String sqlInsert = "insert into users_shops(userId, shopId) values((select id from users where name LIKE ?), " +
-				"(select id from shops where name LIKE ? and website LIKE ?));";
-		String sqlTruncate = "DELETE FROM users_shops WHERE userId = (select id from users where name LIKE ?)";
+		String sqlInsert = "insert into users_shops(userId, shopId) values((select id from users where name = ?), " +
+				"(select id from shops where name = ? and website = ?));";
+		String sqlTruncate = "DELETE FROM users_shops WHERE userId = (select id from users where name = ?)";
 
 		try {
 			PreparedStatement tr = connection.prepareStatement(sqlTruncate);
@@ -303,7 +306,7 @@ public class JDBCConnector {
 
 	public Boolean addItems(String categoty, Shop shop, List<Item> items) {
 		String sqlInsert = "insert into items(name, imageurl, price, salePrice, saleBeginDate, saleEndDate, cityId, categoryId) " +
-				"values(?, ?, ?, ?, ?, ?, (select id from shops where name LIKE ? and website LIKE ?), (select id from categories where name LIKE ?));";
+				"values(?, ?, ?, ?, ?, ?, (select id from shops where name = ? and website = ?), (select id from categories where name = ?));";
 
 		try {
 			PreparedStatement ps = connection.prepareStatement(sqlInsert);
@@ -337,7 +340,7 @@ public class JDBCConnector {
 		try {
 			String sql = "select items.name, imageURL, price, salePrice, saleBeginDate, saleEndDate, shops.name from items join categories " +
 					"on items.categoryId = categories.id join shops " +
-					"on items.cityId = shops.id where categories.name LIKE ? AND shops.name LIKE ? AND shops.website LIKE ? ";
+					"on items.cityId = shops.id where categories.name = ? AND shops.name = ? AND shops.website = ? ";
 
 			PreparedStatement ps = connection.prepareStatement(sql);
 			ps.setString(1, categoty);
@@ -377,7 +380,7 @@ public class JDBCConnector {
 		List<Item> items = new ArrayList<>();
 		try {
 			String sql = "select items.name, imageURL, price, salePrice, saleBeginDate, saleEndDate, shops.name from items join shops " +
-					"on items.cityId = shops.id where shops.name LIKE ? AND shops.website LIKE ? AND LOWER(items.name) LIKE LOWER(?);";
+					"on items.cityId = shops.id where shops.name = ? AND shops.website = ? AND LOWER(items.name) = LOWER(?);";
 
 			PreparedStatement ps = connection.prepareStatement(sql);
 			ps.setString(1, shop.getName());
@@ -464,7 +467,7 @@ public class JDBCConnector {
 		int[] a = {12};
 		try {
 			String sql = "select shops.name, website from shops join users_shops on shops.id = users_shops.shopId join" +
-					" users on users.id = users_shops.userId where users.name LIKE ?";
+					" users on users.id = users_shops.userId where users.name = ?";
 
 			PreparedStatement ps = connection.prepareStatement(sql);
 			ps.setString(1, username);
@@ -511,7 +514,7 @@ public class JDBCConnector {
 		City result = null;
 		try {
 			String sql = "select cities.name, region from cities join users " +
-					"on users.cityId = cities.id where users.name LIKE ?";
+					"on users.cityId = cities.id where users.name = ?";
 
 			PreparedStatement ps = connection.prepareStatement(sql);
 			ps.setString(1, username);
@@ -531,13 +534,14 @@ public class JDBCConnector {
 	public String getUserId(String username) {
 		String result = null;
 		try {
-			String sql = "select id from users where users.name LIKE ?";
+			String sql = "select id from users where users.name = ?";
 
 			PreparedStatement ps = connection.prepareStatement(sql);
 			ps.setString(1, username);
 			ResultSet rs = ps.executeQuery();
-			rs.next();
-			result = rs.getString("id");
+			if (rs.next()) {
+				result = rs.getString(1);
+			}
 
 			ps.close();
 		} catch (SQLException e) {

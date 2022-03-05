@@ -29,19 +29,95 @@ public class Integration {
     }
 
     @Test
+    void testScenario4() {
+        AbsSenderMock absSenderMock = new AbsSenderMock();
+        AbsSenderMock.userNumbers.put(chat.getId(), new ArrayList<>());
+        AbsSenderMock.userCommand.put(chat.getId(), Command.CHOSE_SHOPS);
+
+        absSenderMock.processNonCommandUpdate(Util.prepareUpdate("/shops", chat, user));
+        absSenderMock.processNonCommandUpdateBoolean(Util.prepareUpdate("3", chat, user));
+        absSenderMock.processNonCommandUpdateBoolean(Util.prepareUpdate("6", chat, user));
+        absSenderMock.processNonCommandUpdateBoolean(Util.prepareUpdate("10", chat, user));
+        Assertions.assertTrue(absSenderMock.processNonCommandUpdateBoolean(Util.prepareUpdate("Далее", chat, user)));
+
+        AbsSenderMock.userCommand.put(chat.getId(), Command.SHOW_ITEMS);
+        absSenderMock.processNonCommandUpdate(Util.prepareUpdate("/showitems", chat, user));
+        absSenderMock.processNonCommandUpdateBoolean(Util.prepareUpdate("1", chat, user));
+        absSenderMock.processNonCommandUpdateBoolean(Util.prepareUpdate("4", chat, user));
+        absSenderMock.processNonCommandUpdateBoolean(Util.prepareUpdate("12", chat, user));
+        Assertions.assertTrue(absSenderMock.processNonCommandUpdateBoolean(Util.prepareUpdate("Далее", chat, user)));
+    }
+
+    @Test
+    void testScenario5() {
+        user.setUserName("testUser");
+
+        AbsSenderMock absSenderMock = new AbsSenderMock();
+        AbsSenderMock.userNumbers.put(chat.getId(), new ArrayList<>());
+        AbsSenderMock.userCommand.put(chat.getId(), Command.START);
+        absSenderMock.processNonCommandUpdateBoolean(Util.prepareUpdate("/start", chat, user));
+
+        String city = "Санкт-Петербург";
+
+        AbsSenderMock.userNumbers.put(chat.getId(), new ArrayList<>());
+        AbsSenderMock.userCommand.put(chat.getId(), Command.CITY);
+        absSenderMock.processNonCommandUpdate(Util.prepareUpdate("/city", chat, user));
+        absSenderMock.processNonCommandUpdateBoolean(Util.prepareUpdate(city, chat, user));
+
+        AbsSenderMock.userNumbers.put(chat.getId(), new ArrayList<>());
+        AbsSenderMock.userCommand.put(chat.getId(), Command.CHOSE_SHOPS);
+
+        absSenderMock.processNonCommandUpdate(Util.prepareUpdate("/shops", chat, user));
+        absSenderMock.processNonCommandUpdateBoolean(Util.prepareUpdate("-1", chat, user));
+        absSenderMock.processNonCommandUpdateBoolean(Util.prepareUpdate("15", chat, user));
+        absSenderMock.processNonCommandUpdateBoolean(Util.prepareUpdate("3", chat, user));
+        Assertions.assertFalse(absSenderMock.processNonCommandUpdateBoolean(Util.prepareUpdate("Далее", chat, user)));
+
+        AbsSenderMock.userCommand.put(chat.getId(), Command.SHOW_ITEMS);
+        absSenderMock.processNonCommandUpdate(Util.prepareUpdate("/showitems", chat, user));
+        absSenderMock.processNonCommandUpdateBoolean(Util.prepareUpdate("1", chat, user));
+        absSenderMock.processNonCommandUpdateBoolean(Util.prepareUpdate("4", chat, user));
+        absSenderMock.processNonCommandUpdateBoolean(Util.prepareUpdate("12", chat, user));
+        Assertions.assertFalse(absSenderMock.processNonCommandUpdateBoolean(Util.prepareUpdate("Далее", chat, user)));
+
+        jdbcConnector.deleteUser("testUser");
+        user.setUserName("anilochka");
+    }
+
+    @Test
+    void testScenario6() {
+        AbsSenderMock absSenderMock = new AbsSenderMock();
+        AbsSenderMock.userNumbers.put(chat.getId(), new ArrayList<>());
+        AbsSenderMock.userCommand.put(chat.getId(), Command.CHOSE_SHOPS);
+
+        absSenderMock.processNonCommandUpdate(Util.prepareUpdate("/shops", chat, user));
+        absSenderMock.processNonCommandUpdateBoolean(Util.prepareUpdate("3", chat, user));
+        absSenderMock.processNonCommandUpdateBoolean(Util.prepareUpdate("6", chat, user));
+        absSenderMock.processNonCommandUpdateBoolean(Util.prepareUpdate("10", chat, user));
+        Assertions.assertTrue(absSenderMock.processNonCommandUpdateBoolean(Util.prepareUpdate("Далее", chat, user)));
+
+        AbsSenderMock.userCommand.put(chat.getId(), Command.SHOW_ITEMS);
+        absSenderMock.processNonCommandUpdate(Util.prepareUpdate("/showitems", chat, user));
+        absSenderMock.processNonCommandUpdateBoolean(Util.prepareUpdate("-1", chat, user));
+        absSenderMock.processNonCommandUpdateBoolean(Util.prepareUpdate("4", chat, user));
+        absSenderMock.processNonCommandUpdateBoolean(Util.prepareUpdate("20", chat, user));
+        Assertions.assertFalse(absSenderMock.processNonCommandUpdateBoolean(Util.prepareUpdate("Далее", chat, user)));
+    }
+
+    @Test
     void testScenario7() {
         AbsSenderMock absSenderMock = new AbsSenderMock();
         AbsSenderMock.userNumbers.put(chat.getId(), new ArrayList<>());
         AbsSenderMock.userCommand.put(chat.getId(), Command.CHOSE_SHOPS);
 
-        absSenderMock.processNonCommandUpdate(prepareUpdate("/shops", chat, user));
-        absSenderMock.processNonCommandUpdateBoolean(prepareUpdate("25,0,22", chat, user));
-        Assertions.assertFalse(absSenderMock.processNonCommandUpdateBoolean(prepareUpdate("Далее", chat, user)));
+        absSenderMock.processNonCommandUpdate(Util.prepareUpdate("/shops", chat, user));
+        absSenderMock.processNonCommandUpdateBoolean(Util.prepareUpdate("25,0,22", chat, user));
+        Assertions.assertFalse(absSenderMock.processNonCommandUpdateBoolean(Util.prepareUpdate("Далее", chat, user)));
 
         AbsSenderMock.userCommand.put(chat.getId(), Command.SHOW_ITEMS);
-        absSenderMock.processNonCommandUpdate(prepareUpdate("/showitems", chat, user));
-        absSenderMock.processNonCommandUpdateBoolean(prepareUpdate("25,0,22", chat, user));
-        Assertions.assertFalse(absSenderMock.processNonCommandUpdateBoolean(prepareUpdate("Далее", chat, user)));
+        absSenderMock.processNonCommandUpdate(Util.prepareUpdate("/showitems", chat, user));
+        absSenderMock.processNonCommandUpdateBoolean(Util.prepareUpdate("25,0,22", chat, user));
+        Assertions.assertFalse(absSenderMock.processNonCommandUpdateBoolean(Util.prepareUpdate("Далее", chat, user)));
     }
 
     @Test
@@ -50,14 +126,14 @@ public class Integration {
         AbsSenderMock.userNumbers.put(chat.getId(), new ArrayList<>());
         AbsSenderMock.userCommand.put(chat.getId(), Command.CHOSE_SHOPS);
 
-        absSenderMock.processNonCommandUpdate(prepareUpdate("/shops", chat, user));
-        absSenderMock.processNonCommandUpdateBoolean(prepareUpdate("1", chat, user));
-        Assertions.assertTrue(absSenderMock.processNonCommandUpdateBoolean(prepareUpdate("Далее", chat, user)));
+        absSenderMock.processNonCommandUpdate(Util.prepareUpdate("/shops", chat, user));
+        absSenderMock.processNonCommandUpdateBoolean(Util.prepareUpdate("1", chat, user));
+        Assertions.assertTrue(absSenderMock.processNonCommandUpdateBoolean(Util.prepareUpdate("Далее", chat, user)));
 
         AbsSenderMock.userCommand.put(chat.getId(), Command.FIND_ITEM);
-        absSenderMock.processNonCommandUpdate(prepareUpdate("/finditem", chat, user));
-        absSenderMock.processNonCommandUpdateBoolean(prepareUpdate("хлеб", chat, user));
-        Assertions.assertTrue(absSenderMock.processNonCommandUpdateBoolean(prepareUpdate("Далее", chat, user)));
+        absSenderMock.processNonCommandUpdate(Util.prepareUpdate("/finditem", chat, user));
+        absSenderMock.processNonCommandUpdateBoolean(Util.prepareUpdate("хлеб", chat, user));
+        Assertions.assertTrue(absSenderMock.processNonCommandUpdateBoolean(Util.prepareUpdate("Далее", chat, user)));
     }
 
     @Test
@@ -66,13 +142,13 @@ public class Integration {
         AbsSenderMock.userNumbers.put(chat.getId(), new ArrayList<>());
         AbsSenderMock.userCommand.put(chat.getId(), Command.CHOSE_SHOPS);
 
-        absSenderMock.processNonCommandUpdate(prepareUpdate("/shops", chat, user));
-        absSenderMock.processNonCommandUpdateBoolean(prepareUpdate("25,0,22", chat, user));
-        Assertions.assertFalse(absSenderMock.processNonCommandUpdateBoolean(prepareUpdate("Далее", chat, user)));
+        absSenderMock.processNonCommandUpdate(Util.prepareUpdate("/shops", chat, user));
+        absSenderMock.processNonCommandUpdateBoolean(Util.prepareUpdate("25,0,22", chat, user));
+        Assertions.assertFalse(absSenderMock.processNonCommandUpdateBoolean(Util.prepareUpdate("Далее", chat, user)));
 
-        absSenderMock.processNonCommandUpdate(prepareUpdate("/finditem", chat, user));
-        absSenderMock.processNonCommandUpdateBoolean(prepareUpdate("хлеб", chat, user));
-        Assertions.assertFalse(absSenderMock.processNonCommandUpdateBoolean(prepareUpdate("Далее", chat, user)));
+        absSenderMock.processNonCommandUpdate(Util.prepareUpdate("/finditem", chat, user));
+        absSenderMock.processNonCommandUpdateBoolean(Util.prepareUpdate("хлеб", chat, user));
+        Assertions.assertFalse(absSenderMock.processNonCommandUpdateBoolean(Util.prepareUpdate("Далее", chat, user)));
     }
 
     @Test
@@ -81,14 +157,14 @@ public class Integration {
         AbsSenderMock.userNumbers.put(chat.getId(), new ArrayList<>());
         AbsSenderMock.userCommand.put(chat.getId(), Command.CHOSE_SHOPS);
 
-        absSenderMock.processNonCommandUpdate(prepareUpdate("/shops", chat, user));
-        absSenderMock.processNonCommandUpdateBoolean(prepareUpdate("8,9", chat, user));
-        Assertions.assertTrue(absSenderMock.processNonCommandUpdateBoolean(prepareUpdate("Далее", chat, user)));
+        absSenderMock.processNonCommandUpdate(Util.prepareUpdate("/shops", chat, user));
+        absSenderMock.processNonCommandUpdateBoolean(Util.prepareUpdate("8,9", chat, user));
+        Assertions.assertTrue(absSenderMock.processNonCommandUpdateBoolean(Util.prepareUpdate("Далее", chat, user)));
 
         AbsSenderMock.userCommand.put(chat.getId(), Command.FIND_ITEM);
-        absSenderMock.processNonCommandUpdate(prepareUpdate("/finditem", chat, user));
-        absSenderMock.processNonCommandUpdateBoolean(prepareUpdate("", chat, user));
-        Assertions.assertFalse(absSenderMock.processNonCommandUpdateBoolean(prepareUpdate("Далее", chat, user)));
+        absSenderMock.processNonCommandUpdate(Util.prepareUpdate("/finditem", chat, user));
+        absSenderMock.processNonCommandUpdateBoolean(Util.prepareUpdate("", chat, user));
+        Assertions.assertFalse(absSenderMock.processNonCommandUpdateBoolean(Util.prepareUpdate("Далее", chat, user)));
     }
 
     @Test
@@ -97,14 +173,14 @@ public class Integration {
         AbsSenderMock.userNumbers.put(chat.getId(), new ArrayList<>());
         AbsSenderMock.userCommand.put(chat.getId(), Command.CHOSE_SHOPS);
 
-        absSenderMock.processNonCommandUpdate(prepareUpdate("/shops", chat, user));
-        absSenderMock.processNonCommandUpdateBoolean(prepareUpdate("25,0,22", chat, user));
-        Assertions.assertFalse(absSenderMock.processNonCommandUpdateBoolean(prepareUpdate("Далее", chat, user)));
+        absSenderMock.processNonCommandUpdate(Util.prepareUpdate("/shops", chat, user));
+        absSenderMock.processNonCommandUpdateBoolean(Util.prepareUpdate("25,0,22", chat, user));
+        Assertions.assertFalse(absSenderMock.processNonCommandUpdateBoolean(Util.prepareUpdate("Далее", chat, user)));
 
         AbsSenderMock.userCommand.put(chat.getId(), Command.FIND_ITEM);
-        absSenderMock.processNonCommandUpdate(prepareUpdate("/finditem", chat, user));
-        absSenderMock.processNonCommandUpdateBoolean(prepareUpdate("", chat, user));
-        Assertions.assertFalse(absSenderMock.processNonCommandUpdateBoolean(prepareUpdate("Далее", chat, user)));
+        absSenderMock.processNonCommandUpdate(Util.prepareUpdate("/finditem", chat, user));
+        absSenderMock.processNonCommandUpdateBoolean(Util.prepareUpdate("", chat, user));
+        Assertions.assertFalse(absSenderMock.processNonCommandUpdateBoolean(Util.prepareUpdate("Далее", chat, user)));
     }
 
     @Test
@@ -113,9 +189,9 @@ public class Integration {
         AbsSenderMock.userNumbers.put(chat.getId(), new ArrayList<>());
         AbsSenderMock.userCommand.put(chat.getId(), Command.CHOSE_SHOPS);
 
-        absSenderMock.processNonCommandUpdate(prepareUpdate("/shops", chat, user));
-        absSenderMock.processNonCommandUpdateBoolean(prepareUpdate("8,9,", chat, user));
-        Assertions.assertTrue(absSenderMock.processNonCommandUpdateBoolean(prepareUpdate("Далее", chat, user)));
+        absSenderMock.processNonCommandUpdate(Util.prepareUpdate("/shops", chat, user));
+        absSenderMock.processNonCommandUpdateBoolean(Util.prepareUpdate("8,9,", chat, user));
+        Assertions.assertTrue(absSenderMock.processNonCommandUpdateBoolean(Util.prepareUpdate("Далее", chat, user)));
 
         List<Shop> numbers = new ArrayList<>();
         numbers.add(new Shop("О'КЕЙ","https://edadeal.ru/sankt-peterburg/retailers/okmarket-giper"));
@@ -133,18 +209,8 @@ public class Integration {
         jdbcConnector.setSelectedShops(user.getUserName(), numbers);
 
         AbsSenderMock.userCommand.put(chat.getId(), Command.SHOW_ITEMS);
-        absSenderMock.processNonCommandUpdate(prepareUpdate("/showitems", chat, user));
-        absSenderMock.processNonCommandUpdateBoolean(prepareUpdate("8,8,8,8,5,8", chat, user));
-        Assertions.assertTrue(absSenderMock.processNonCommandUpdateBoolean(prepareUpdate("Далее", chat, user)));
-    }
-
-    private Update prepareUpdate(String text, Chat chat, User user) {
-        Update update = new Update();
-        Message message = new Message();
-        message.setChat(chat);
-        message.setText(text);
-        message.setFrom(user);
-        update.setMessage(message);
-        return update;
+        absSenderMock.processNonCommandUpdate(Util.prepareUpdate("/showitems", chat, user));
+        absSenderMock.processNonCommandUpdateBoolean(Util.prepareUpdate("8,8,8,8,5,8", chat, user));
+        Assertions.assertTrue(absSenderMock.processNonCommandUpdateBoolean(Util.prepareUpdate("Далее", chat, user)));
     }
 }
