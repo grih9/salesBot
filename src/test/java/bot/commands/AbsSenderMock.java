@@ -21,19 +21,22 @@ import database.JDBCConnector;
 import utils.Utils;
 
 public class AbsSenderMock extends TelegramLongPollingCommandBot {
-    private JDBCConnector jdbc;
-    StartCommand startCommand = new StartCommand("start", "Старт", this.jdbc);
-    ChooseCityCommand chooseCityCommand = new ChooseCityCommand("city", "Город", this.jdbc);
-    ChooseShopsCommand chooseShopsCommand = new ChooseShopsCommand("shops", "Выбрать магазины", this.jdbc);
-    FindItemCommand findItemCommand = new FindItemCommand("finditem", "Найти товар", this.jdbc);
-    ShowItemsCommand showItemsCommand = new ShowItemsCommand("showitems", "Отобразить товары", this.jdbc);
+    private final StartCommand startCommand;
+    private final ChooseCityCommand chooseCityCommand;
+    private final ChooseShopsCommand chooseShopsCommand;
+    private final FindItemCommand findItemCommand;
+    private final ShowItemsCommand showItemsCommand;
 
     public static Map<Long, Command> userCommand = new HashMap<>();
     public static Map<Long, ArrayList<Integer>> userNumbers = new HashMap<>();
     private Boolean userAdded = false;
 
     public AbsSenderMock(JDBCConnector jdbc) {
-        this.jdbc = jdbc;
+        this.startCommand = new StartCommand("start", "Старт", jdbc);
+        this.chooseCityCommand = new ChooseCityCommand("city", "Город", jdbc);
+        this.chooseShopsCommand = new ChooseShopsCommand("shops", "Выбрать магазины", jdbc);
+        this.findItemCommand = new FindItemCommand("finditem", "Найти товар", jdbc);
+        this.showItemsCommand = new ShowItemsCommand("showitems", "Отобразить товары", jdbc);
     }
 
     @Override
