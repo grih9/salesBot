@@ -14,6 +14,7 @@ public class UserIntegrationIT {
     private static final Chat chat = new Chat();
     private static final String username = "testUserr";
     private static final JDBCConnector jdbcConnector = new JDBCConnector(false);
+    private static final AbsSenderMock absSenderMock = new AbsSenderMock();
 
     @BeforeAll
     static void allSetUp() {
@@ -23,7 +24,7 @@ public class UserIntegrationIT {
 
     @BeforeEach
     void eachSetUp() {
-        AbsSenderMock absSenderMock = new AbsSenderMock();
+
         AbsSenderMock.userNumbers.put(chat.getId(), new ArrayList<>());
         AbsSenderMock.userCommand.put(chat.getId(), Command.START);
         absSenderMock.processNonCommandUpdateBoolean(Util.prepareUpdate("/start", chat, user));
@@ -40,7 +41,7 @@ public class UserIntegrationIT {
     }
 
     @Test
-    void testScenario2() { AbsSenderMock absSenderMock = new AbsSenderMock();
+    void testScenario2() {
         String city = "Санкт-Петербург";
 
         AbsSenderMock.userNumbers.put(chat.getId(), new ArrayList<>());
@@ -55,7 +56,6 @@ public class UserIntegrationIT {
     @Test
     void testScenario3() {
         String city = "Санкт";
-        AbsSenderMock absSenderMock = new AbsSenderMock();
 
         AbsSenderMock.userNumbers.put(chat.getId(), new ArrayList<>());
         AbsSenderMock.userCommand.put(chat.getId(), Command.CITY);
