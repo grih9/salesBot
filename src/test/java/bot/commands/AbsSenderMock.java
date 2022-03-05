@@ -21,7 +21,7 @@ import database.JDBCConnector;
 import utils.Utils;
 
 public class AbsSenderMock extends TelegramLongPollingCommandBot {
-    private final JDBCConnector jdbc = new JDBCConnector(false);
+    private JDBCConnector jdbc;
     StartCommand startCommand = new StartCommand("start", "Старт", this.jdbc);
     ChooseCityCommand chooseCityCommand = new ChooseCityCommand("city", "Город", this.jdbc);
     ChooseShopsCommand chooseShopsCommand = new ChooseShopsCommand("shops", "Выбрать магазины", this.jdbc);
@@ -31,6 +31,10 @@ public class AbsSenderMock extends TelegramLongPollingCommandBot {
     public static Map<Long, Command> userCommand = new HashMap<>();
     public static Map<Long, ArrayList<Integer>> userNumbers = new HashMap<>();
     private Boolean userAdded = false;
+
+    public AbsSenderMock(JDBCConnector jdbc) {
+        this.jdbc = jdbc;
+    }
 
     @Override
     public String getBotUsername() {
