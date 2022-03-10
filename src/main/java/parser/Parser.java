@@ -70,17 +70,17 @@ public class Parser {
                     driver.close();
                     driver.quit();
                 }
-                System.out.println("exception1");
-                e.printStackTrace();
+                //System.out.println("exception1");
+                //e.printStackTrace();
                 items = jdbc.getItemsByCategory(category, shop);
-                System.out.println("after jdbc");
+                //System.out.println("after jdbc");
                 return items;
             } catch (Exception ee) {
-                System.out.println("exception2");
-                ee.printStackTrace();
+                //System.out.println("exception2");
+                //ee.printStackTrace();
             }
         } finally {
-            System.out.println("finally");
+            //System.out.println("finally");
 
             return items.isEmpty() ? jdbc.getItemsByCategory(category, shop) : items;
         }
@@ -133,17 +133,17 @@ public class Parser {
                     driver.close();
                     driver.quit();
                 }
-                System.out.println("exception1");
-                e.printStackTrace();
+                //System.out.println("exception1");
+                //e.printStackTrace();
                 items = jdbc.getItemsByName(itemName, shop);
-                System.out.println("after jdbc");
+                //System.out.println("after jdbc");
                 return items;
             } catch (Exception ee) {
-                System.out.println("exception2");
-                ee.printStackTrace();
+                //System.out.println("exception2");
+                //ee.printStackTrace();
             }
         } finally {
-            System.out.println("finally");
+            //System.out.println("finally");
             return items.isEmpty() ? jdbc.getItemsByName(itemName, shop) : items;
         }
     }

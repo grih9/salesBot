@@ -65,7 +65,6 @@ public class ChooseShopsCommand extends ServiceCommand {
         numbers = new ArrayList<>(noDuplArray);
 
         for (int elem : noDuplArray) {
-            System.out.println("shop " + elem);
             if (elem > shops.size() || elem < 1) {
                 super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName,
                         "Номера сети " + elem + " нет в списке");

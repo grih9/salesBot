@@ -84,7 +84,6 @@ public class ShowItemsCommand extends ServiceCommand {
                     shop.getName());
             boolean hasItems = false;
             for (int i : numbers) {
-                System.out.println("findElem " + i);
                 if (i > categories.size() || i < 1) {
                     super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName,
                             "Номера категории " + i + " нет в списке");
@@ -92,29 +91,19 @@ public class ShowItemsCommand extends ServiceCommand {
                 }
                 super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName,
                             categories.get(i-1));
-                System.out.println("cat " + categories.get(i-1));
-                System.out.println("name " + shop.getName());
-                System.out.println("website " + shop.getWebsite());
                 List<Item> items = Parser.findItemsByCategory(categories.get(i-1), city, shop);
-                System.out.println("items after parser ");
-                System.out.println(items);
                 if (items.isEmpty()) {
                     super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName,
                             "Акционных товаров в данной категории нет");
                     continue;
                 }
                 hasItems = true;
-                System.out.println("items before sort" + items.size());
                 items.sort(Comparator.naturalOrder());
-                System.out.println("items after sort" + items.size());
                 int ii = 0;
-                System.out.println("items before loop" + items.size());
                 for (Item item : items) {
-                    System.out.println("items " + ii + " " + item);
                     super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName, item.toString());
                     ii++;
                 }
-                System.out.println("items after loop" + items.size());
             }
             if (!hasItems) {
                 super.sendAnswer(absSender, chat.getId(), super.getCommandIdentifier(), userName,
