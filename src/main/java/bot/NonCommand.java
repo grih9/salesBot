@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 public class NonCommand {
     public Boolean checkValid(String text) {
         Pattern pattern = Pattern.compile("((,*[ ]*)*[0-9]+(,*[ ]*)*)+");
-        System.out.println(pattern.matcher(text).pattern());
+        //System.out.println(pattern.matcher(text).pattern());
 
         return pattern.matcher(text).matches();
     }
