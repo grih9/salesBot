@@ -380,7 +380,7 @@ public class JDBCConnector {
 		List<Item> items = new ArrayList<>();
 		try {
 			String sql = "select items.name, imageURL, price, salePrice, saleBeginDate, saleEndDate, shops.name from items join shops " +
-					"on items.cityId = shops.id where shops.name = ? AND shops.website = ? AND LOWER(items.name) = LOWER(?);";
+					"on items.cityId = shops.id where shops.name = ? AND shops.website = ? AND LOWER(items.name) LIKE '%' || LOWER(?)  || '%';";
 
 			PreparedStatement ps = connection.prepareStatement(sql);
 			ps.setString(1, shop.getName());
