@@ -12,9 +12,9 @@ public class JDBCConnector {
 	private Connection connection = null;
 
 	public JDBCConnector(Boolean isTestConn) {
-		String url = "jdbc:postgresql://ec2-44-194-92-192.compute-1.amazonaws.com:5432/d9dbmmcbmhilk";
-		String user = "jkuqppzldjvlxm";
-		String password = "d7723ca3c3f9bb79f6eac28080b7f9a763cae3b2879c015c9f43208284df717f";
+		String url = "jdbc:postgresql://ec2-18-214-134-226.compute-1.amazonaws.com:5432/d9v8j0bhiqb6sb";
+		String user = "gcbviarcpapfvk";
+		String password = "ae0728387b1276488fc7bcb4f651da45c868c26f9f5a31c0e9e5100e6faa126f";
 
 		if (isTestConn) {
 			url = "jdbc:postgresql://ec2-44-193-188-118.compute-1.amazonaws.com:5432/d7ba6v4jgke23f";
