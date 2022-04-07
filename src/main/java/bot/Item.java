@@ -97,8 +97,8 @@ public class Item implements Comparable<Item>  {
                 (weight != 0 ? ("Вес: " + weight + "\n") : "") +
                 (price != null ? ("Цена без скидки: " + price + "\n") : "") +
                 "Цена со скидкой: " + salePrice + "\n" +
-                (saleBeginDate != null ? ("Начало акции: " + saleBeginDate + "\n") : "") +
-                (saleEndDate != null ? ("Окончание акции: " + saleEndDate + "\n") : "") +
+//                (saleBeginDate != null ? ("Начало акции: " + saleBeginDate + "\n") : "") +
+//                (saleEndDate != null ? ("Окончание акции: " + saleEndDate + "\n") : "") +
                 "Сеть: " + shopName + "\n" +
                 imageURL;
     }
