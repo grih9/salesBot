@@ -30,5 +30,3 @@ jobs:
             context: .
             push: true
             tags: ${{ secrets.DOCKER_HUB_USERNAME }}/devops:latest
-            no-cache: true
-
