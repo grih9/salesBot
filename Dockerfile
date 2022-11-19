@@ -5,3 +5,5 @@ RUN mvn -B -f /home/app/pom.xml clean package -DskipTests
 
 FROM openjdk:11.0.4-jre-slim
 COPY --from=build /home/app /usr/local/lib
+EXPOSE 8080
+ENTRYPOINT "/usr/local/lib"
