@@ -21,28 +21,6 @@
                     </plugins>
                 </pluginManagement>
                 <plugins>
-                        <plugin>
-                           <artifactId>maven-assembly-plugin</artifactId>
-                           <executions>
-                        <execution>
-                          <phase>package</phase>
-                          <goals>
-                            <goal>single</goal>
-                          </goals>
-                        </execution>
-                      </executions>
-                      <configuration>
-                        <archive>
-                          <manifest>
-                            <addClasspath>true</addClasspath>
-                            <mainClass>com.package.MainClass</mainClass>
-                          </manifest>
-                        </archive>
-                        <descriptorRefs>
-                          <descriptorRef>jar-with-dependencies</descriptorRef>
-                        </descriptorRefs>
-                      </configuration>
-                    </plugin> 
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>build-helper-maven-plugin</artifactId>
