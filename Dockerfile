@@ -4,6 +4,6 @@ COPY pom.xml /home/app
 RUN mvn -B -f /home/app/pom.xml clean package -DskipTests
 
 FROM openjdk:11.0.4-jre-slim
-COPY --from=build /home/app /usr/local/lib
+COPY --from=build /home/app/target/salesBot.jar /usr/local/lib/salesBot.jar
 EXPOSE 8080
-ENTRYPOINT ls /usr/local/lib/target
+ENTRYPOINT ["java","-jar","/usr/local/lib/salesBot.jar"]
