@@ -6,8 +6,6 @@ RUN mvn -B -f /home/app/pom.xml clean package -DskipTests
 FROM openjdk:11.0.4-jre-slim
 COPY --from=build /home/app /usr/local/lib
 EXPOSE 8080
-RUN --mount=type=secret,id=BOT_NAME \
-  --mount=type=secret,id=BOT_TOKEN \
-   export BOT_NAME=$(cat /run/secrets/BOT_NAME) && \
-   export BOT_TOKEN=$(cat /run/secrets/BOT_TOKEN) && \ java -jar /usr/local/lib/target/salesBot-jar-with-dependencies.jar
-CMD ["/bin/bash"]
+ENV BOT_TOKEN="2104765245:AAHzvhwnfBZ_Na6t6TCaqxB_NYMNzJFWGQQ"
+ENV BOT_NAME="ShoppingSalesBot"
+ENTRYPOINT ["java", "-jar", "/usr/local/lib/target/salesBot-jar-with-dependencies.jar"]
