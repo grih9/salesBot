@@ -1,4 +1,4 @@
-FROM maven:3.8.0-jdk-11 AS build
+FROM maven:3.8-jdk-11 AS build
 COPY src /home/app/src
 COPY pom.xml /home/app
 RUN mvn -B -f /home/app/pom.xml clean package -DskipTests
