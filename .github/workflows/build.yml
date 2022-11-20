@@ -30,6 +30,3 @@ jobs:
             context: .
             push: true
             tags: ${{ secrets.DOCKER_HUB_USERNAME }}/devops:latest
-            secrets: |
-              BOT_NAME=${{ secrets.BOT_NAME }}
-              BOT_TOKEN=${{ secrets.BOT_TOKEN }}
