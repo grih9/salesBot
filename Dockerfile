@@ -8,4 +8,5 @@ COPY --from=build /home/app /usr/local/lib
 EXPOSE 8080
 ENV BOT_NAME=$(secrets.BOT_NAME)
 ENV BOT_TOKEN=$(secrets.BOT_TOKEN)
-ENTRYPOINT ["java","-jar","/usr/local/lib/target/salesBot-jar-with-dependencies.jar"]
+RUN java -jar "/usr/local/lib/target/salesBot-jar-with-dependencies.jar"
+CMD ["/bin/bash"]
