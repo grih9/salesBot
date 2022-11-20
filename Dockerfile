@@ -9,5 +9,5 @@ EXPOSE 8080
 RUN --mount=type=secret,id=BOT_NAME \
   --mount=type=secret,id=BOT_TOKEN \
    export BOT_NAME=$(cat /run/secrets/BOT_NAME) && \
-   export BOT_TOKEN=$(cat /run/secrets/BOT_TOKEN) && \ java -jar "/usr/local/lib/target/salesBot-jar-with-dependencies.jar"
+   export BOT_TOKEN=$(cat /run/secrets/BOT_TOKEN) && \ java -jar /usr/local/lib/target/salesBot-jar-with-dependencies.jar
 CMD ["/bin/bash"]
